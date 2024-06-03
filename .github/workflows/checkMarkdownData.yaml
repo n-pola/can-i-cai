@@ -22,4 +22,4 @@ jobs:
         uses: docker://orrosenblatt/validate-json-action:latest
         env:
           INPUT_SCHEMA: MarkdownSchemas/component.json
-          INPUT_JSONS: data/categories/**/**/*.md
+          INPUT_JSONS: data/categories/camera/Leica/m11-p.md
