@@ -23,5 +23,6 @@ jobs:
         with:
           node-version: '20.x'
 
+      - run: cd validator
       - run: npm install
       - run: npm run start
