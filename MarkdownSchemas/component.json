@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json-schema.org/draft-06/schema",
   "$id": "https://can-i-cai.de/component.schema.json",
   "title": "Component",
   "description": "A component",
