@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://can-i-cai.de/component.schema.json",
+  "title": "Component",
+  "description": "A component",
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "The name of the component",
+      "type": "string"
+    },
+    "type": {
+      "description": "The type of the component",
+      "enum": ["output", "input", "input-output"]
+    },
+    "compatible": {
+       "description": "Wether or not the component supports c2pa",
+        "type": "boolean"
+    },
+    "minimalRequiredVersion": {
+      "description": "The minimal required version of the component",
+      "type": "string"
+    }
+  },
+  "required": ["name", "type", "compatible"]
+}

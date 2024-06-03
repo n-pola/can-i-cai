@@ -1,0 +1,25 @@
+name: Verify Markdown Data
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Validate JSON
+        uses: OrRosenblatt/validate-json-action@0.1.0
+        env:
+          INPUT_SCHEMA: MarkdownSchemas/component.json
+          INPUT_JSONS: data/categories/**/**/*.md
