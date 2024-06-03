@@ -9,10 +9,12 @@ export const ComponentSchema = new Schema<Component>({
   manufacturer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Manufacturer',
+    index: true,
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
+    index: true,
   },
   type: {
     type: String,

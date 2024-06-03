@@ -25,7 +25,6 @@
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.1.3",
-    "mongoose": "^8.4.1",
     "prettier": "^3.3.0",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
@@ -33,6 +32,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "mongoose": "^8.4.1",
     "cic-shared": "file:../shared",
     "front-matter": "^4.0.2",
     "marked": "^12.0.2"
