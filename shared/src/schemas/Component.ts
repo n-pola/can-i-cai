@@ -32,3 +32,7 @@ export const ComponentSchema = new Schema<Component>({
     type: String,
   },
 });
+
+// enable virtuals
+ComponentSchema.set('toObject', { virtuals: true });
+ComponentSchema.set('toJSON', { virtuals: true });

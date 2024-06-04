@@ -17,3 +17,7 @@ export const CategorySchema = new Schema<Category>({
     required: true,
   },
 });
+
+// enable virtuals
+CategorySchema.set('toObject', { virtuals: true });
+CategorySchema.set('toJSON', { virtuals: true });

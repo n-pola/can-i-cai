@@ -1,4 +1,35 @@
 services:
+  backend:
+    image: node:20.14
+    depends_on:
+      - parser
+      - db
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - ./shared:/app/node_modules/cic-shared
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: db
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+    command: sh -c "npm install && npm run dev"
+
+  frontend:
+    image: node:20.14
+    depends_on:
+      - backend
+    working_dir: /app
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./frontend:/app
+      # - ./shared:/app/node_modules/cic-shared
+    command: sh -c "npm install && npm run dev"
+
   db:
     image: mongo
     ports:
@@ -10,7 +41,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
 
   parser:
-    image: node:lts
+    image: node:20.14
     depends_on:
      - db
     working_dir: /app

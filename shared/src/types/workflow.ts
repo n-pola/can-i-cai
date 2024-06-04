@@ -31,6 +31,7 @@ export interface Workflow {
  */
 export interface SavedWorkflow {
   name: string;
+  id: string; // assigned by db or frontend
   adjacencies: [id: string, data: Adjacency][];
   nodes: [id: string, data: ObjectId | PopulatedCustomComponent][];
   edges: [id: string, data: Edge][];

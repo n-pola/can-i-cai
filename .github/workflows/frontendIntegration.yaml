@@ -1,28 +1,26 @@
-name: Verify Markdown Data
 
+name: CI-Frontend
 on:
   push:
     branches:
       - main
       - master
     paths:
-      - 'data/**'
-      - 'validator/**'
+      - 'frontend/**'
   pull_request:
     branches:
       - main
       - master
     paths:
-      - 'data/**'
-      - 'validator/**'
+      - 'frontend/**'
 
 jobs:
-  verify:
-    name: Verify Markdown Data
+  lintFrontend:
+    name: Lint Frontend
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./validator
+        working-directory: ./frontend
 
     steps:
       - name: Checkout repository
@@ -33,5 +31,11 @@ jobs:
         with:
           node-version: '20.x'
 
-      - run: npm install
-      - run: npm run start
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint:all:no-fix
+
+      - name: Check types
+        run: npm run type-check

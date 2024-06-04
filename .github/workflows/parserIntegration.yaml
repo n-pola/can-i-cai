@@ -1,0 +1,44 @@
+name: CI-Parser
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'parser/**'
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - 'parser/**'
+
+jobs:
+  lintParser:
+    name: Lint Parser
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./parser
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies for shared
+        working-directory: ./shared
+        run: npm install
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint:no-fix
+
+      - name: Check types
+        run: npm run type-check

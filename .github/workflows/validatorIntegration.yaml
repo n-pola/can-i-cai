@@ -1,24 +1,23 @@
-name: Verify Markdown Data
 
+
+name: CI-Validator
 on:
   push:
     branches:
       - main
       - master
     paths:
-      - 'data/**'
       - 'validator/**'
   pull_request:
     branches:
       - main
       - master
     paths:
-      - 'data/**'
       - 'validator/**'
 
 jobs:
-  verify:
-    name: Verify Markdown Data
+  lintValidator:
+    name: Lint Validator
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -33,5 +32,11 @@ jobs:
         with:
           node-version: '20.x'
 
-      - run: npm install
-      - run: npm run start
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint:no-fix
+
+      - name: Check types
+        run: npm run type-check
