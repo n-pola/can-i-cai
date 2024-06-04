@@ -38,9 +38,11 @@ export const verifyFiles = async (
       }),
     );
 
-    validationFailed = await Promise.all(promises).then((results) =>
+    const batchResult = await Promise.all(promises).then((results) =>
       results.some((result) => !result),
     );
+
+    validationFailed = validationFailed || batchResult;
 
     console.log(`Batch ${i + 1} of ${batches} completed`);
   }
