@@ -1,0 +1,21 @@
+{
+  "$id": "https://can-i-cai.de/category.schema.json",
+  "title": "Category",
+  "description": "Information about a category",
+  "type": "object",
+  "properties": {
+    "en": {
+      "description": "English name",
+      "type": "string"
+    },
+    "de": {
+      "description": "German name",
+      "type": "string"
+    },
+    "icon": {
+      "description": "The google symbols icon to use with this category",
+      "type": "string"
+    }
+  },
+  "required": ["en", "de", "icon"]
+}
