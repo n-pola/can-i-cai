@@ -5,6 +5,7 @@ export const ComponentSchema = new Schema<Component>({
   name: {
     type: String,
     required: true,
+    index: true,
   },
   manufacturer: {
     type: mongoose.Schema.Types.ObjectId,
@@ -34,5 +35,19 @@ export const ComponentSchema = new Schema<Component>({
 });
 
 // enable virtuals
-ComponentSchema.set('toObject', { virtuals: true });
-ComponentSchema.set('toJSON', { virtuals: true });
+ComponentSchema.set('toObject', {
+  virtuals: true,
+  transform(_doc, ret) {
+    delete ret.__v;
+    delete ret._id;
+    return ret;
+  },
+});
+ComponentSchema.set('toJSON', {
+  virtuals: true,
+  transform(_doc, ret) {
+    delete ret.__v;
+    delete ret._id;
+    return ret;
+  },
+});
