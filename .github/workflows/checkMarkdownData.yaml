@@ -12,6 +12,7 @@ on:
 
 jobs:
   verify:
+    name: Verify Markdown Data
     runs-on: ubuntu-latest
     defaults:
       run:
