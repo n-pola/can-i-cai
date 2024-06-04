@@ -8,3 +8,6 @@ export const ManufacturerSchema = new Schema<Manufacturer>({
     unique: true,
   },
 });
+
+ManufacturerSchema.set('toObject', { virtuals: true });
+ManufacturerSchema.set('toJSON', { virtuals: true });
