@@ -38,4 +38,4 @@ jobs:
         run: npm run lint:all:no-fix
 
       - name: Check types
-        run: npm run check-types
+        run: npm run type-check
