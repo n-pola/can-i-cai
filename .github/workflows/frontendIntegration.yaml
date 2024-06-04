@@ -1,25 +1,26 @@
-name: CI-Backend
+
+name: CI-Frontend
 on:
   push:
     branches:
       - main
       - master
     paths:
-      - 'backend/**'
+      - 'frontend/**'
   pull_request:
     branches:
       - main
       - master
     paths:
-      - 'backend/**'
+      - 'frontend/**'
 
 jobs:
-  lintBackend:
-    name: Lint Backend
+  lintFrontend:
+    name: Lint Frontend
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: ./frontend
 
     steps:
       - name: Checkout repository
@@ -30,15 +31,11 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Install dependencies for shared
-        working-directory: ./shared
-        run: npm install
-
       - name: Install dependencies
         run: npm install
 
       - name: Lint
-        run: npm run lint:no-fix
+        run: npm run lint:all:no-fix
 
       - name: Check types
         run: npm run check-types

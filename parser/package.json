@@ -10,7 +10,8 @@
     "build": "tsc && tsc-alias",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
-    "lint:no-fix": "eslint ./src --no-fix"
+    "lint:no-fix": "eslint ./src --no-fix",
+    "type-check": "tsc --noEmit"
   },
   "author": "Nils Polarek",
   "license": "ISC",
