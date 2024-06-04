@@ -1,43 +1,51 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 import Ajv from 'ajv';
-import fm from 'front-matter';
 import { globSync } from 'glob';
+import { verifyFiles } from './utils/verifyFiles';
 
 const ajv = new Ajv();
 
-// load schema from file
-const schema = readFileSync(
-  path.join(__dirname, 'schemas', 'component.json'),
+// load schemas from file
+const componentSchema = readFileSync(
+  path.join(__dirname, 'schemas', 'component.schema.json'),
+  'utf8',
+);
+const categorySchema = readFileSync(
+  path.join(__dirname, 'schemas', 'category.schema.json'),
   'utf8',
 );
 
 // compile schema
-const validate = ajv.compile(JSON.parse(schema));
+const validateComponent = ajv.compile(JSON.parse(componentSchema));
+const validateCategory = ajv.compile(JSON.parse(categorySchema));
 
+// Get all files to check
 const base = path.join(__dirname, '../../data/categories');
 const componentFiles = globSync(`${base}/*/*/*.md`);
+const categoryFiles = globSync(`${base}/*/index.md`);
 
-let validationFailed = false;
+const validateData = async () => {
+  console.log('\nValidating component files...');
+  const componentValidationFailed = await verifyFiles(
+    componentFiles,
+    validateComponent,
+  );
 
-componentFiles.forEach((file) => {
-  const data = readFileSync(file, 'utf8');
-  const { attributes } = fm(data);
-  const valid = validate(attributes);
-  const name = path.basename(file);
+  console.log('\nValidating category files...');
+  const categoryValidationFailed = await verifyFiles(
+    categoryFiles,
+    validateCategory,
+  );
 
-  if (valid) {
-    console.log(`✅ ${name}`);
+  return componentValidationFailed || categoryValidationFailed;
+};
+
+validateData().then((result) => {
+  if (result) {
+    process.exit(1);
   } else {
-    console.log(`❌ ${name}`);
-    console.log(validate.errors);
-    validationFailed = true;
+    console.log('All files are valid');
+    process.exit(0);
   }
 });
-
-if (validationFailed) {
-  process.exit(1);
-} else {
-  console.log('All files are valid');
-  process.exit(0);
-}
