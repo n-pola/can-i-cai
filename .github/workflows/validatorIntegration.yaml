@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: .validator/
+        working-directory: ./validator
 
     steps:
       - name: Checkout repository
