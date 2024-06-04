@@ -1,4 +1,14 @@
 services:
+  frontend:
+    image: node:20.14
+    working_dir: /app
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./frontend:/app
+      # - ./shared:/app/node_modules/cic-shared
+    command: sh -c "npm install && npm run dev"
+
   db:
     image: mongo
     ports:
@@ -10,7 +20,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
 
   parser:
-    image: node:lts
+    image: node:20.14
     depends_on:
      - db
     working_dir: /app

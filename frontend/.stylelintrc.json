@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss",
+    "stylelint-config-recommended-vue",
+    "stylelint-config-recess-order",
+    "stylelint-config-css-modules"
+  ],
+  "rules": {
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["global", "deep"]
+      }
+    ]
+  },
+  "ignoreFiles": [
+    "src/assets/styles/_normalize.scss"
+  ]
+}
