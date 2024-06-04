@@ -29,25 +29,3 @@ export interface CustomComponent extends Omit<Component, 'id' | 'manufacturer'> 
 export interface PopulatedCustomComponent extends Omit<CustomComponent, 'category'> {
   category: Category;
 }
-
-interface Adjacency {
-  in: string[];
-  out: string[];
-}
-
-export interface Edge {
-  source: string;
-  target: string;
-}
-
-export interface Workflow {
-  name?: string;
-  adjacencies: Map<string, Adjacency>;
-  nodes: Map<string, Component | CustomComponent>;
-  edges: Map<string, string>;
-}
-
-// TODO: make proper types when we know what the data looks like
-export interface SavedWorkflow {
-  nodes: [id: string, data: Component][];
-}
