@@ -1,14 +1,23 @@
 import {
-  CategorySchema,
-  ManufacturerSchema,
-  ComponentSchema,
+  categoryConfig,
+  componentConfig,
+  manufacturerConfig,
 } from 'cic-shared';
 import mongoose from 'mongoose';
 import { MarkdownCategory, MarkdownComponent } from '@/types/MarkdownData';
 
-const Category = mongoose.model('Category', CategorySchema);
-const Manufacturer = mongoose.model('Manufacturer', ManufacturerSchema);
-const Component = mongoose.model('Component', ComponentSchema);
+export const Manufacturer = mongoose.model(
+  manufacturerConfig.name,
+  manufacturerConfig.schema,
+);
+export const Component = mongoose.model(
+  componentConfig.name,
+  componentConfig.schema,
+);
+export const Category = mongoose.model(
+  categoryConfig.name,
+  categoryConfig.schema,
+);
 
 /**
  * Creates a new component in the database
