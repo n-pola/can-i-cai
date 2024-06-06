@@ -26,5 +26,6 @@ module.exports = {
     'prefer-arrow-callback': 'warn',
     'consistent-return': 'off',
     'no-console': 'off',
+    'import/prefer-default-export': 'off',
   },
 };

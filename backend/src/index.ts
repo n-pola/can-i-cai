@@ -1,10 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import { CategorySchema } from 'cic-shared';
 import mongoose from 'mongoose';
+import errorHandler from '@/middlewares/errorHandler';
+import apiRouter from '@/routes';
 
 const app = express();
-const Category = mongoose.model('Category', CategorySchema);
 
 app.use(
   cors({
@@ -14,15 +14,9 @@ app.use(
 );
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+app.use('/', apiRouter);
 
-app.get('/categories', async (req, res) => {
-  const categories = await Category.find();
-
-  res.json(categories);
-});
+app.use(errorHandler);
 
 const port = process.env.PORT || 3000;
 
