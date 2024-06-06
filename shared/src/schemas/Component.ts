@@ -1,23 +1,13 @@
-import mongoose, { Schema } from 'mongoose';
-import { type Component } from '@/types';
+import mongoose, { Schema, SchemaDefinition } from 'mongoose';
+import { ComponentBase, CustomComponent, type Component } from '@/types';
 import { manufacturerConfig } from './Manufacturer';
 import { categoryConfig } from './Category';
 
-const ComponentSchema = new Schema<Component>({
+/** Shared props of custom and parsed components */
+const componentSchemasBase: SchemaDefinition<ComponentBase> = {
   name: {
     type: String,
     required: true,
-    index: true,
-  },
-  manufacturer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: manufacturerConfig.name,
-    index: true,
-  },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: categoryConfig.name,
-    index: true,
   },
   type: {
     type: String,
@@ -34,7 +24,40 @@ const ComponentSchema = new Schema<Component>({
   additionalInfo: {
     type: String,
   },
+};
+
+/** Parsed from data component schema */
+const ComponentSchema = new Schema<Component>({
+  ...componentSchemasBase,
+  manufacturer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: manufacturerConfig.name,
+    index: true,
+  },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: categoryConfig.name,
+    index: true,
+  },
 });
+
+/** Custom component schema for saving user created components in shared
+ * workflows */
+export const CustomComponentSchema = new Schema<CustomComponent>(
+  {
+    ...componentSchemasBase,
+    manufacturer: {
+      type: String,
+      required: true,
+    },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: categoryConfig.name,
+      index: true,
+    },
+  },
+  { _id: false, versionKey: false },
+);
 
 // enable virtuals
 ComponentSchema.set('toObject', {
