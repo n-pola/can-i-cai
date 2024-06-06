@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 import { Category } from '@/types/category';
 
-export const CategorySchema = new Schema<Category>({
+const CategorySchema = new Schema<Category>({
   name: {
     de: {
       type: String,
@@ -35,3 +35,8 @@ CategorySchema.set('toJSON', {
     return ret;
   },
 });
+
+export const categoryConfig = {
+  name: 'Category',
+  schema: CategorySchema,
+};

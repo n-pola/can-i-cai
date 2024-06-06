@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 import { Manufacturer } from '../types/manufacturer';
 
-export const ManufacturerSchema = new Schema<Manufacturer>({
+const ManufacturerSchema = new Schema<Manufacturer>({
   name: {
     type: String,
     required: true,
@@ -26,3 +26,8 @@ ManufacturerSchema.set('toJSON', {
     return ret;
   },
 });
+
+export const manufacturerConfig = {
+  name: 'Manufacturer',
+  schema: ManufacturerSchema,
+};

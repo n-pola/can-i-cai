@@ -1,13 +1,19 @@
 import {
-  CategorySchema,
-  ComponentSchema,
-  ManufacturerSchema,
+  manufacturerConfig,
+  componentConfig,
+  categoryConfig,
 } from 'cic-shared';
 import mongoose from 'mongoose';
 
 export const ManufacturerModel = mongoose.model(
-  'Manufacturer',
-  ManufacturerSchema,
+  manufacturerConfig.name,
+  manufacturerConfig.schema,
 );
-export const ComponentModel = mongoose.model('Component', ComponentSchema);
-export const CategoryModel = mongoose.model('Category', CategorySchema);
+export const ComponentModel = mongoose.model(
+  componentConfig.name,
+  componentConfig.schema,
+);
+export const CategoryModel = mongoose.model(
+  categoryConfig.name,
+  categoryConfig.schema,
+);

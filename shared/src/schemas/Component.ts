@@ -1,7 +1,9 @@
 import mongoose, { Schema } from 'mongoose';
 import { type Component } from '@/types';
+import { manufacturerConfig } from './Manufacturer';
+import { categoryConfig } from './Category';
 
-export const ComponentSchema = new Schema<Component>({
+const ComponentSchema = new Schema<Component>({
   name: {
     type: String,
     required: true,
@@ -9,12 +11,12 @@ export const ComponentSchema = new Schema<Component>({
   },
   manufacturer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Manufacturer',
+    ref: manufacturerConfig.name,
     index: true,
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
+    ref: categoryConfig.name,
     index: true,
   },
   type: {
@@ -51,3 +53,8 @@ ComponentSchema.set('toJSON', {
     return ret;
   },
 });
+
+export const componentConfig = {
+  name: 'Component',
+  schema: ComponentSchema,
+};
