@@ -22,7 +22,10 @@ export type ComponentResponse = PopulatedComponent;
 /**
  * Response for batch component requests
  */
-export type ComponentsResponse = PopulatedComponent[];
+export type BatchComponentsResponse = {
+  components: PopulatedComponent[];
+  missing: string[];
+};
 
 /**
  * Response for a shared workflow

@@ -5,3 +5,11 @@ export interface SearchQuery {
 export interface CategoryParams {
   id: string;
 }
+
+export interface ComponentParams {
+  id: string;
+}
+
+export interface BatchComponentsQuery {
+  ids: string;
+}

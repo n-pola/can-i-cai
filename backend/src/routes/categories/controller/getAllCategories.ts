@@ -12,7 +12,7 @@ export const getAllCategories: RequestHandler = async (req, res, next) => {
     }
 
     const response: CategoriesResponse[] = categories.map((category) =>
-      category.toObject(),
+      category.toJSON(),
     );
 
     res.send(response);
