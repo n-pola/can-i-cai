@@ -8,8 +8,7 @@ const app = express();
 
 app.use(
   cors({
-    origin:
-      (process.env.CORS_ORIGIN && new RegExp(process.env.CORS_ORIGIN)) || '*',
+    origin: process.env.CORS_ORIGIN || '*',
   }),
 );
 app.use(express.json());
