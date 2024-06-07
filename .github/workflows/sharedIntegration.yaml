@@ -1,4 +1,4 @@
-name: CI-Parser
+name: CI-Shared
 on:
   push:
     branches:
