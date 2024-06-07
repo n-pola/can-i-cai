@@ -13,3 +13,7 @@ export interface ComponentParams {
 export interface BatchComponentsQuery {
   ids: string;
 }
+
+export interface WorkflowParams {
+  id: string;
+}

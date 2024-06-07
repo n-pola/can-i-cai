@@ -2,6 +2,7 @@ import {
   manufacturerConfig,
   componentConfig,
   categoryConfig,
+  workflowConfig,
 } from 'cic-shared';
 import mongoose from 'mongoose';
 
@@ -16,4 +17,8 @@ export const ComponentModel = mongoose.model(
 export const CategoryModel = mongoose.model(
   categoryConfig.name,
   categoryConfig.schema,
+);
+export const WorkflowModel = mongoose.model(
+  workflowConfig.name,
+  workflowConfig.schema,
 );

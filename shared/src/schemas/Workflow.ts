@@ -57,7 +57,7 @@ const CustomNodeSchema = new Schema<SavedWorkflow['customNodes'][0]>(
 );
 
 /** Schema for a shared workflow */
-export const WorkflowSchema = new Schema<SavedWorkflow>({
+const WorkflowSchema = new Schema<SavedWorkflow>({
   name: {
     type: String,
     required: true,
@@ -70,9 +70,12 @@ export const WorkflowSchema = new Schema<SavedWorkflow>({
         required: true,
       },
       data: {
-        type: Schema.Types.ObjectId,
-        ref: 'Component',
+        id: {
+          type: Schema.Types.ObjectId,
+          ref: 'Component',
+        },
       },
+      _id: false,
     },
   ],
   customNodes: [CustomNodeSchema],
@@ -96,3 +99,8 @@ WorkflowSchema.set('toJSON', {
     return ret;
   },
 });
+
+export const workflowConfig = {
+  name: 'Workflow',
+  schema: WorkflowSchema,
+};
