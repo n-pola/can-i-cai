@@ -2,16 +2,19 @@ import { ObjectId } from 'mongoose';
 import { Manufacturer } from './manufacturer';
 import { Category } from './category';
 
-/** Component in the mongodb */
-export interface Component {
-  id: string; // assigned by db
+export interface ComponentBase {
   name: string;
-  manufacturer: ObjectId;
-  category: ObjectId;
   type: 'input' | 'output' | 'input-output';
   compatible: boolean;
   minimalRequiredVersion?: string;
   additionalInfo?: string;
+}
+
+/** Component in the mongodb */
+export interface Component extends ComponentBase {
+  id: string; // assigned by db
+  manufacturer: ObjectId;
+  category: ObjectId;
 }
 
 /** Component after being populated with manufacturer and category from mongoose */
@@ -21,8 +24,9 @@ export interface PopulatedComponent extends Omit<Component, 'manufacturer' | 'ca
 }
 
 /** Custom component in the mongodb */
-export interface CustomComponent extends Omit<Component, 'id' | 'manufacturer'> {
+export interface CustomComponent extends ComponentBase {
   manufacturer: string;
+  category: ObjectId;
 }
 
 /** Custom component after being populated with category from mongoose */

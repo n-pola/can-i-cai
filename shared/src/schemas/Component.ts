@@ -1,20 +1,13 @@
-import mongoose, { Schema } from 'mongoose';
-import { type Component } from '@/types';
+import mongoose, { Schema, SchemaDefinition } from 'mongoose';
+import { ComponentBase, CustomComponent, type Component } from '@/types';
+import { manufacturerConfig } from './Manufacturer';
+import { categoryConfig } from './Category';
 
-export const ComponentSchema = new Schema<Component>({
+/** Shared props of custom and parsed components */
+const componentSchemasBase: SchemaDefinition<ComponentBase> = {
   name: {
     type: String,
     required: true,
-  },
-  manufacturer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Manufacturer',
-    index: true,
-  },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-    index: true,
   },
   type: {
     type: String,
@@ -31,8 +24,60 @@ export const ComponentSchema = new Schema<Component>({
   additionalInfo: {
     type: String,
   },
+};
+
+/** Parsed from data component schema */
+const ComponentSchema = new Schema<Component>({
+  ...componentSchemasBase,
+  manufacturer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: manufacturerConfig.name,
+    index: true,
+  },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: categoryConfig.name,
+    index: true,
+  },
 });
 
+/** Custom component schema for saving user created components in shared
+ * workflows */
+export const CustomComponentSchema = new Schema<CustomComponent>(
+  {
+    ...componentSchemasBase,
+    manufacturer: {
+      type: String,
+      required: true,
+    },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: categoryConfig.name,
+      index: true,
+    },
+  },
+  { _id: false, versionKey: false },
+);
+
 // enable virtuals
-ComponentSchema.set('toObject', { virtuals: true });
-ComponentSchema.set('toJSON', { virtuals: true });
+ComponentSchema.set('toObject', {
+  virtuals: true,
+  transform(_doc, ret) {
+    delete ret.__v;
+    delete ret._id;
+    return ret;
+  },
+});
+ComponentSchema.set('toJSON', {
+  virtuals: true,
+  transform(_doc, ret) {
+    delete ret.__v;
+    delete ret._id;
+    return ret;
+  },
+});
+
+export const componentConfig = {
+  name: 'Component',
+  schema: ComponentSchema,
+};

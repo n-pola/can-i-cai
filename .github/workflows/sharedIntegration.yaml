@@ -1,0 +1,40 @@
+name: CI-Shared
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'shared/**'
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - 'shared/**'
+
+jobs:
+  lintParser:
+    name: Lint shared components
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./shared
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint:no-fix
+
+      - name: Check types
+        run: npm run type-check

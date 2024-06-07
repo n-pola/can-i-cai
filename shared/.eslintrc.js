@@ -26,5 +26,7 @@ module.exports = {
     'prefer-arrow-callback': 'warn',
     'no-console': 'off',
     'import/prefer-default-export': 'off',
+    'no-underscore-dangle': 'off',
+    'no-param-reassign': 'warn',
   },
 };
