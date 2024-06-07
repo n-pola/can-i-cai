@@ -7,7 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && tsc-alias",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "lint:no-fix": "eslint ./src --no-fix",
+    "type-check": "tsc --noEmit"
   },
   "author": "Nils Polarek",
   "license": "ISC",
