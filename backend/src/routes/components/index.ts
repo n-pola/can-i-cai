@@ -4,7 +4,7 @@ import { getBatchComponents } from './controller/getBatchComponents';
 
 const router = Router();
 
-router.use('/:id', getComponent);
-router.use('/', getBatchComponents);
+router.get('/:id', getComponent);
+router.get('/', getBatchComponents);
 
 export default router;
