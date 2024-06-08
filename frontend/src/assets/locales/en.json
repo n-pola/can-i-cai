@@ -1,1 +1,7 @@
-{}
+{
+  "landingPage": {
+    "introduction": "Check if your publishing workflow is compatible with specifications of the Content Authenticity Initiative so that you can publish authentic media to the web and be prepared for the future of a more authentic web.",
+    "checkWorkflow": "Check my workflow",
+    "whatIsCAI": "What is CAI?"
+  }
+}

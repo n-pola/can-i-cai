@@ -1,1 +1,7 @@
-{}
+{
+  "landingPage": {
+    "introduction": "Prüfe, ob dein Veröffentlichungsprozess mit den Spezifikationen der Content Authenticity Initiative kompatibel ist, damit du authentische Medien im Web veröffentlichen kannst und für die Zukunft eines authentischeren Webs gerüstet bist.",
+    "checkWorkflow": "Meinen Prozess überprüpfen",
+    "whatIsCAI": "Was ist CAI?"
+  }
+}
