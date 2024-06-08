@@ -150,8 +150,6 @@ const workflow: Workflow = {
 
 <template>
   <WorkflowPlane :workflow="workflow" class="workflow-plane" />
-  <h1>test</h1>
-  <p>a</p>
 </template>
 
 <style lang="scss">
