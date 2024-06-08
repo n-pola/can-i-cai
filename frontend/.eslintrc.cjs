@@ -26,5 +26,6 @@ module.exports = {
     'no-underscore-dangle': 'off',
     curly: ['error', 'multi-line'],
     'import/prefer-default-export': 'off',
+    'vue/multi-word-component-names': 'warn',
   },
 };
