@@ -1,5 +1,23 @@
 @import 'normalize';
-@import 'fonts';
 @import 'variables';
+@import 'fonts';
 @import 'typography';
+@import 'base';
+@import 'icons';
 
+// set scss vars to native css vars
+:root {
+  --size-base: #{$base};
+  --size-xxs: #{$xxs};
+  --size-xs: #{$xs};
+  --size-s: #{$s};
+  --size-m: #{$m};
+  --size-l: #{$l};
+  --size-xl: #{$xl};
+  --size-xxl: #{$xxl};
+  --font-xs: #{$f-xs};
+  --font-s: #{$f-s};
+  --font-m: #{$f-m};
+  --font-l: #{$f-l};
+  --font-xl: #{$f-xl};
+}

@@ -18,6 +18,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "cic-shared": "file:../shared",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
     "vue-i18n": "^9.13.1",

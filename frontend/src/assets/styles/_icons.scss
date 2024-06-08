@@ -1,0 +1,67 @@
+/* stylelint-disable font-family-no-missing-generic-family-keyword */
+@import 'variables';
+
+.material-symbols-outlined {
+  display: inline-block;
+  font-family: 'Material Symbols Outlined';
+  font-size: inherit;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  color: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+.material-symbols-rounded {
+  display: inline-block;
+  font-family: 'Material Symbols Rounded';
+  font-size: inherit;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  color: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+.material-symbols-sharp {
+  display: inline-block;
+  font-family: 'Material Symbols Sharp';
+  font-size: inherit;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  color: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+.icon {
+  &--xxs {
+    width: $xxs;
+    height: $xxs;
+    font-size: $xxs;
+  }
+
+  &--s {
+    width: $s;
+    height: $s;
+    font-size: $s;
+  }
+
+  &--m {
+    width: $m;
+    height: $m;
+    font-size: $m;
+  }
+}
