@@ -1,3 +1,42 @@
-.dummy {
-  color: red
-}
+// Sizes
+$base: 10px;
+$xxs: $base;
+$xs: $base * 1.6;
+$s: $base * 2;
+$m: $base * 2.5;
+$l: $base * 4;
+$xl: $base * 6.3;
+$xxl: $base * 80;
+
+// Font sizes
+$f-base: 10px;
+$f-xs: $f-base * 1.6;
+$f-s: $f-base * 2;
+$f-m: $f-base * 2.5;
+$f-l: $f-base * 4;
+$f-xl: $f-base * 5;
+
+// Font weights
+$fw-regular: 400;
+$fw-semibold: 500;
+$fw-bold: 700;
+
+// Colors
+$primary: #2F6690;
+$primary-light: #468DC3;
+$secondary: #19364D;
+$secondary-light: #28567B;
+$success: #00A878;
+$error: #E84855;
+$warning: #FBB13C;
+
+// Shades
+$lightest: #FFF;
+$lighter: #EEE;
+$light: #CCC;
+$dark: #525252;
+$darker: #262626;
+$darkest: #121212;
+
+// Misc.
+$border-radius: 4px;
