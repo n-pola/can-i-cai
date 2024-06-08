@@ -1,0 +1,48 @@
+@import 'variables';
+
+h1, .is-h1 {
+  margin: 0;
+  font-size: $f-xl;
+  font-weight: $fw-bold;
+}
+
+h2, .is-h2 {
+  margin: 0;
+  font-size: $f-l;
+  font-weight: $fw-semibold;
+}
+
+h3, .is-h3 {
+  margin: 0;
+  font-size: $f-m;
+  font-weight: $fw-semibold;
+}
+
+h4, .title, .is-h4 {
+  margin: 0;
+  font-size: $f-s;
+  font-weight: $fw-semibold;
+}
+
+h5, .subtitle, .is-h5 {
+  margin: 0;
+  font-size: $f-s;
+  font-weight: $fw-regular;
+}
+
+body,
+p,
+* {
+  margin: 0;
+  font-family: Roboto, sans-serif;
+  font-size: $f-xs;
+  font-weight: $fw-regular;
+  color: $darkest;
+}
+
+span {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+
