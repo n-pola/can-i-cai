@@ -19,7 +19,11 @@
     "minimalRequiredVersion": {
       "description": "The minimal required version of the component",
       "type": "string"
+    },
+    "_id": {
+      "description": "Unique identifier supplied by the database",
+      "type": "string"
     }
   },
-  "required": ["name", "type", "compatible"]
+  "required": ["name", "type", "compatible", "_id"]
 }

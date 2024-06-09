@@ -2,6 +2,7 @@ export interface MarkdownCategory {
   en: string;
   de: string;
   icon: string;
+  _id?: string;
 }
 
 export interface MarkdownComponent {
@@ -9,4 +10,5 @@ export interface MarkdownComponent {
   type: 'input' | 'output' | 'input-output';
   compatible: boolean;
   minimalRequiredVersion?: string;
+  _id?: string;
 }

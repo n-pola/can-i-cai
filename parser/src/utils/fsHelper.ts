@@ -1,4 +1,4 @@
-import { readdir, readFile } from 'fs/promises';
+import { readdir, readFile, writeFile } from 'fs/promises';
 import pathHelper from 'path';
 
 /**
@@ -30,5 +30,39 @@ export const getFilesByExtension = (
       .map((result) => result.name),
   );
 
+/**
+ * Read the index.md file of a given directory
+ * @param directory - The directory to read the index.md file from
+ * @returns Promise that resolves to the content of the index.md file
+ */
 export const getIndexMarkdown = (directory: string): Promise<string> =>
   readFile(pathHelper.join(directory, 'index.md'), 'utf-8');
+
+/**
+ * Append a key value pair to the front matter of a markdown file
+ * @param file - File to append the key value pair to
+ * @param key - Key to append
+ * @param value - Value of the key
+ * @returns Promise that resolves when the key value pair is appended
+ */
+export const appendPropToFrontMatter = async (
+  file: string,
+  key: string,
+  value: string,
+) => {
+  const content = await readFile(file, 'utf-8');
+  const lines = content.split('\n');
+  const frontMatterEnd = lines.findIndex(
+    (line, index) => index > 0 && line === '---',
+  );
+
+  if (frontMatterEnd === -1) {
+    throw new Error('Front matter end not found');
+  }
+
+  lines.splice(frontMatterEnd, 0, `${key}: ${value}`);
+
+  const newContent = lines.join('\n');
+
+  await writeFile(file, newContent);
+};

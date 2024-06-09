@@ -12,6 +12,7 @@ import {
   getIndexMarkdown,
   getSubDirectories,
   getFilesByExtension,
+  appendPropToFrontMatter,
 } from '@/utils/fsHelper';
 
 /**
@@ -39,6 +40,11 @@ export const parseComponent = async (
     category,
     additionalInfo || undefined,
   )
+    .then((newComponent) => {
+      if (!attributes._id) {
+        return appendPropToFrontMatter(file, '_id', newComponent.id);
+      }
+    })
     .then(() => {
       console.log(`Parsed component: ${attributes.name}`);
     })
@@ -81,6 +87,15 @@ export const parseCategory = async (directory: string): Promise<void> => {
   const categoryIndex = await getIndexMarkdown(directory);
   const categoryData = fm<MarkdownCategory>(categoryIndex);
   const newCategory = await createCategory(categoryData.attributes);
+
+  // attach new id to the read category markdown file
+  if (!categoryData.attributes._id) {
+    appendPropToFrontMatter(
+      path.join(directory, 'index.md'),
+      '_id',
+      newCategory.id,
+    );
+  }
 
   const manufacturers = await getSubDirectories(directory);
 
