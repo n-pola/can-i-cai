@@ -2,6 +2,7 @@ import path from 'path';
 import mongoose from 'mongoose';
 import { parseCategory } from '@/utils/parsers';
 import { getSubDirectories } from '@/utils/fsHelper';
+import { Category, Component, Manufacturer } from '@/utils/dbHelpers';
 
 if (!process.env.DATA_PATH) {
   throw new Error('DATA_PATH is not set');
@@ -51,9 +52,14 @@ mongoose
   .then(() => {
     console.log('Connected to the database');
 
-    // clear the database
-    // TODO: switch to create or update? this will also drop saved workflows
-    return mongoose.connection.db.dropDatabase();
+    // clear the collections
+    const dropPromises: Promise<boolean>[] = [];
+
+    dropPromises.push(Category.collection.drop());
+    dropPromises.push(Manufacturer.collection.drop());
+    dropPromises.push(Component.collection.drop());
+
+    return Promise.all(dropPromises);
   })
   .then(() => {
     console.log('Database cleared');
