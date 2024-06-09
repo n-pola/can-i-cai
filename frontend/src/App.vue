@@ -7,7 +7,7 @@ const i18n = useI18n();
 
 <template>
   <header>
-    <RouterLink to="/">
+    <RouterLink to="/" :title="i18n.t('homepage')">
       <img alt="Can I CAI? Logo" class="logo" src="@/assets/logo.svg" />
     </RouterLink>
     <nav id="language">
