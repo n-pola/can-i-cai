@@ -17,7 +17,7 @@ const i18n = useI18n();
         </p>
       </div>
       <div class="landing-page__buttons">
-        <RouterLink to="/check">
+        <RouterLink to="/check" :title="i18n.t('landingPage.checkWorkflow')">
           <Button size="l" full-width>{{ i18n.t('landingPage.checkWorkflow') }}</Button>
         </RouterLink>
         <a
@@ -25,6 +25,7 @@ const i18n = useI18n();
           referrerpolicy="no-referrer"
           target="_blank"
           rel="noopener noreferrer"
+          :title="i18n.t('landingPage.whatIsCAI')"
         >
           <Button size="l" color="secondary" full-width>{{
             i18n.t('landingPage.whatIsCAI')
