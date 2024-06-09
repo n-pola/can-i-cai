@@ -15,7 +15,11 @@
     "icon": {
       "description": "The google symbols icon to use with this category",
       "type": "string"
+    },
+    "_id": {
+      "description": "Unique identifier supplied by the database",
+      "type": "string"
     }
   },
-  "required": ["en", "de", "icon"]
+  "required": ["en", "de", "icon", "_id"]
 }
