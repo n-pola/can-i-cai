@@ -11,10 +11,15 @@ const router = createRouter({
     },
     {
       path: '/check',
-      name: 'WorkflowChecker',
+      name: 'Workflow checker',
       component: () => import('@/views/WorkflowChecker.vue'),
     },
   ],
+});
+
+// attach route name to document title on route change
+router.afterEach((to) => {
+  document.title = `Can I CAI? | ${to.name?.toString()}`;
 });
 
 export default router;
