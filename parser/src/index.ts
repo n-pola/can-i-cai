@@ -29,6 +29,17 @@ const main = async () => {
       });
     });
   });
+
+  categoryChain
+    .then(() => {
+      console.log('Finished parsing all categories');
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('Error parsing files');
+      console.error(error);
+      process.exit(1);
+    });
 };
 
 mongoose
@@ -41,6 +52,7 @@ mongoose
     console.log('Connected to the database');
 
     // clear the database
+    // TODO: switch to create or update? this will also drop saved workflows
     return mongoose.connection.db.dropDatabase();
   })
   .then(() => {

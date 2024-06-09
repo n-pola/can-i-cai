@@ -34,6 +34,7 @@ export const createComponent = async (
   additionalInfo?: string,
 ) =>
   Component.create({
+    _id: component._id,
     name: component.name,
     manufacturer: manufacturerId,
     category: categoryId,
@@ -74,4 +75,5 @@ export const createCategory = async (category: MarkdownCategory) =>
       en: category.en,
     },
     icon: category.icon,
+    _id: category._id,
   });
