@@ -51,7 +51,9 @@ const i18n = useI18n();
   width: 100vw;
   height: 100vh;
 }
+</style>
 
+<style lang="scss" scoped>
 header {
   display: flex;
   flex-flow: row;
