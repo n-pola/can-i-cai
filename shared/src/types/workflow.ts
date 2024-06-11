@@ -17,11 +17,14 @@ export interface Edge {
   target: string;
 }
 
+/** data of a single node */
+export type Node = PopulatedComponent | PopulatedCustomComponent;
+
 /** Workflow representation in the frontend */
 export interface Workflow {
   name?: string;
   adjacencies: Map<string, Adjacency>;
-  nodes: Map<string, PopulatedComponent | PopulatedCustomComponent>;
+  nodes: Map<string, Node>;
   edges: Map<string, Edge>;
 }
 
