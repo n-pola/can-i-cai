@@ -64,4 +64,8 @@
     height: $m;
     font-size: $m;
   }
+
+  &--fill {
+    font-variation-settings: "FILL" 1;
+  }
 }

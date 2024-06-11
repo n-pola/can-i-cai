@@ -52,53 +52,65 @@ const handleSubmit = (event: Event) => {
     @click="handleClick"
     @keypress.esc="handleClick"
   >
-    <header class="modal__header" :class="`modal__header--${color}`">
-      <slot name="header">
-        <h3>Default Header</h3>
-      </slot>
-
-      <button class="modal__close-button" @click="handleClose" type="button">
-        <span class="material-symbols-outlined icon--m">close</span>
-      </button>
-    </header>
-
-    <form v-if="isForm" @submit="handleSubmit">
-      <div class="modal__content">
-        <slot>
-          <p>Default Content</p>
+    <div class="modal__inner">
+      <header class="modal__header" :class="`modal__header--${color}`">
+        <slot name="header">
+          <h3>Default Header</h3>
         </slot>
-      </div>
 
-      <footer class="modal__footer">
-        <slot name="footer">
-          <Button type="submit" color="primary">Submit</Button>
-        </slot>
-      </footer>
-    </form>
-    <template v-else>
-      <div class="modal__content">
-        <slot>
-          <p>Default Content</p>
-        </slot>
-      </div>
+        <button class="modal__close-button" @click="handleClose" type="button">
+          <span class="material-symbols-outlined icon--m">close</span>
+        </button>
+      </header>
 
-      <footer class="modal__footer">
-        <slot name="footer">
-          <p>default footer</p>
-        </slot>
-      </footer>
-    </template>
+      <form v-if="isForm" @submit="handleSubmit">
+        <div class="modal__content">
+          <slot>
+            <p>Default Content</p>
+          </slot>
+        </div>
+
+        <footer class="modal__footer">
+          <slot name="footer">
+            <Button type="submit" color="primary">Submit</Button>
+          </slot>
+        </footer>
+      </form>
+      <template v-else>
+        <div class="modal__content">
+          <slot>
+            <p>Default Content</p>
+          </slot>
+        </div>
+
+        <footer class="modal__footer">
+          <slot name="footer">
+            <p>default footer</p>
+          </slot>
+        </footer>
+      </template>
+    </div>
   </dialog>
 </template>
 
 <style lang="scss" scoped>
 .modal {
-  width: 40 * $base;
+  width: $modal-width;
+  max-height: calc(100vh - $s);
   padding: 0;
   margin: auto;
   overflow: hidden;
   border: 0;
   border-radius: $border-radius;
+
+  &::backdrop {
+    background-color: rgb(0 0 0 / 50%);
+  }
+
+  &__inner {
+    display: flex;
+    flex-flow: column;
+  }
 
   &__header {
     display: flex;
@@ -129,11 +141,9 @@ const handleSubmit = (event: Event) => {
   }
 
   &__content {
+    max-height: $modal-content-max-height;
     padding: $s $xs;
-  }
-
-  &__footer {
-    padding: $s $xs;
+    overflow-y: auto;
   }
 }
 </style>

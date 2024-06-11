@@ -2,9 +2,17 @@
 import { defineProps, computed, ref } from 'vue';
 import { type PopulatedComponent, type PopulatedCustomComponent } from 'cic-shared';
 
-const props = defineProps<{
-  component: PopulatedComponent | PopulatedCustomComponent;
-}>();
+const props = withDefaults(
+  defineProps<{
+    component: PopulatedComponent | PopulatedCustomComponent;
+    showCompatibility?: boolean;
+    showDelete?: boolean;
+  }>(),
+  {
+    showCompatibility: true,
+    showDelete: true,
+  },
+);
 
 const emit = defineEmits<{
   delete: [];
@@ -33,17 +41,18 @@ defineExpose({
     <div
       class="component__category"
       :class="{
-        'component__category--compatible': component.compatible,
-        'component__category--incompatible': !component.compatible,
+        'component__category--compatible': component.compatible && showCompatibility,
+        'component__category--incompatible': !component.compatible && showCompatibility,
+        'component__category--neutral': !showCompatibility,
       }"
     >
       <span class="material-symbols-outlined icon--m">{{ component.category.icon }}</span>
     </div>
     <div class="component__content">
-      <h3 class="component__title">{{ component.name }}</h3>
+      <h4 class="component__title">{{ component.name }}</h4>
       <p class="component__manufacturer">{{ manufacturer }}</p>
     </div>
-    <div class="component__action">
+    <div class="component__action" v-if="showDelete">
       <button class="component__delete" @click="handleDeleteClick" type="button">
         <span class="material-symbols-outlined icon--xxs">close</span>
       </button>
@@ -69,6 +78,11 @@ defineExpose({
     #{$self}__delete {
       display: block;
     }
+
+    #{$self}__category--neutral {
+      color: $lightest;
+      background-color: $dark;
+    }
   }
 
   &__category {
@@ -77,6 +91,11 @@ defineExpose({
     justify-content: center;
     aspect-ratio: 1 / 1;
     color: $lightest;
+
+    &--neutral {
+      color: $darkest;
+      background-color: $light;
+    }
 
     &--compatible {
       background-color: $success;

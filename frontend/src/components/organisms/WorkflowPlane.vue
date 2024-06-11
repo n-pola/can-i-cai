@@ -5,13 +5,19 @@ import WorkflowForeignObject from '@/components/molecules/WorkflowForeignObject.
 import { cssVariables } from '@/utils/cssVariables';
 import { useToast } from 'vue-toastification';
 
+// Component definitions
 const props = defineProps<{
   workflow: Workflow;
 }>();
 
+const emit = defineEmits<{
+  nodeClicked: [id: string];
+}>();
+
+// Hooks
 const toast = useToast();
 
-// array of refs
+// Data
 const editorRef = ref<HTMLElement | null>(null);
 const componentRefs = ref<{ objectRef: SVGForeignObjectElement | null }[]>([]);
 const viewPort = ref({
@@ -21,6 +27,7 @@ const viewPort = ref({
   height: 0,
 });
 
+// Computed values
 const viewBox = computed(() => {
   return `${viewPort.value.x} ${viewPort.value.y} ${viewPort.value.width} ${viewPort.value.height}`;
 });
@@ -120,10 +127,6 @@ const handleScroll = (event: WheelEvent) => {
   };
 };
 
-const handleClick = (id: string) => {
-  toast.success(`Component ${id} clicked`);
-};
-
 onMounted(() => {
   // Center the viewport fn the workflow
   const x = -((editorRef.value?.clientWidth || 0) / 2 - 240 / 2);
@@ -155,10 +158,11 @@ onMounted(() => {
       :y="getComponentPosition(node[0]).y"
       :component="node[1]"
       :key="node[0]"
-      @click="handleClick(node[0])"
+      @click="emit('nodeClicked', node[0])"
       @delete="toast.error(`delete ${node[0]} requested`)"
-      @keydown.enter="handleClick(node[0])"
+      @keypress.enter="emit('nodeClicked', node[0])"
       ref="componentRefs"
+      tabindex="0"
     />
   </svg>
 </template>

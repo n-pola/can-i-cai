@@ -8,6 +8,7 @@ const props = withDefaults(
     size?: 's' | 'm' | 'l';
     color?: 'primary' | 'secondary';
     fullWidth?: boolean;
+    iconPosition: 'start' | 'end';
   }>(),
   {
     type: 'button',
@@ -15,6 +16,7 @@ const props = withDefaults(
     size: 'm',
     color: 'primary',
     fullWidth: false,
+    iconPosition: 'end',
   },
 );
 
@@ -27,8 +29,13 @@ const addOptionalClass = (condition: boolean, className: string) => (condition ?
     class="button"
     :class="`button--${size} button--${color} ${addOptionalClass(fullWidth, 'button--fullwidth')}`"
   >
+    <span v-if="props.icon && iconPosition === 'start'" class="material-symbols-outlined">{{
+      props.icon
+    }}</span>
     <span><slot /></span>
-    <span v-if="props.icon" class="material-symbols-outlined">{{ props.icon }}</span>
+    <span v-if="props.icon && iconPosition === 'end'" class="material-symbols-outlined">{{
+      props.icon
+    }}</span>
   </button>
 </template>
 
@@ -39,6 +46,12 @@ const addOptionalClass = (condition: boolean, className: string) => (condition ?
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
+
+  &:disabled {
+    pointer-events: none;
+    user-select: none;
+    background-color: $light;
+  }
 
   &:hover {
     cursor: pointer;

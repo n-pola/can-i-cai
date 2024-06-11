@@ -1,6 +1,17 @@
 <script setup lang="ts">
-import type { Workflow } from 'cic-shared';
+import type { Node, Workflow } from 'cic-shared';
 import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
+import { config } from '@/config';
+import { onMounted, ref } from 'vue';
+import Modal from '@/components/atoms/Modal.vue';
+import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
+import AddComponentModal from '@/components/organisms/AddComponentModal.vue';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
+
+const detailModalIsOpen = ref(false);
+const selectedNode = ref<Node | null>(null);
 
 const nodes: Workflow['nodes'] = new Map([
   [
@@ -9,6 +20,8 @@ const nodes: Workflow['nodes'] = new Map([
       name: 'Designer',
       type: 'input-output',
       compatible: true,
+      minimalRequiredVersion: '1.0.0',
+      additionalInfo: 'This is a test',
       manufacturer: {
         name: 'Microsoft',
         id: '6663630e4eb7fcc82c3fed6d',
@@ -89,6 +102,14 @@ const nodes: Workflow['nodes'] = new Map([
   ],
 ]);
 
+const handleNodeClick = (nodeId: string) => {
+  console.log('Node clicked', nodeId);
+  const node = nodes.get(nodeId);
+  if (!node) throw new Error(`Node with id ${nodeId} not found`);
+  selectedNode.value = node;
+  detailModalIsOpen.value = true;
+};
+
 const workflow: Workflow = {
   name: 'Custom workflow test',
   adjacencies: new Map([
@@ -149,7 +170,14 @@ const workflow: Workflow = {
 </script>
 
 <template>
-  <WorkflowPlane :workflow="workflow" class="workflow-plane" />
+  <WorkflowPlane :workflow="workflow" class="workflow-plane" @nodeClicked="handleNodeClick" />
+  <ComponentDetailModal
+    v-if="selectedNode"
+    v-model="detailModalIsOpen"
+    :component="selectedNode"
+    id="123"
+  />
+  <AddComponentModal :modelValue="true" @add-component="(id) => toast(id)" />
 </template>
 
 <style lang="scss">
