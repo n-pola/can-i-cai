@@ -49,7 +49,7 @@ defineExpose({
       <span class="material-symbols-outlined icon--m">{{ component.category.icon }}</span>
     </div>
     <div class="component__content">
-      <h4 class="component__title">{{ component.name }}</h4>
+      <h4 :title="component.name" class="component__title">{{ component.name }}</h4>
       <p class="component__manufacturer">{{ manufacturer }}</p>
     </div>
     <div class="component__action" v-if="showDelete">

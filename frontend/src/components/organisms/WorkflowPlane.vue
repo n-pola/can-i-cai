@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { type Edge, type Workflow } from 'cic-shared';
 import WorkflowForeignObject from '@/components/molecules/WorkflowForeignObject.vue';
 import { cssVariables } from '@/utils/cssVariables';
 import { useToast } from 'vue-toastification';
+import { useWorkflowStore } from '@/stores/workflow';
+import SvgAddButton from '@/components/atoms/SvgAddButton.vue';
 
-// Component definitions
-const props = defineProps<{
-  workflow: Workflow;
-}>();
+const workflow = useWorkflowStore();
 
 const emit = defineEmits<{
   nodeClicked: [id: string];
+  deleteNode: [id: string];
+  addComponentRequested: [id?: string];
+  addComponentRequestedEdge: [id: string];
 }>();
 
 // Hooks
@@ -35,64 +36,44 @@ const viewBox = computed(() => {
 const lines = computed(() => {
   const lineCoordinates = [];
 
-  for (let i = 0; i < componentRefs.value.length - 1; i += 1) {
-    const { objectRef: objectRef1 } = componentRefs.value[i];
-    const { objectRef: objectRef2 } = componentRefs.value[i + 1];
+  workflow.edges.forEach((edge, id) => {
+    const sourcePosition = workflow.nodes.get(edge.source);
+    const targetPosition = workflow.nodes.get(edge.target);
 
-    // eslint-disable-next-line no-continue
-    if (!objectRef1 || !objectRef2) continue;
-    const obj1BoundingBox = objectRef1.getBBox();
-    const obj2BoundingBox = objectRef2.getBBox();
+    if (!sourcePosition || !targetPosition) {
+      return;
+    }
 
-    const x1 = obj1BoundingBox.x + obj1BoundingBox.width / 2;
-    const y1 = obj1BoundingBox.y;
-    const x2 = obj2BoundingBox.x + obj2BoundingBox.width / 2;
-    const y2 = obj2BoundingBox.y;
+    const sourceBB = sourcePosition.boundingBox;
+    const targetBB = targetPosition.boundingBox;
 
-    lineCoordinates.push({ x1, y1, x2, y2 });
-  }
+    const sourceX = sourceBB.x + sourceBB.width / 2;
+    const sourceY = sourceBB.y + sourceBB.height;
+    const targetX = targetBB.x + targetBB.width / 2;
+    const targetY = targetBB.y;
+
+    lineCoordinates.push({
+      x1: sourceX,
+      y1: sourceY,
+      x2: targetX,
+      y2: targetY,
+      id,
+      compatible: edge.compatible,
+    });
+  });
 
   return lineCoordinates;
 });
-
-const getNodeLevel = (nodeId: string, level = 0): number => {
-  const adjacencies = props.workflow.adjacencies.get(nodeId);
-
-  if (!adjacencies) throw new Error(`No adjacencies found for node ${nodeId}`);
-
-  if (adjacencies.in.length === 0) return level;
-
-  const inEdges = adjacencies.in
-    .map((edge) => props.workflow.edges.get(edge))
-    .filter((edge) => edge !== undefined) as Edge[];
-
-  const lowerNodeLevels = inEdges.map((edge) => getNodeLevel(edge.source, level + 1));
-
-  return Math.max(...lowerNodeLevels);
-};
-
-const getComponentPosition = (nodeId: string) => {
-  const level = getNodeLevel(nodeId);
-  const componentPositionSpace =
-    cssVariables.size.xxs * 2 + cssVariables.font.m + cssVariables.font.s + cssVariables.size.m;
-
-  return {
-    x: 0,
-    y: componentPositionSpace * level,
-  };
-};
 
 const handleScroll = (event: WheelEvent) => {
   event.preventDefault();
 
   const { deltaX, deltaY, clientX, clientY } = event;
-  console.log(event);
   if (event.ctrlKey) {
     if (!editorRef.value) return;
     const svgWidth = editorRef.value.clientWidth;
     const svgHeight = editorRef.value.clientHeight;
     const svgBoundingRect = editorRef.value.getBoundingClientRect();
-    console.log(svgBoundingRect);
     const offsetX = clientX - svgBoundingRect.left;
     const offsetY = clientY - svgBoundingRect.top;
 
@@ -130,7 +111,7 @@ const handleScroll = (event: WheelEvent) => {
 onMounted(() => {
   // Center the viewport fn the workflow
   const x = -((editorRef.value?.clientWidth || 0) / 2 - 240 / 2);
-  const y = -((editorRef.value?.clientHeight || 0) / 2 - (props.workflow.nodes.size * 107) / 2);
+  const y = -((editorRef.value?.clientHeight || 0) / 2 - (workflow.nodes.size * 107) / 2);
 
   viewPort.value = {
     x,
@@ -143,24 +124,47 @@ onMounted(() => {
 
 <template>
   <svg ref="editorRef" :viewBox="viewBox" @wheel="handleScroll">
+    <g
+      v-if="workflow.nodes.size === 0"
+      @click="emit('addComponentRequested')"
+      @keypress.enter="emit('addComponentRequested')"
+    >
+      <text text-anchor="middle" dominant-baseline="middle">No nodes in workflow</text>
+      <text text-anchor="middle" dominant-baseline="middle" dy="1em">
+        Add a node to get started
+      </text>
+    </g>
     <line
       v-for="(line, index) in lines"
       :x1="line.x1"
       :y1="line.y1"
       :x2="line.x2"
       :y2="line.y2"
-      stroke="black"
       class="component-edge"
+      :class="{ 'component-edge--compatible': line.compatible }"
       :key="index"
+    />
+    <SvgAddButton
+      v-for="(line, index) in lines"
+      :x="(line.x1 + line.x2) / 2"
+      :y="(line.y1 + line.y2) / 2"
+      :size="cssVariables.size.m"
+      :key="index"
+      @click="emit('addComponentRequestedEdge', line.id)"
+      @keypress.enter="emit('addComponentRequestedEdge', line.id)"
+      tabindex="0"
     />
     <WorkflowForeignObject
       v-for="node in workflow.nodes"
-      :y="getComponentPosition(node[0]).y"
+      :y="node[1].boundingBox.y"
+      :x="node[1].boundingBox.x"
       :component="node[1]"
       :key="node[0]"
+      :id="node[0]"
       @click="emit('nodeClicked', node[0])"
-      @delete="toast.error(`delete ${node[0]} requested`)"
+      @delete="emit('deleteNode', node[0])"
       @keypress.enter="emit('nodeClicked', node[0])"
+      @requestAddAfter="emit('addComponentRequested', node[0])"
       ref="componentRefs"
       tabindex="0"
     />
@@ -169,7 +173,11 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .component-edge {
-  stroke: $success;
+  stroke: $error;
   stroke-width: 4;
+
+  &--compatible {
+    stroke: $success;
+  }
 }
 </style>

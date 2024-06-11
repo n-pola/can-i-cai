@@ -79,7 +79,7 @@ const content = computed(() => {
       </div>
       <div v-if="component.additionalInfo" class="component-details__additional-info">
         <h4>Additional Informations</h4>
-        <p>{{ component.additionalInfo }}</p>
+        <div v-html="component.additionalInfo"></div>
       </div>
     </div>
 
@@ -155,6 +155,14 @@ const content = computed(() => {
     display: flex;
     flex-direction: column;
     gap: $xxs;
+
+    & :deep(a) {
+      color: $primary;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }
 </style>

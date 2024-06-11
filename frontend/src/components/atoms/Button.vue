@@ -8,7 +8,7 @@ const props = withDefaults(
     size?: 's' | 'm' | 'l';
     color?: 'primary' | 'secondary';
     fullWidth?: boolean;
-    iconPosition: 'start' | 'end';
+    iconPosition?: 'start' | 'end';
   }>(),
   {
     type: 'button',
