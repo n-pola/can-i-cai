@@ -1,34 +1,8 @@
 import { defineStore } from 'pinia';
-import type {
-  Workflow,
-  PopulatedComponent,
-  PopulatedCustomComponent,
-  Edge,
-  Node,
-} from 'cic-shared';
+import type { PopulatedComponent, PopulatedCustomComponent, Edge } from 'cic-shared';
 import { v4 as uuid } from 'uuid';
-import { cssVariables } from '../utils/cssVariables';
-
-interface BoundingBox {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-type FrontendNode = Node & {
-  boundingBox: BoundingBox;
-};
-
-type FrontendEdge = Edge & {
-  compatible: boolean;
-};
-
-interface WorkflowStore extends Omit<Workflow, 'nodes' | 'edges'> {
-  id: string;
-  nodes: Map<string, FrontendNode>;
-  edges: Map<string, FrontendEdge>;
-}
+import type { BoundingBox, FrontendNode, WorkflowStore } from '@/types/workflow';
+import { cssVariables } from '@/utils/cssVariables';
 
 export const useWorkflowStore = defineStore('workflow', {
   state: (): WorkflowStore => ({
@@ -78,6 +52,11 @@ export const useWorkflowStore = defineStore('workflow', {
 
         return node.compatible;
       },
+    incompatibleNodes: (state): FrontendNode[] => {
+      const nodesArray = Array.from(state.nodes.values());
+
+      return nodesArray.filter((node) => !node.compatible);
+    },
   },
   actions: {
     addEdge(source: string, target: string): void {
