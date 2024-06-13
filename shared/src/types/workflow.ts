@@ -35,7 +35,7 @@ export interface SavedWorkflow {
   name: string;
   id: string; // assigned by db or frontend
   adjacencies: { id: string; data: Adjacency }[];
-  nodes: { id: string; data: ObjectId }[];
+  nodes: { id: string; componentId: string }[];
   customNodes: { id: string; data: CustomComponent }[];
   edges: { id: string; data: Edge }[];
 }

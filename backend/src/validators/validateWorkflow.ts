@@ -3,7 +3,7 @@ import { SavedWorkflow } from 'cic-shared';
 import { objectIdValidation } from './objectIdValidation';
 
 /** Schema to validate a single adjacency entry */
-const adjacencyValidationSchema = Joi.object({
+const adjacencyValidationSchema = Joi.object<SavedWorkflow['adjacencies'][0]>({
   id: Joi.string().required(),
   data: Joi.object({
     in: Joi.array().items(Joi.string()).required(),
@@ -12,15 +12,13 @@ const adjacencyValidationSchema = Joi.object({
 });
 
 /** Schema to validate a single node entry */
-const nodeValidationSchema = Joi.object({
+const nodeValidationSchema = Joi.object<SavedWorkflow['nodes'][0]>({
   id: Joi.string().required(),
-  data: Joi.object({
-    id: objectIdValidation.required(),
-  }).required(),
+  componentId: objectIdValidation.required(),
 });
 
 /** Schema to validate a single custom node entry */
-const customNodeValidationSchema = Joi.object({
+const customNodeValidationSchema = Joi.object<SavedWorkflow['customNodes'][0]>({
   id: Joi.string().required(),
   data: Joi.object({
     name: Joi.string().required(),
@@ -34,7 +32,7 @@ const customNodeValidationSchema = Joi.object({
 });
 
 /** Schema to validate a single edge entry */
-const edgeValidationSchema = Joi.object({
+const edgeValidationSchema = Joi.object<SavedWorkflow['edges'][0]>({
   id: Joi.string().required(),
   data: Joi.object({
     source: Joi.string().required(),
