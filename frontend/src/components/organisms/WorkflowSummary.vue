@@ -14,6 +14,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   nodeClick: [componentId: string];
+  save: [];
+  share: [];
 }>();
 
 // Hooks
@@ -98,8 +100,8 @@ const title = computed(() => {
         </section>
       </div>
       <footer class="workflow-summary__footer">
-        <Button full-width color="secondary">{{ i18n.t('save') }}</Button>
-        <Button full-width>{{ i18n.t('share') }}</Button>
+        <Button full-width color="secondary" @click="emit('save')">{{ i18n.t('save') }}</Button>
+        <Button full-width @click="emit('share')">{{ i18n.t('share') }}</Button>
       </footer>
     </div>
   </div>

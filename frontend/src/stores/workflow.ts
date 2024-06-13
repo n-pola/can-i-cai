@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
-import type { PopulatedComponent, PopulatedCustomComponent, Edge } from 'cic-shared';
+import type { PopulatedComponent, PopulatedCustomComponent, Edge, SavedWorkflow } from 'cic-shared';
 import { v4 as uuid } from 'uuid';
 import type { BoundingBox, FrontendNode, WorkflowStore } from '@/types/workflow';
 import { cssVariables } from '@/utils/cssVariables';
+import { useComponentsStore } from '@/stores/components';
 
 export const useWorkflowStore = defineStore('workflow', {
   state: (): WorkflowStore => ({
@@ -65,7 +66,14 @@ export const useWorkflowStore = defineStore('workflow', {
     },
   },
   actions: {
-    addEdge(source: string, target: string): void {
+    clearWorkflow(): void {
+      this.id = '';
+      this.name = '';
+      this.adjacencies.clear();
+      this.nodes.clear();
+      this.edges.clear();
+    },
+    addEdge(source: string, target: string, id?: string): void {
       const sourceAdjacency = this.adjacencies.get(source);
       const targetAdjacency = this.adjacencies.get(target);
       const sourceCompatible = this.nodeCompatible(source);
@@ -79,7 +87,7 @@ export const useWorkflowStore = defineStore('workflow', {
         return;
       }
 
-      const edgeId = uuid();
+      const edgeId = id || uuid();
       this.edges.set(edgeId, { source, target, compatible: sourceCompatible && targetCompatible });
       sourceAdjacency.out.push(edgeId);
       targetAdjacency.in.push(edgeId);
@@ -103,8 +111,9 @@ export const useWorkflowStore = defineStore('workflow', {
     addNode(
       node: PopulatedComponent | PopulatedCustomComponent,
       boundingBox?: BoundingBox,
+      loadedId?: string,
     ): string {
-      const id = uuid();
+      const id = loadedId || uuid();
       this.nodes.set(id, {
         ...node,
         boundingBox: boundingBox ?? { x: 0, y: 0, width: 0, height: 0 },
@@ -227,6 +236,47 @@ export const useWorkflowStore = defineStore('workflow', {
 
         this.recalculateNodePositionsFrom(edge.target);
       });
+    },
+    saveToLocalStorage(): void {
+      const workflowId = uuid();
+      const workflow: SavedWorkflow = {
+        name: this.name!,
+        id: workflowId,
+        adjacencies: Array.from(this.adjacencies).map(([id, data]) => ({ id, data })),
+        nodes: Array.from(this.nodes).map(([id, data]) => ({ id, componentId: data.id })),
+        customNodes: [],
+        edges: Array.from(this.edges).map(([id, data]) => ({ id, data })),
+      };
+      localStorage.setItem('workflow', JSON.stringify(workflow));
+    },
+    async loadFromLocalStorage(): Promise<void> {
+      this.clearWorkflow();
+      const componentsStore = useComponentsStore();
+      const workflow = localStorage.getItem('workflow');
+      if (!workflow) {
+        return;
+      }
+
+      const parsedWorkflow = JSON.parse(workflow) as SavedWorkflow;
+      this.id = parsedWorkflow.id;
+      this.name = parsedWorkflow.name;
+
+      const componentIds = parsedWorkflow.nodes.map(({ componentId }) => componentId);
+      await componentsStore.getComponents(componentIds);
+
+      const loadedNodes = parsedWorkflow.nodes.map(({ id, componentId }) =>
+        componentsStore.getComponent(componentId).then((component) => {
+          this.addNode(component, undefined, id);
+        }),
+      );
+
+      await Promise.all(loadedNodes);
+
+      parsedWorkflow.edges.forEach(({ id, data }) => {
+        this.addEdge(data.source, data.target, id);
+      });
+
+      this.firstNodes.forEach((id) => this.recalculateNodePositionsFrom(id));
     },
   },
 });

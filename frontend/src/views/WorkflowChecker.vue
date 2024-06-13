@@ -72,6 +72,9 @@ const handleAddComponentRequested = (id?: string) => {
 
 <template>
   <div class="workflow-checker">
+    <button @click="workflowStore.loadFromLocalStorage" type="button" style="z-index: 99">
+      Load
+    </button>
     <WorkflowPlane
       class="workflow-plane"
       @nodeClicked="handleNodeClick"
@@ -85,6 +88,7 @@ const handleAddComponentRequested = (id?: string) => {
         :workflowCompatible="workflowStore.compatible"
         :incompatibleComponents="workflowStore.incompatibleNodes"
         @node-click="handleNodeClick"
+        @save="workflowStore.saveToLocalStorage"
       />
     </aside>
     <ComponentDetailModal
