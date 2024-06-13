@@ -31,3 +31,8 @@ export type BatchComponentsResponse = {
  * Response for a shared workflow
  */
 export type SharedWorkflowResponse = SavedWorkflow;
+
+/**
+ * Response for a search query
+ */
+export type SearchResponse = PopulatedComponent[];

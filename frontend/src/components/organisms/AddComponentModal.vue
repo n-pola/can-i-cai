@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import Modal from '@/components/atoms/Modal.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useCategoryStore } from '@/stores/category';
 import CategoryItem from '@/components/atoms/CategoryItem.vue';
-import type { CategoryResponse } from 'cic-shared';
+import type { CategoryResponse, SearchResponse } from 'cic-shared';
 import { useToast } from 'vue-toastification';
 import Button from '@/components/atoms/Button.vue';
 import { useI18n } from 'vue-i18n';
 import WorkflowComponent from '@/components/molecules/WorkflowComponent.vue';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner.vue';
 import type { ComponentType, AdditionalCategory } from '@/types/workflow';
+import SearchBar from '@/components/molecules/SearchBar.vue';
+import HttpError from '@/types/httpError';
+import { searchComponents } from '@/api/search';
 
 // Component setup
 const isOpen = defineModel<boolean>();
@@ -27,6 +30,11 @@ const categoriesLoading = ref(false);
 const categoryLoading = ref(false);
 const selectedCategoryId = ref<string | null>(null);
 const selectedCategory = ref<CategoryResponse | null>(null);
+const search = ref('');
+const searchTimeout = ref<NodeJS.Timeout | null>(null);
+const searchResult = ref<SearchResponse | null>(null);
+const searchLoading = ref(false);
+const searchError = ref<string | null>(null);
 
 const additionalCategories: AdditionalCategory[] = [
   {
@@ -48,6 +56,13 @@ const additionalCategories: AdditionalCategory[] = [
 ];
 
 // Functions
+const resetComponentState = () => {
+  selectedCategoryId.value = null;
+  selectedCategory.value = null;
+  search.value = '';
+  searchResult.value = null;
+};
+
 const handleCategoryClick = (categoryId: string) => {
   const timeout = setTimeout(() => {
     categoryLoading.value = true;
@@ -71,18 +86,61 @@ const handleCategoryClick = (categoryId: string) => {
 };
 
 const handleAddComponent = (componentId: string) => {
-  selectedCategoryId.value = null;
-  selectedCategory.value = null;
+  resetComponentState();
+
   isOpen.value = false;
   emit('addComponent', componentId, 'component');
 };
 
 const handleAddSpecialComponent = (type: ComponentType) => {
-  selectedCategoryId.value = null;
-  selectedCategory.value = null;
+  resetComponentState();
+
   isOpen.value = false;
   emit('addComponent', '', type);
 };
+
+const handleSearch = async (value: string) => {
+  if (!value.length) {
+    searchResult.value = null;
+    return;
+  }
+
+  if (value.length < 3) {
+    searchError.value = 'Please enter at least 3 characters';
+    return;
+  }
+
+  try {
+    searchError.value = null;
+    searchLoading.value = true;
+    searchResult.value = await searchComponents(value);
+  } catch (error: HttpError | unknown) {
+    if (error instanceof HttpError && error.statusCode === 404) {
+      searchResult.value = [];
+      return;
+    }
+    toast.error('Failed to search for components');
+    searchResult.value = null;
+  } finally {
+    searchLoading.value = false;
+  }
+};
+
+const handleClearSearch = () => {
+  search.value = '';
+  searchResult.value = null;
+};
+
+// Watchers
+watch(search, (value) => {
+  // Debounce the search input
+  if (searchTimeout.value) {
+    clearTimeout(searchTimeout.value);
+  }
+  searchTimeout.value = setTimeout(() => {
+    handleSearch(value);
+  }, 300);
+});
 
 // Lifecycle hooks
 onMounted(async () => {
@@ -100,45 +158,66 @@ onMounted(async () => {
     </template>
     <template #default>
       <div class="add-component-modal">
-        <div v-if="categoriesLoading || categoryLoading" class="add-component-modal__loading">
-          <LoadingSpinner />
+        <div class="add-component-modal__search">
+          <SearchBar v-model="search" @clear-search="handleClearSearch" />
+          <p v-if="searchError" class="add-component-modal__search-error">{{ searchError }}</p>
         </div>
-        <div
-          class="add-component-modal__categories"
-          v-if="categoryStore.categories.size > 0 && selectedCategoryId === null"
-        >
-          <h4>Categories</h4>
-          <CategoryItem
-            v-for="[id, category] in categoryStore.categories"
-            :key="id"
-            :category="category"
-            @click="handleCategoryClick(id)"
-            @keypress.enter="handleCategoryClick(id)"
-            tabindex="0"
-          />
-          <CategoryItem
-            v-for="category in additionalCategories"
-            :key="category.name[locale as 'de' | 'en']"
-            :category="category"
-            @click="handleAddSpecialComponent(category.type)"
-            @keypress.enter="handleAddComponent(category.name[locale as 'de' | 'en'])"
-            tabindex="0"
-          />
-        </div>
-        <div v-else-if="selectedCategory" class="add-component-modal__components">
-          <h4>{{ selectedCategory.name[locale as 'de' | 'en'] }}</h4>
-          <WorkflowComponent
-            v-for="component in selectedCategory.components"
-            :key="component.id"
-            @click="handleAddComponent(component.id)"
-            :component="component"
-            :show-compatibility="false"
-            :show-delete="false"
-            tabindex="0"
-          />
-        </div>
-        <div v-else>
-          <p>Something went wrong, please try again later.</p>
+        <div class="add-component-modal__content">
+          <div
+            v-if="categoriesLoading || categoryLoading || searchLoading"
+            class="add-component-modal__loading"
+          >
+            <LoadingSpinner />
+          </div>
+          <template v-if="searchResult">
+            <h4>Search Result</h4>
+            <template v-if="searchResult.length">
+              <WorkflowComponent
+                v-for="component in searchResult"
+                :key="component.id"
+                @click="handleAddComponent(component.id)"
+                :component="component"
+                :show-compatibility="false"
+                :show-delete="false"
+                tabindex="0"
+              />
+            </template>
+            <p v-else>No components found</p>
+          </template>
+          <template v-else-if="categoryStore.categories.size > 0 && selectedCategoryId === null">
+            <h4>Categories</h4>
+            <CategoryItem
+              v-for="[id, category] in categoryStore.categories"
+              :key="id"
+              :category="category"
+              @click="handleCategoryClick(id)"
+              @keypress.enter="handleCategoryClick(id)"
+              tabindex="0"
+            />
+            <CategoryItem
+              v-for="category in additionalCategories"
+              :key="category.name[locale as 'de' | 'en']"
+              :category="category"
+              @click="handleAddSpecialComponent(category.type)"
+              @keypress.enter="handleAddComponent(category.name[locale as 'de' | 'en'])"
+              tabindex="0"
+            />
+          </template>
+          <template v-else-if="selectedCategory">
+            <h4>{{ selectedCategory.name[locale as 'de' | 'en'] }}</h4>
+            <WorkflowComponent
+              v-for="component in selectedCategory.components"
+              :key="component.id"
+              @click="handleAddComponent(component.id)"
+              :component="component"
+              :show-compatibility="false"
+              :show-delete="false"
+              tabindex="0"
+            />
+          </template>
+          <div v-else>
+            <p>Something went wrong, please try again later.</p>
+          </div>
         </div>
       </div>
     </template>
@@ -148,7 +227,9 @@ onMounted(async () => {
         <Button
           icon="chevron_backward"
           icon-position="start"
-          :disabled="categoriesLoading || categoryLoading || selectedCategoryId === null"
+          :disabled="
+            categoriesLoading || categoryLoading || selectedCategoryId === null || searchResult
+          "
           @click="selectedCategoryId = null"
           >Back</Button
         >
@@ -159,23 +240,32 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .add-component-modal {
-  &__categories {
-    display: flex;
-    flex-flow: column;
-    gap: $xxs;
+  width: 100%;
+  overflow-y: auto;
+
+  &__search {
+    position: sticky;
+    top: 0;
+    padding: $xs $s;
+    background-color: $lightest;
   }
 
-  &__components {
+  &__search-error {
+    margin-top: $xxs;
+    color: $error;
+  }
+
+  &__content {
     display: flex;
     flex-flow: column;
     gap: $xxs;
+    padding: 0 $xs;
   }
 
   &__footer {
     display: flex;
     justify-content: flex-end;
-    padding: $s $xs;
-    padding-top: 0;
+    padding: $xs $s;
   }
 
   &__loading {

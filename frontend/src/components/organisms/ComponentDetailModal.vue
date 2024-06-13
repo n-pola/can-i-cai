@@ -113,6 +113,8 @@ const content = computed(() => {
   display: flex;
   flex-direction: column;
   gap: $xs;
+  width: 100%;
+  padding: $xs $s;
 
   &__detail {
     display: flex;
