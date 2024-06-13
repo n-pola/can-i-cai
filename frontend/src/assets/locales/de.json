@@ -15,5 +15,6 @@
     "addComponentsHint": "Bitte fügen Sie Bestandteile zu Ihrem Workflow hinzu"
   },
   "share": "Teilen",
-  "save": "Speichern"
+  "save": "Speichern",
+  "untitledWorkflow": "Unbenannter Prozess"
 }

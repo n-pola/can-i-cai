@@ -1,7 +1,18 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
+import TextInput from '@/components/atoms/TextInput.vue';
+import { useWorkflowStore } from '@/stores/workflow';
 
 const i18n = useI18n();
+const route = useRoute();
+const workflowName = ref('');
+const workflowStore = useWorkflowStore();
+
+watch(workflowName, () => {
+  workflowStore.name = workflowName.value;
+});
 </script>
 
 <template>
@@ -9,7 +20,21 @@ const i18n = useI18n();
     <RouterLink to="/" :title="i18n.t('homepage')" class="header__home-link">
       <img alt="Can I CAI? Logo" class="header__logo" src="@/assets/logo.svg" />
     </RouterLink>
-    <nav id="language">
+
+    <div class="header__workflow-name-wrap">
+      <div v-if="route.path.includes('check')" class="header__workflow-name">
+        <p class="header__input-ghost">{{ workflowName || i18n.t('untitledWorkflow') }}</p>
+        <TextInput
+          id="workflowName"
+          label="Workflow Name"
+          v-model="workflowName"
+          :placeholder="i18n.t('untitledWorkflow')"
+          class="header__input"
+        />
+      </div>
+    </div>
+
+    <nav id="language" class="header__language-switcher">
       <button
         class="header__language-button"
         :class="{ 'header__language-button--active': i18n.locale.value === 'en' }"
@@ -33,10 +58,9 @@ const i18n = useI18n();
 
 <style lang="scss" scoped>
 .header {
-  display: flex;
-  flex-flow: row;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   align-items: center;
-  justify-content: space-between;
   padding: $s $l;
   border-bottom: 1px solid $lighter;
 
@@ -46,6 +70,11 @@ const i18n = useI18n();
 
   &__logo {
     height: $l;
+  }
+
+  &__language-switcher {
+    display: flex;
+    justify-content: flex-end;
   }
 
   &__language-button {
@@ -60,6 +89,44 @@ const i18n = useI18n();
     &--active {
       color: $primary;
     }
+  }
+
+  &__workflow-name-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__workflow-name {
+    display: flex;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+  }
+
+  &__input {
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
+    padding: $xxs $xxs calc($xxs / 2);
+    border-bottom: 2px solid $secondary;
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
+
+    &:focus,
+    &:hover {
+      background-color: $lighter;
+      border-color: $primary-light;
+      outline: 0;
+      box-shadow: none;
+    }
+  }
+
+  &__input-ghost {
+    padding: $xxs $xxs calc($xxs / 2);
+    pointer-events: none;
+    user-select: none;
+    border-bottom: 2px solid transparent;
+    opacity: 0;
+    white-space-collapse: preserve;
   }
 }
 </style>

@@ -15,5 +15,6 @@
     "addComponentsHint": "Please add components to your workflow"
   },
   "share": "Share",
-  "save": "Save"
+  "save": "Save",
+  "untitledWorkflow": "Untitled workflow"
 }
