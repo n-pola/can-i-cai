@@ -52,10 +52,16 @@ export const useWorkflowStore = defineStore('workflow', {
 
         return node.compatible;
       },
-    incompatibleNodes: (state): FrontendNode[] => {
-      const nodesArray = Array.from(state.nodes.values());
+    incompatibleNodes: (state): WorkflowStore['nodes'] => {
+      const nodes = new Map(state.nodes);
 
-      return nodesArray.filter((node) => !node.compatible);
+      nodes.forEach((node, id) => {
+        if (node.compatible) {
+          nodes.delete(id);
+        }
+      });
+
+      return nodes;
     },
   },
   actions: {

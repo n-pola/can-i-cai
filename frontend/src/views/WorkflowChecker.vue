@@ -5,6 +5,7 @@ import { ref } from 'vue';
 
 import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
 import AddComponentModal from '@/components/organisms/AddComponentModal.vue';
+import WorkflowSummary from '@/components/organisms/WorkflowSummary.vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useComponentsStore } from '@/stores/components';
@@ -70,24 +71,47 @@ const handleAddComponentRequested = (id?: string) => {
 </script>
 
 <template>
-  <WorkflowPlane
-    class="workflow-plane"
-    @nodeClicked="handleNodeClick"
-    @add-component-requested="handleAddComponentRequested"
-    @add-component-requested-edge="handleAddComponentOnEdge"
-    @delete-node="workflowStore.removeNodeAndCloseGaps"
-  />
-  <ComponentDetailModal
-    v-if="selectedNode"
-    v-model="detailModalIsOpen"
-    :component="selectedNode"
-    id="123"
-  />
-  <AddComponentModal v-model="addComponentModalIsOpen" @add-component="handleAddComponent" />
-  <button @click="addComponentModalIsOpen = true" type="button">Add component</button>
+  <div class="workflow-checker">
+    <WorkflowPlane
+      class="workflow-plane"
+      @nodeClicked="handleNodeClick"
+      @add-component-requested="handleAddComponentRequested"
+      @add-component-requested-edge="handleAddComponentOnEdge"
+      @delete-node="workflowStore.removeNodeAndCloseGaps"
+    />
+    <aside class="workflow-summary">
+      <WorkflowSummary
+        :componentCount="workflowStore.nodes.size"
+        :workflowCompatible="workflowStore.compatible"
+        :incompatibleComponents="workflowStore.incompatibleNodes"
+        @node-click="handleNodeClick"
+      />
+    </aside>
+    <ComponentDetailModal
+      v-if="selectedNode"
+      v-model="detailModalIsOpen"
+      :component="selectedNode"
+      id="123"
+    />
+    <AddComponentModal v-model="addComponentModalIsOpen" @add-component="handleAddComponent" />
+  </div>
 </template>
 
 <style lang="scss">
+.workflow-checker {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: $s;
+  align-items: center;
+  height: 100%;
+  padding: 0 $l;
+}
+
+.workflow-summary {
+  z-index: 1;
+  grid-column: 9 / span 2;
+}
+
 .workflow-plane {
   position: absolute;
   top: 0;
