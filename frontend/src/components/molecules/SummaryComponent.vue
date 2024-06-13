@@ -32,11 +32,6 @@ defineProps<{
   &:hover {
     cursor: pointer;
     background-color: $light;
-
-    #{$self}__category {
-      color: $lightest;
-      background-color: $dark;
-    }
   }
 
   &__category {
@@ -44,8 +39,8 @@ defineProps<{
     align-items: center;
     justify-content: center;
     aspect-ratio: 1 / 1;
-    color: $darkest;
-    background-color: $light;
+    color: $lightest;
+    background-color: $error;
   }
 
   &__content {
