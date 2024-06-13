@@ -12,7 +12,9 @@ export const getComponent: RequestHandler<ComponentParams> = async (
   try {
     const { id } = req.params;
 
-    const component = await ComponentModel.findById(id);
+    const component = await ComponentModel.findById(id)
+      .populate('category')
+      .populate('manufacturer');
 
     if (!component) {
       throw new HttpError('No component found', 404);
