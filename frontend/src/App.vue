@@ -6,14 +6,14 @@ const i18n = useI18n();
 </script>
 
 <template>
-  <header>
-    <RouterLink to="/" :title="i18n.t('homepage')">
-      <img alt="Can I CAI? Logo" class="logo" src="@/assets/logo.svg" />
+  <header class="header">
+    <RouterLink to="/" :title="i18n.t('homepage')" class="header__home-link">
+      <img alt="Can I CAI? Logo" class="header__logo" src="@/assets/logo.svg" />
     </RouterLink>
     <nav id="language">
       <button
-        class="language-button"
-        :class="{ 'language-button--active': i18n.locale.value === 'en' }"
+        class="header__language-button"
+        :class="{ 'header__language-button--active': i18n.locale.value === 'en' }"
         @click="i18n.locale.value = 'en'"
         type="button"
       >
@@ -21,8 +21,8 @@ const i18n = useI18n();
       </button>
       <span>/</span>
       <button
-        class="language-button"
-        :class="{ 'language-button--active': i18n.locale.value === 'de' }"
+        class="header__language-button"
+        :class="{ 'header__language-button--active': i18n.locale.value === 'de' }"
         @click="i18n.locale.value = 'de'"
         type="button"
       >
@@ -54,7 +54,7 @@ const i18n = useI18n();
 </style>
 
 <style lang="scss" scoped>
-header {
+.header {
   display: flex;
   flex-flow: row;
   align-items: center;
@@ -62,28 +62,32 @@ header {
   padding: $s $l;
   border-bottom: 1px solid $lighter;
 
-  .logo {
+  &__home-link {
+    display: flex;
+  }
+
+  &__logo {
     height: $l;
+  }
+
+  &__language-button {
+    &:hover {
+      cursor: pointer;
+    }
+
+    & abbr {
+      color: inherit;
+    }
+
+    &--active {
+      color: $primary;
+    }
   }
 }
 
 main {
   flex: 1;
   transform: translate3d(0, 0, 0);
-}
-
-.language-button {
-  &:hover {
-    cursor: pointer;
-  }
-
-  & abbr {
-    color: inherit;
-  }
-
-  &--active {
-    color: $primary;
-  }
 }
 
 footer {
