@@ -88,9 +88,6 @@ const handleSaveRequested = () => {
 
 <template>
   <div class="workflow-checker">
-    <button @click="workflowStore.loadFromLocalStorage" type="button" style="z-index: 99">
-      Load
-    </button>
     <WorkflowPlane
       class="workflow-plane"
       @nodeClicked="handleNodeClick"
