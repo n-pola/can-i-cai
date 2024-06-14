@@ -10,6 +10,7 @@ const props = withDefaults(
     fullWidth?: boolean;
     iconPosition?: 'start' | 'end';
     iconSize?: 'xxs' | 's' | 'm' | undefined;
+    iconFilled?: boolean;
     rounded?: boolean;
   }>(),
   {
@@ -21,6 +22,7 @@ const props = withDefaults(
     iconPosition: 'end',
     iconSize: undefined,
     rounded: true,
+    iconFilled: false,
   },
 );
 
@@ -36,14 +38,14 @@ const addOptionalClass = (condition: boolean, className: string) => (condition ?
     <span
       v-if="props.icon && iconPosition === 'start'"
       class="material-symbols-outlined"
-      :class="`${addOptionalClass(!!iconSize, `icon--${iconSize}`)}`"
+      :class="`${addOptionalClass(!!iconSize, `icon--${iconSize}`)} ${addOptionalClass(iconFilled, 'icon--fill')}`"
       >{{ props.icon }}</span
     >
     <span v-if="$slots.default"><slot /></span>
     <span
       v-if="props.icon && iconPosition === 'end'"
       class="material-symbols-outlined"
-      :class="`${addOptionalClass(!!iconSize, `icon--${iconSize}`)}`"
+      :class="`${addOptionalClass(!!iconSize, `icon--${iconSize}`)} ${addOptionalClass(iconFilled, 'icon--fill')}`"
       >{{ props.icon }}</span
     >
   </button>

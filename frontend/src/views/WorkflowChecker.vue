@@ -1,26 +1,29 @@
 <script setup lang="ts">
 import type { Node } from 'cic-shared';
-import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
 import { ref } from 'vue';
-
-import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
-import AddComponentModal from '@/components/organisms/AddComponentModal.vue';
-import WorkflowSummary from '@/components/organisms/WorkflowSummary.vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useComponentsStore } from '@/stores/components';
 import { useI18n } from 'vue-i18n';
+
+import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
+import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
+import AddComponentModal from '@/components/organisms/AddComponentModal.vue';
+import WorkflowSummary from '@/components/organisms/WorkflowSummary.vue';
+import CheckerTools from '@/components/organisms/CheckerTools.vue';
 
 const toast = useToast();
 const workflowStore = useWorkflowStore();
 const componentsStore = useComponentsStore();
 const i18n = useI18n();
 
+const workflowPlane = ref<InstanceType<typeof WorkflowPlane> | null>(null);
 const detailModalIsOpen = ref(false);
 const addComponentModalIsOpen = ref(false);
 const selectedNode = ref<Node | null>(null);
 const tmpId = ref<string | null>(null);
 const addType = ref<'after' | 'between'>('after');
+const mode = ref<'select' | 'move'>('select');
 
 const handleNodeClick = (nodeId: string) => {
   const node = workflowStore.nodes.get(nodeId);
@@ -94,7 +97,15 @@ const handleSaveRequested = () => {
       @add-component-requested="handleAddComponentRequested"
       @add-component-requested-edge="handleAddComponentOnEdge"
       @delete-node="workflowStore.removeNodeAndCloseGaps"
+      ref="workflowPlane"
     />
+    <aside class="workflow-tools">
+      <CheckerTools
+        :mode="mode"
+        @recenter="workflowPlane?.centerPlane"
+        @clear-plane="workflowStore.clearWorkflow"
+      />
+    </aside>
     <aside class="workflow-summary">
       <WorkflowSummary
         :componentCount="workflowStore.nodes.size"
@@ -127,6 +138,11 @@ const handleSaveRequested = () => {
 .workflow-summary {
   z-index: 1;
   grid-column: 9 / span 2;
+}
+
+.workflow-tools {
+  z-index: 1;
+  grid-column: 1;
 }
 
 .workflow-plane {

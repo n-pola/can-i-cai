@@ -128,6 +128,10 @@ const centerPlane = () => {
 onMounted(() => {
   centerPlane();
 });
+
+defineExpose({
+  centerPlane,
+});
 </script>
 
 <template>

@@ -22,6 +22,12 @@
     },
     "actions": {
       "deleteComponent": "Bestandteil löschen"
+    },
+    "tools": {
+      "recenter": "Zentrieren",
+      "clearWorkflow": "Prozess löschen",
+      "select": "Auswählen",
+      "move": "Verschieben"
     }
   },
   "share": "Teilen",

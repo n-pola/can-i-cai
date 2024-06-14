@@ -22,6 +22,12 @@
     },
     "actions": {
       "deleteComponent": "Delete component"
+    },
+    "tools": {
+      "recenter": "Recenter",
+      "clearWorkflow": "Clear workflow",
+      "select": "Select",
+      "move": "Move"
     }
   },
   "share": "Share",
