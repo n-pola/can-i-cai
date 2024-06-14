@@ -1,6 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LandingPage from '@/views/LandingPage.vue';
-import { WorkflowStorageHelper } from '../helpers/workflowStorageHelper';
+import { useWorkflowStore } from '@/stores/workflow';
+import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
+import { useToast } from 'vue-toastification';
+import { i18n } from '@/utils/i18n';
+
+const toast = useToast();
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,7 +29,30 @@ const router = createRouter({
       path: '/check',
       name: 'Workflow checker',
       component: () => import('@/views/WorkflowChecker.vue'),
+      beforeEnter: (to, from, next) => {
+        const workflowStore = useWorkflowStore();
+        workflowStore.clearWorkflow();
+        next();
+      },
+      children: [
+        {
+          path: ':id',
+          name: 'Workflow checker',
+          component: () => import('@/views/WorkflowChecker.vue'),
+          beforeEnter: async (to, from, next) => {
+            try {
+              const workflowStore = useWorkflowStore();
+              await workflowStore.loadFromLocalStorage(to.params.id as string);
+              return next();
+            } catch (error) {
+              toast.error(i18n.t('workflowNotFound'));
+              return next('/');
+            }
+          },
+        },
+      ],
     },
+
     {
       path: '/overview',
       name: 'Workflow overview',

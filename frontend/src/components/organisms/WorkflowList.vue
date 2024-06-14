@@ -28,7 +28,9 @@ const i18n = useI18n();
     </div>
     <ul class="workflow-list__list">
       <li v-for="workflow in workflows" :key="workflow.id" class="workflow-list__list-item">
-        <WorkflowListItem :workflow="workflow" @delete="emit('delete', workflow.id)" />
+        <RouterLink :to="`/check/${workflow.id}`">
+          <WorkflowListItem :workflow="workflow" @delete="emit('delete', workflow.id)" />
+        </RouterLink>
       </li>
     </ul>
   </div>

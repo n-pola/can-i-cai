@@ -256,7 +256,7 @@ export const useWorkflowStore = defineStore('workflow', {
       const componentsStore = useComponentsStore();
       const workflow = WorkflowStorageHelper.getWorkflow(workflowId);
       if (!workflow) {
-        return;
+        throw new Error('Workflow not found');
       }
 
       this.id = workflow.id;

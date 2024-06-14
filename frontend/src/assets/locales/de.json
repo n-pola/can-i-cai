@@ -31,5 +31,6 @@
   "deleteAll": "Alle löschen",
   "new": "Neu",
   "component": "Bestandteil | Bestandteile",
-  "deleteWorkflow": "Prozess löschen"
+  "deleteWorkflow": "Prozess löschen",
+  "workflowNotFound": "Prozess nicht gefunden"
 }

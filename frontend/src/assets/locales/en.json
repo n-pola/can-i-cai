@@ -31,5 +31,6 @@
   "deleteAll": "Delete all",
   "new": "New",
   "component": "component | components",
-  "deleteWorkflow": "Delete workflow"
+  "deleteWorkflow": "Delete workflow",
+  "workflowNotFound": "Workflow not found"
 }
