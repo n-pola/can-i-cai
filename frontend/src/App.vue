@@ -26,7 +26,7 @@ const i18n = useI18n();
 #app {
   display: flex;
   flex-flow: column;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
 }
 </style>
@@ -39,13 +39,11 @@ main {
 
 footer {
   position: absolute;
+  right: 0;
   bottom: 0;
-  left: 0;
   box-sizing: border-box;
   display: flex;
   flex-flow: row;
-  justify-content: flex-end;
-  width: 100%;
 }
 
 .footer-links {
