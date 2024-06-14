@@ -113,7 +113,7 @@ const centerPlane = () => {
 
   if (workflow.nodes.size) {
     x -= -240 / 2;
-    y -= (workflow.nodes.size * 107) / 2;
+    y += (workflow.nodes.size * 107) / 2;
   }
 
   viewPort.value = {
