@@ -14,7 +14,22 @@
     "information": "Information",
     "addComponentsHint": "Please add components to your workflow"
   },
+  "workflowChecker": {
+    "save": {
+      "missingTitle": "Could not save workflow. Please assign a name at the top of your screen.",
+      "success": "Workflow \"{name}\" saved successfully.",
+      "error": "Could not save workflow. Please try again."
+    },
+    "actions": {
+      "deleteComponent": "Delete component"
+    }
+  },
   "share": "Share",
   "save": "Save",
-  "untitledWorkflow": "Untitled workflow"
+  "untitledWorkflow": "Untitled workflow",
+  "yourWorkflows": "Your workflows",
+  "deleteAll": "Delete all",
+  "new": "New",
+  "component": "component | components",
+  "deleteWorkflow": "Delete workflow"
 }

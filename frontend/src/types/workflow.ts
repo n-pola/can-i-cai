@@ -25,3 +25,11 @@ export interface WorkflowStore extends Omit<Workflow, 'nodes' | 'edges'> {
   nodes: Map<string, FrontendNode>;
   edges: Map<string, FrontendEdge>;
 }
+
+/** Item in the list of workflows in the local storage that reference full workflows by id */
+export interface WorkflowStorageItem {
+  id: string;
+  name: string;
+  componentCount: number;
+  updateAt: number;
+}

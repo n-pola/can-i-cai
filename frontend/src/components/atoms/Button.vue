@@ -6,7 +6,7 @@ const props = withDefaults(
     type?: ButtonHTMLAttributes['type'];
     icon?: string;
     size?: 'xs' | 's' | 'm' | 'l';
-    color?: 'primary' | 'secondary';
+    color?: 'primary' | 'secondary' | 'error';
     fullWidth?: boolean;
     iconPosition?: 'start' | 'end';
     iconSize?: 'xxs' | 's' | 'm' | undefined;
@@ -113,6 +113,15 @@ const addOptionalClass = (condition: boolean, className: string) => (condition ?
 
     &:hover {
       background-color: $secondary-light;
+    }
+  }
+
+  &--error {
+    color: $lightest;
+    background-color: $error;
+
+    &:hover {
+      background-color: $error-light;
     }
   }
 }

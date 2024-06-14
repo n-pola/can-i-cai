@@ -14,7 +14,22 @@
     "information": "Information",
     "addComponentsHint": "Bitte fügen Sie Bestandteile zu Ihrem Workflow hinzu"
   },
+  "workflowChecker": {
+    "save": {
+      "missingTitle": "Prozess konnte nicht gespeichert werden. Bitte vergebe einen Namen am oberen Rand des Bildschirms.",
+      "success": "Prozess \"{name}\" wurde erfolgreich gespeichert.",
+      "error": "Prozess konnte nicht gespeichert werden. Bitte versuche es erneut."
+    },
+    "actions": {
+      "deleteComponent": "Bestandteil löschen"
+    }
+  },
   "share": "Teilen",
   "save": "Speichern",
-  "untitledWorkflow": "Unbenannter Prozess"
+  "untitledWorkflow": "Unbenannter Prozess",
+  "yourWorkflows": "Deine Prozesse",
+  "deleteAll": "Alle löschen",
+  "new": "Neu",
+  "component": "Bestandteil | Bestandteile",
+  "deleteWorkflow": "Prozess löschen"
 }

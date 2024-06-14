@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 import type { BoundingBox, FrontendNode, WorkflowStore } from '@/types/workflow';
 import { cssVariables } from '@/utils/cssVariables';
 import { useComponentsStore } from '@/stores/components';
+import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 
 export const useWorkflowStore = defineStore('workflow', {
   state: (): WorkflowStore => ({
@@ -238,7 +239,8 @@ export const useWorkflowStore = defineStore('workflow', {
       });
     },
     saveToLocalStorage(): void {
-      const workflowId = uuid();
+      const workflowId = this.id || uuid();
+      this.id = workflowId;
       const workflow: SavedWorkflow = {
         name: this.name!,
         id: workflowId,
@@ -247,24 +249,23 @@ export const useWorkflowStore = defineStore('workflow', {
         customNodes: [],
         edges: Array.from(this.edges).map(([id, data]) => ({ id, data })),
       };
-      localStorage.setItem('workflow', JSON.stringify(workflow));
+      WorkflowStorageHelper.saveWorkflow(workflow);
     },
-    async loadFromLocalStorage(): Promise<void> {
+    async loadFromLocalStorage(workflowId: string): Promise<void> {
       this.clearWorkflow();
       const componentsStore = useComponentsStore();
-      const workflow = localStorage.getItem('workflow');
+      const workflow = WorkflowStorageHelper.getWorkflow(workflowId);
       if (!workflow) {
         return;
       }
 
-      const parsedWorkflow = JSON.parse(workflow) as SavedWorkflow;
-      this.id = parsedWorkflow.id;
-      this.name = parsedWorkflow.name;
+      this.id = workflow.id;
+      this.name = workflow.name;
 
-      const componentIds = parsedWorkflow.nodes.map(({ componentId }) => componentId);
+      const componentIds = workflow.nodes.map(({ componentId }) => componentId);
       await componentsStore.getComponents(componentIds);
 
-      const loadedNodes = parsedWorkflow.nodes.map(({ id, componentId }) =>
+      const loadedNodes = workflow.nodes.map(({ id, componentId }) =>
         componentsStore.getComponent(componentId).then((component) => {
           this.addNode(component, undefined, id);
         }),
@@ -272,7 +273,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
       await Promise.all(loadedNodes);
 
-      parsedWorkflow.edges.forEach(({ id, data }) => {
+      workflow.edges.forEach(({ id, data }) => {
         this.addEdge(data.source, data.target, id);
       });
 

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { defineProps, computed, ref } from 'vue';
 import { type PopulatedComponent, type PopulatedCustomComponent } from 'cic-shared';
+import { useI18n } from 'vue-i18n';
 
+// Component setup
 const props = withDefaults(
   defineProps<{
     component: PopulatedComponent | PopulatedCustomComponent;
@@ -18,14 +20,20 @@ const emit = defineEmits<{
   delete: [];
 }>();
 
+// Hooks
+const i18n = useI18n();
+
+// Data
 const componentRef = ref<HTMLElement | null>(null);
 
+// Computed values
 const manufacturer = computed(() =>
   typeof props.component.manufacturer === 'string'
     ? props.component.manufacturer
     : props.component.manufacturer.name,
 );
 
+// Functions
 const handleDeleteClick = (e: MouseEvent) => {
   e.stopImmediatePropagation();
   emit('delete');
@@ -53,7 +61,12 @@ defineExpose({
       <p class="component__manufacturer">{{ manufacturer }}</p>
     </div>
     <div class="component__action" v-if="showDelete">
-      <button class="component__delete" @click="handleDeleteClick" type="button">
+      <button
+        class="component__delete"
+        @click="handleDeleteClick"
+        type="button"
+        :title="i18n.t('workflowChecker.actions.deleteComponent')"
+      >
         <span class="material-symbols-outlined icon--xxs">close</span>
       </button>
     </div>

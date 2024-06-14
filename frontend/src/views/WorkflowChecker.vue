@@ -9,10 +9,12 @@ import WorkflowSummary from '@/components/organisms/WorkflowSummary.vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useComponentsStore } from '@/stores/components';
+import { useI18n } from 'vue-i18n';
 
 const toast = useToast();
 const workflowStore = useWorkflowStore();
 const componentsStore = useComponentsStore();
+const i18n = useI18n();
 
 const detailModalIsOpen = ref(false);
 const addComponentModalIsOpen = ref(false);
@@ -68,6 +70,20 @@ const handleAddComponentRequested = (id?: string) => {
     addType.value = 'after';
   }
 };
+
+const handleSaveRequested = () => {
+  if (!workflowStore.name) {
+    toast.error(i18n.t('workflowChecker.save.missingTitle'));
+    return;
+  }
+
+  try {
+    workflowStore.saveToLocalStorage();
+    toast.success(i18n.t('workflowChecker.save.success', { name: workflowStore.name }));
+  } catch (e) {
+    toast.error(i18n.t('workflowChecker.save.error'));
+  }
+};
 </script>
 
 <template>
@@ -88,7 +104,7 @@ const handleAddComponentRequested = (id?: string) => {
         :workflowCompatible="workflowStore.compatible"
         :incompatibleComponents="workflowStore.incompatibleNodes"
         @node-click="handleNodeClick"
-        @save="workflowStore.saveToLocalStorage"
+        @save="handleSaveRequested"
       />
     </aside>
     <ComponentDetailModal
