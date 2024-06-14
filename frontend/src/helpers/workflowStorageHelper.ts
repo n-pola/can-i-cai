@@ -11,7 +11,7 @@ export class WorkflowStorageHelper {
    * @param id - Id of the referenced Workflow
    */
   static getWorkflow(id: string): SavedWorkflow | null {
-    const workflow = localStorage.getItem(`${singleWorkflowKeyPrefix}-${id}`);
+    const workflow = localStorage.getItem(`${singleWorkflowKeyPrefix}${id}`);
     if (!workflow) {
       return null;
     }
@@ -40,10 +40,10 @@ export class WorkflowStorageHelper {
     const existingWorkflowIndex = workflows.findIndex((w) => w.id === workflow.id);
     if (existingWorkflowIndex !== -1) {
       workflows[existingWorkflowIndex] = workflow;
-      return;
+    } else {
+      workflows.push(workflow);
     }
 
-    workflows.push(workflow);
     localStorage.setItem(workflowStorageKey, JSON.stringify(workflows));
   }
 
