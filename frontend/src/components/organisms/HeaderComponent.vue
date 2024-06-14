@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, toRefs } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import TextInput from '@/components/atoms/TextInput.vue';
@@ -7,12 +7,7 @@ import { useWorkflowStore } from '@/stores/workflow';
 
 const i18n = useI18n();
 const route = useRoute();
-const workflowName = ref('');
-const workflowStore = useWorkflowStore();
-
-watch(workflowName, () => {
-  workflowStore.name = workflowName.value;
-});
+const { name: workflowName } = toRefs(useWorkflowStore());
 </script>
 
 <template>
