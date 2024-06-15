@@ -36,6 +36,7 @@ const searchTimeout = ref<NodeJS.Timeout | null>(null);
 const searchResult = ref<SearchResponse | null>(null);
 const searchLoading = ref(false);
 const searchError = ref<string | null>(null);
+const modalContentElement = ref<HTMLDivElement | null>(null);
 
 const additionalCategories: AdditionalCategory[] = [
   {
@@ -57,13 +58,22 @@ const additionalCategories: AdditionalCategory[] = [
 ];
 
 // Functions
+
+/** Scroll the content part of the modal to top */
+const scrollToTop = () => {
+  modalContentElement.value?.scrollTo({ top: 0, behavior: 'instant' });
+};
+
+/** Completely reset the modals state for next interaction/opening */
 const resetComponentState = () => {
   selectedCategoryId.value = null;
   selectedCategory.value = null;
   search.value = '';
   searchResult.value = null;
+  scrollToTop();
 };
 
+/** Load component for a category and populate ref with it */
 const handleCategoryClick = (categoryId: string) => {
   const timeout = setTimeout(() => {
     categoryLoading.value = true;
@@ -73,6 +83,7 @@ const handleCategoryClick = (categoryId: string) => {
     .then((category) => {
       selectedCategory.value = category;
       selectedCategoryId.value = categoryId;
+      scrollToTop();
     })
     .catch(() => {
       selectedCategoryId.value = null;
@@ -86,6 +97,7 @@ const handleCategoryClick = (categoryId: string) => {
     });
 };
 
+/** Emit the desire to add a predefined component to the workflow */
 const handleAddComponent = (componentId: string) => {
   resetComponentState();
 
@@ -93,6 +105,7 @@ const handleAddComponent = (componentId: string) => {
   emit('addComponent', componentId, 'component');
 };
 
+/** Emit the request to add a special component */
 const handleAddSpecialComponent = (type: ComponentType) => {
   resetComponentState();
 
@@ -100,6 +113,7 @@ const handleAddSpecialComponent = (type: ComponentType) => {
   emit('addComponent', '', type);
 };
 
+/** Handle api calls, errors and clearing in context of search */
 const handleSearch = async (value: string) => {
   if (!value.length) {
     searchResult.value = null;
@@ -127,9 +141,16 @@ const handleSearch = async (value: string) => {
   }
 };
 
+/** Clear search related data */
 const handleClearSearch = () => {
   search.value = '';
   searchResult.value = null;
+};
+
+/** Go back to categories overview */
+const handleBack = () => {
+  selectedCategoryId.value = null;
+  scrollToTop();
 };
 
 // Watchers
@@ -158,7 +179,7 @@ onMounted(async () => {
       <h3>{{ translate('addComponentModal.title') }}</h3>
     </template>
     <template #default>
-      <div class="add-component-modal">
+      <div class="add-component-modal" ref="modalContentElement">
         <div class="add-component-modal__search">
           <InputBar
             id="cic-search"
@@ -241,7 +262,7 @@ onMounted(async () => {
           :disabled="
             categoriesLoading || categoryLoading || selectedCategoryId === null || searchResult
           "
-          @click="selectedCategoryId = null"
+          @click="handleBack"
           >{{ translate('back') }}</Button
         >
       </div>
