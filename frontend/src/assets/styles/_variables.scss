@@ -6,7 +6,7 @@ $s: $base * 2;
 $m: $base * 2.5;
 $l: $base * 4;
 $xl: $base * 6.3;
-$xxl: $base * 80;
+$xxl: $base * 8;
 
 // Font sizes
 $f-base: 10px;
@@ -29,6 +29,7 @@ $secondary: #19364D;
 $secondary-light: #28567B;
 $success: #00A878;
 $error: #E84855;
+$error-light: #EE7781;
 $warning: #FBB13C;
 
 // Shades
@@ -41,3 +42,8 @@ $darkest: #121212;
 
 // Misc.
 $border-radius: 4px;
+$modal-width: 40 * $base;
+$modal-content-max-height: 50 * $base;
+$animation: .3s ease;
+$shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+

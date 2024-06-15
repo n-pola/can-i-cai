@@ -3,6 +3,7 @@ import { Manufacturer } from './manufacturer';
 import { Category } from './category';
 
 export interface ComponentBase {
+  id: string;
   name: string;
   type: 'input' | 'output' | 'input-output';
   compatible: boolean;

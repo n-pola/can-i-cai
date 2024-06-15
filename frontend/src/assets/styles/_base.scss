@@ -1,5 +1,11 @@
-body {
+html, body {
+  color: $darkest;
   background-color: $lightest;
+
+  & *:focus:not(:focus-visible) {
+    outline: 0;
+    box-shadow: none;
+  }
 }
 
 button {

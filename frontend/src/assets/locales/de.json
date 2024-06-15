@@ -6,5 +6,58 @@
   },
   "imprint": "Impressum",
   "privacyPolicy": "Datenschutzerklärung",
-  "homepage": "Startseite"
+  "homepage": "Startseite",
+  "summary": {
+    "summary": "Zusammenfassung",
+    "incompatibleComponents": "Inkompatible Bestandteile",
+    "componentCountHint": "{compatibleCount}/{totalCount} Bestandteil ist kompatibel | {compatibleCount}/{totalCount} Bestandteilen sind kompatibel",
+    "information": "Information",
+    "addComponentsHint": "Bitte fügen Sie Bestandteile zu Ihrem Workflow hinzu"
+  },
+  "workflowChecker": {
+    "toasts": {
+      "missingTitle": "Prozess konnte nicht {action} werden. Bitte vergebe einen Namen am oberen Rand des Bildschirms.",
+      "success": "Prozess \"{name}\" wurde erfolgreich {action}.",
+      "error": "Prozess konnte nicht {action} werden. Bitte versuche es erneut."
+    },
+    "actions": {
+      "deleteComponent": "Bestandteil löschen",
+      "saved": "gespeichert",
+      "shared": "geteilt"
+    },
+    "tools": {
+      "recenter": "Zentrieren",
+      "clearWorkflow": "Prozess löschen",
+      "select": "Auswählen",
+      "move": "Verschieben"
+    }
+  },
+  "addComponentModal": {
+    "title": "Bestandteil hinzufügen",
+    "searchComponents": "Bestandteil suchen",
+    "clearSearch": "Suche löschen",
+    "errors": {
+      "noResults": "Keine Bestandteile gefunden",
+      "minCharacters": "Bitte gib mindestens {minCharacters} Zeichen ein",
+      "searchFailed": "Suche fehlgeschlagen. Bitte versuche es erneut."
+    }
+  },
+  "sharedModal":{
+    "title": "Prozess geteilt",
+    "success": "Dein Prozess wurde erfolgreich geteilt. Du kannst den Link kopieren und teilen.",
+    "hintReshare": "Wenn du etwas an deinem Prozess änderst, musst du ihn erneut teilen, da ein neuer Link erstellt wird."
+  },
+  "share": "Teilen",
+  "save": "Speichern",
+  "untitledWorkflow": "Unbenannter Prozess",
+  "yourWorkflows": "Deine Prozesse",
+  "deleteAll": "Alle löschen",
+  "new": "Neu",
+  "component": "Bestandteil | Bestandteile",
+  "deleteWorkflow": "Prozess löschen",
+  "workflowNotFound": "Prozess nicht gefunden",
+  "search": "Suche",
+  "category": "Kategorie | Kategorien",
+  "back": "Zurück",
+  "copy": "Kopieren"
 }

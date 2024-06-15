@@ -6,5 +6,58 @@
   },
   "imprint": "Imprint",
   "privacyPolicy": "Privacy Policy",
-  "homepage": "Homepage"
+  "homepage": "Homepage",
+  "summary": {
+    "summary": "Summary",
+    "incompatibleComponents": "Incompatible components",
+    "componentCountHint": "{compatibleCount}/{totalCount} component is compatible | {compatibleCount}/{totalCount} components are compatible",
+    "information": "Information",
+    "addComponentsHint": "Please add components to your workflow"
+  },
+  "workflowChecker": {
+    "toasts": {
+      "missingTitle": "Workflow could not be {action}. Please assign a name at the top of your screen.",
+      "success": "Workflow \"{name}\" {action} successfully.",
+      "error": "Workflow could not be {action}. Please try again."
+    },
+    "actions": {
+      "deleteComponent": "Delete component",
+      "saved": "saved",
+      "shared": "shared"
+    },
+    "tools": {
+      "recenter": "Recenter",
+      "clearWorkflow": "Clear workflow",
+      "select": "Select",
+      "move": "Move"
+    }
+  },
+  "addComponentModal": {
+    "title": "Add component",
+    "searchComponents": "Search components",
+    "clearSearch": "Clear search",
+    "errors": {
+      "noResults": "No components found",
+      "minCharacters": "Please enter at least {minCharacters} characters",
+      "searchFailed": "Search failed. Please try again."
+    }
+  },
+  "sharedModal":{
+    "title": "Shared workflow",
+    "success": "Your workflow was shared successfully. You can now copy the link below and share it.",
+    "hintReshare": "If you change something on your workflow you will need to share it again, as a new link will be created."
+  },
+  "share": "Share",
+  "save": "Save",
+  "untitledWorkflow": "Untitled workflow",
+  "yourWorkflows": "Your workflows",
+  "deleteAll": "Delete all",
+  "new": "New",
+  "component": "component | components",
+  "deleteWorkflow": "Delete workflow",
+  "workflowNotFound": "Workflow not found",
+  "search": "Search",
+  "category": "Category | Categories",
+  "back": "Back",
+  "copy": "Copy"
 }

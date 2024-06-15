@@ -5,9 +5,13 @@ const props = withDefaults(
   defineProps<{
     type?: ButtonHTMLAttributes['type'];
     icon?: string;
-    size?: 's' | 'm' | 'l';
-    color?: 'primary' | 'secondary';
+    size?: 'xs' | 's' | 'm' | 'l';
+    color?: 'primary' | 'secondary' | 'error';
     fullWidth?: boolean;
+    iconPosition?: 'start' | 'end';
+    iconSize?: 'xxs' | 's' | 'm' | undefined;
+    iconFilled?: boolean;
+    rounded?: boolean;
   }>(),
   {
     type: 'button',
@@ -15,6 +19,10 @@ const props = withDefaults(
     size: 'm',
     color: 'primary',
     fullWidth: false,
+    iconPosition: 'end',
+    iconSize: undefined,
+    rounded: true,
+    iconFilled: false,
   },
 );
 
@@ -25,10 +33,21 @@ const addOptionalClass = (condition: boolean, className: string) => (condition ?
   <button
     :type="props.type"
     class="button"
-    :class="`button--${size} button--${color} ${addOptionalClass(fullWidth, 'button--fullwidth')}`"
+    :class="`button--${size} button--${color} ${addOptionalClass(fullWidth, 'button--fullwidth')} ${addOptionalClass(rounded, 'button--rounded')}`"
   >
-    <span><slot /></span>
-    <span v-if="props.icon" class="material-symbols-outlined">{{ props.icon }}</span>
+    <span
+      v-if="props.icon && iconPosition === 'start'"
+      class="material-symbols-outlined"
+      :class="`${addOptionalClass(!!iconSize, `icon--${iconSize}`)} ${addOptionalClass(iconFilled, 'icon--fill')}`"
+      >{{ props.icon }}</span
+    >
+    <span v-if="$slots.default"><slot /></span>
+    <span
+      v-if="props.icon && iconPosition === 'end'"
+      class="material-symbols-outlined"
+      :class="`${addOptionalClass(!!iconSize, `icon--${iconSize}`)} ${addOptionalClass(iconFilled, 'icon--fill')}`"
+      >{{ props.icon }}</span
+    >
   </button>
 </template>
 
@@ -38,19 +57,33 @@ const addOptionalClass = (condition: boolean, className: string) => (condition ?
   gap: $xxs;
   align-items: center;
   justify-content: center;
-  border-radius: 9999px;
+
+  &--rounded {
+    border-radius: 9999px;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    user-select: none;
+    background-color: $light;
+  }
 
   &:hover {
     cursor: pointer;
   }
 
-  & > * {
+  & > *:not([class*='icon--']) {
     font-size: inherit;
     color: inherit;
   }
 
   &--fullwidth {
     width: 100%;
+  }
+
+  &--xs {
+    padding: $xxs $xxs;
+    font-size: $f-xxs;
   }
 
   &--s {
@@ -82,6 +115,15 @@ const addOptionalClass = (condition: boolean, className: string) => (condition ?
 
     &:hover {
       background-color: $secondary-light;
+    }
+  }
+
+  &--error {
+    color: $lightest;
+    background-color: $error;
+
+    &:hover {
+      background-color: $error-light;
     }
   }
 }

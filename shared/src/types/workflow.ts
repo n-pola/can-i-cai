@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongoose';
 import { CustomComponent, PopulatedComponent, PopulatedCustomComponent } from './components';
 
 /** Neighboring edges of a node */
@@ -17,11 +16,14 @@ export interface Edge {
   target: string;
 }
 
+/** data of a single node */
+export type Node = PopulatedComponent | PopulatedCustomComponent;
+
 /** Workflow representation in the frontend */
 export interface Workflow {
   name?: string;
   adjacencies: Map<string, Adjacency>;
-  nodes: Map<string, PopulatedComponent | PopulatedCustomComponent>;
+  nodes: Map<string, Node>;
   edges: Map<string, Edge>;
 }
 
@@ -32,7 +34,7 @@ export interface SavedWorkflow {
   name: string;
   id: string; // assigned by db or frontend
   adjacencies: { id: string; data: Adjacency }[];
-  nodes: { id: string; data: ObjectId }[];
+  nodes: { id: string; componentId: string }[];
   customNodes: { id: string; data: CustomComponent }[];
   edges: { id: string; data: Edge }[];
 }

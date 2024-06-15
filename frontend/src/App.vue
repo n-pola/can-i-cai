@@ -1,35 +1,13 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import HeaderComponent from '@/components/organisms/HeaderComponent.vue';
 
 const i18n = useI18n();
 </script>
 
 <template>
-  <header>
-    <RouterLink to="/" :title="i18n.t('homepage')">
-      <img alt="Can I CAI? Logo" class="logo" src="@/assets/logo.svg" />
-    </RouterLink>
-    <nav id="language">
-      <button
-        class="language-button"
-        :class="{ 'language-button--active': i18n.locale.value === 'en' }"
-        @click="i18n.locale.value = 'en'"
-        type="button"
-      >
-        <abbr lang="en" title="English">EN</abbr>
-      </button>
-      <span>/</span>
-      <button
-        class="language-button"
-        :class="{ 'language-button--active': i18n.locale.value === 'de' }"
-        @click="i18n.locale.value = 'de'"
-        type="button"
-      >
-        <abbr lang="en" title="Deutsch">DE</abbr>
-      </button>
-    </nav>
-  </header>
+  <HeaderComponent />
 
   <main>
     <RouterView />
@@ -48,51 +26,24 @@ const i18n = useI18n();
 #app {
   display: flex;
   flex-flow: column;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
 }
+</style>
 
-header {
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: $s $l;
-  border-bottom: 1px solid $lighter;
-
-  .logo {
-    height: $l;
-  }
-}
-
+<style lang="scss" scoped>
 main {
   flex: 1;
   transform: translate3d(0, 0, 0);
 }
 
-.language-button {
-  &:hover {
-    cursor: pointer;
-  }
-
-  & abbr {
-    color: inherit;
-  }
-
-  &--active {
-    color: $primary;
-  }
-}
-
 footer {
   position: absolute;
+  right: 0;
   bottom: 0;
-  left: 0;
   box-sizing: border-box;
   display: flex;
   flex-flow: row;
-  justify-content: flex-end;
-  width: 100%;
 }
 
 .footer-links {
