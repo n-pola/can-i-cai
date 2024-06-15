@@ -10,7 +10,7 @@
   "summary": {
     "summary": "Zusammenfassung",
     "incompatibleComponents": "Inkompatible Bestandteile",
-    "componentCountHint": "{compatibleCount}/{totalCount} Bestandteilen sind kompatibel",
+    "componentCountHint": "{compatibleCount}/{totalCount} Bestandteil ist kompatibel | {compatibleCount}/{totalCount} Bestandteilen sind kompatibel",
     "information": "Information",
     "addComponentsHint": "Bitte fügen Sie Bestandteile zu Ihrem Workflow hinzu"
   },

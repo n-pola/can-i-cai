@@ -75,10 +75,14 @@ const title = computed(() => {
           <h4>{{ i18n.t('summary.summary') }}</h4>
           <p>
             {{
-              i18n.t('summary.componentCountHint', {
-                compatibleCount: componentCount - incompatibleComponents.size,
-                totalCount: componentCount,
-              })
+              i18n.t(
+                'summary.componentCountHint',
+                {
+                  compatibleCount: componentCount - incompatibleComponents.size,
+                  totalCount: componentCount,
+                },
+                componentCount,
+              )
             }}
           </p>
         </section>
