@@ -164,6 +164,13 @@ watch(search, (value) => {
   }, 300);
 });
 
+// Reset state when modal is closed
+watch(isOpen, (value) => {
+  if (!value) {
+    resetComponentState();
+  }
+});
+
 // Lifecycle hooks
 onMounted(async () => {
   categoriesLoading.value = true;
