@@ -82,7 +82,7 @@ const handleSubmit = (event: Event) => {
         </slot>
       </div>
 
-      <footer class="modal__footer">
+      <footer class="modal__footer" v-if="$slots.footer">
         <slot name="footer">
           <p>default footer</p>
         </slot>

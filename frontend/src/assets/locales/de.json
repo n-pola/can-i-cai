@@ -15,13 +15,15 @@
     "addComponentsHint": "Bitte fügen Sie Bestandteile zu Ihrem Workflow hinzu"
   },
   "workflowChecker": {
-    "save": {
-      "missingTitle": "Prozess konnte nicht gespeichert werden. Bitte vergebe einen Namen am oberen Rand des Bildschirms.",
-      "success": "Prozess \"{name}\" wurde erfolgreich gespeichert.",
-      "error": "Prozess konnte nicht gespeichert werden. Bitte versuche es erneut."
+    "toasts": {
+      "missingTitle": "Prozess konnte nicht {action} werden. Bitte vergebe einen Namen am oberen Rand des Bildschirms.",
+      "success": "Prozess \"{name}\" wurde erfolgreich {action}.",
+      "error": "Prozess konnte nicht {action} werden. Bitte versuche es erneut."
     },
     "actions": {
-      "deleteComponent": "Bestandteil löschen"
+      "deleteComponent": "Bestandteil löschen",
+      "saved": "gespeichert",
+      "shared": "geteilt"
     },
     "tools": {
       "recenter": "Zentrieren",
@@ -40,6 +42,11 @@
       "searchFailed": "Suche fehlgeschlagen. Bitte versuche es erneut."
     }
   },
+  "sharedModal":{
+    "title": "Prozess geteilt",
+    "success": "Dein Prozess wurde erfolgreich geteilt. Du kannst den Link kopieren und teilen.",
+    "hintReshare": "Wenn du etwas an deinem Prozess änderst, musst du ihn erneut teilen, da ein neuer Link erstellt wird."
+  },
   "share": "Teilen",
   "save": "Speichern",
   "untitledWorkflow": "Unbenannter Prozess",
@@ -51,5 +58,6 @@
   "workflowNotFound": "Prozess nicht gefunden",
   "search": "Suche",
   "category": "Kategorie | Kategorien",
-  "back": "Zurück"
+  "back": "Zurück",
+  "copy": "Kopieren"
 }

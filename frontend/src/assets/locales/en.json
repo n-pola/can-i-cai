@@ -15,13 +15,15 @@
     "addComponentsHint": "Please add components to your workflow"
   },
   "workflowChecker": {
-    "save": {
-      "missingTitle": "Could not save workflow. Please assign a name at the top of your screen.",
-      "success": "Workflow \"{name}\" saved successfully.",
-      "error": "Could not save workflow. Please try again."
+    "toasts": {
+      "missingTitle": "Workflow could not be {action}. Please assign a name at the top of your screen.",
+      "success": "Workflow \"{name}\" {action} successfully.",
+      "error": "Workflow could not be {action}. Please try again."
     },
     "actions": {
-      "deleteComponent": "Delete component"
+      "deleteComponent": "Delete component",
+      "saved": "saved",
+      "shared": "shared"
     },
     "tools": {
       "recenter": "Recenter",
@@ -40,6 +42,11 @@
       "searchFailed": "Search failed. Please try again."
     }
   },
+  "sharedModal":{
+    "title": "Shared workflow",
+    "success": "Your workflow was shared successfully. You can now copy the link below and share it.",
+    "hintReshare": "If you change something on your workflow you will need to share it again, as a new link will be created."
+  },
   "share": "Share",
   "save": "Save",
   "untitledWorkflow": "Untitled workflow",
@@ -51,5 +58,6 @@
   "workflowNotFound": "Workflow not found",
   "search": "Search",
   "category": "Category | Categories",
-  "back": "Back"
+  "back": "Back",
+  "copy": "Copy"
 }

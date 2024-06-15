@@ -4,6 +4,7 @@ import { useWorkflowStore } from '@/stores/workflow';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 import { useToast } from 'vue-toastification';
 import { i18n } from '@/utils/i18n';
+import { getSharedWorkflow } from '../api/workflow';
 
 const toast = useToast();
 
@@ -27,22 +28,32 @@ const router = createRouter({
     },
     {
       path: '/check',
-      name: 'Workflow checker',
+      name: 'Workflow Checker',
       component: () => import('@/views/WorkflowChecker.vue'),
-      beforeEnter: (to, from, next) => {
-        const workflowStore = useWorkflowStore();
-        workflowStore.clearWorkflow();
-        next();
-      },
       children: [
         {
           path: ':id',
-          name: 'Workflow checker',
           component: () => import('@/views/WorkflowChecker.vue'),
           beforeEnter: async (to, from, next) => {
             try {
               const workflowStore = useWorkflowStore();
               await workflowStore.loadFromLocalStorage(to.params.id as string);
+              return next('/check');
+            } catch (error) {
+              toast.error(i18n.t('workflowNotFound'));
+              return next('/');
+            }
+          },
+        },
+        {
+          path: 'shared/:id',
+          name: 'Shared Workflow',
+          component: () => import('@/views/WorkflowChecker.vue'),
+          beforeEnter: async (to, from, next) => {
+            try {
+              const workflowStore = useWorkflowStore();
+              const workflow = await getSharedWorkflow(to.params.id as string);
+              workflowStore.reconstructWorkflow(workflow);
               return next();
             } catch (error) {
               toast.error(i18n.t('workflowNotFound'));

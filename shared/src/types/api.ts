@@ -36,3 +36,6 @@ export type SharedWorkflowResponse = SavedWorkflow;
  * Response for a search query
  */
 export type SearchResponse = PopulatedComponent[];
+
+/** Body of the share workflow request */
+export type ShareWorkflowRequest = Omit<SavedWorkflow, 'id'>;
