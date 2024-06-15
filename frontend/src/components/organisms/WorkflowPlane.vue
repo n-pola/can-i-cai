@@ -29,38 +29,6 @@ const viewBox = computed(() => {
   return `${viewPort.value.x} ${viewPort.value.y} ${viewPort.value.width} ${viewPort.value.height}`;
 });
 
-const lines = computed(() => {
-  const lineCoordinates = [];
-
-  workflow.edges.forEach((edge, id) => {
-    const sourcePosition = workflow.nodes.get(edge.source);
-    const targetPosition = workflow.nodes.get(edge.target);
-
-    if (!sourcePosition || !targetPosition) {
-      return;
-    }
-
-    const sourceBB = sourcePosition.boundingBox;
-    const targetBB = targetPosition.boundingBox;
-
-    const sourceX = sourceBB.x + sourceBB.width / 2;
-    const sourceY = sourceBB.y + sourceBB.height;
-    const targetX = targetBB.x + targetBB.width / 2;
-    const targetY = targetBB.y;
-
-    lineCoordinates.push({
-      x1: sourceX,
-      y1: sourceY,
-      x2: targetX,
-      y2: targetY,
-      id,
-      compatible: edge.compatible,
-    });
-  });
-
-  return lineCoordinates;
-});
-
 // Functions
 const handleScroll = (event: WheelEvent) => {
   event.preventDefault();
@@ -153,19 +121,19 @@ defineExpose({
       </text>
     </g>
     <line
-      v-for="line in lines"
-      :x1="line.x1"
-      :y1="line.y1"
-      :x2="line.x2"
-      :y2="line.y2"
+      v-for="line in workflow.positionedEdges"
+      :x1="line.coordinates.start.x"
+      :y1="line.coordinates.start.y"
+      :x2="line.coordinates.end.x"
+      :y2="line.coordinates.end.y"
       class="workflow-plane__edge"
       :class="{ 'workflow-plane__edge--compatible': line.compatible }"
       :key="line.id"
     />
     <SvgAddButton
-      v-for="(line, index) in lines"
-      :x="(line.x1 + line.x2) / 2"
-      :y="(line.y1 + line.y2) / 2"
+      v-for="(line, index) in workflow.positionedEdges"
+      :x="(line.coordinates.start.x + line.coordinates.end.x) / 2"
+      :y="(line.coordinates.start.y + line.coordinates.end.y) / 2"
       :size="cssVariables.size.m"
       :key="index"
       @click="emit('addComponentRequestedEdge', line.id)"

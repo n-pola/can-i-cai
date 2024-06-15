@@ -20,6 +20,17 @@ export type FrontendEdge = Edge & {
   compatible: boolean;
 };
 
+/** Coordinates of an Edge to draw on svg plane */
+export interface EdgeCoordinates {
+  start: { x: number; y: number };
+  end: { x: number; y: number };
+}
+
+export interface PositionedFrontendEdge extends FrontendEdge {
+  coordinates: EdgeCoordinates;
+  id: string;
+}
+
 export interface WorkflowStore extends Omit<Workflow, 'nodes' | 'edges'> {
   id: string;
   nodes: Map<string, FrontendNode>;

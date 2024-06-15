@@ -1,7 +1,13 @@
 import { defineStore } from 'pinia';
 import type { PopulatedComponent, PopulatedCustomComponent, Edge, SavedWorkflow } from 'cic-shared';
 import { v4 as uuid } from 'uuid';
-import type { BoundingBox, FrontendNode, WorkflowStore } from '@/types/workflow';
+import type {
+  BoundingBox,
+  EdgeCoordinates,
+  FrontendNode,
+  PositionedFrontendEdge,
+  WorkflowStore,
+} from '@/types/workflow';
 import { cssVariables } from '@/utils/cssVariables';
 import { useComponentsStore } from '@/stores/components';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
@@ -64,6 +70,54 @@ export const useWorkflowStore = defineStore('workflow', {
       });
 
       return nodes;
+    },
+    /**
+     * Get the position of a single edge
+     * @param edgeId - The id of the edge
+     */
+    edgePosition:
+      (state) =>
+      (edgeId: string): EdgeCoordinates | null => {
+        const edge = state.edges.get(edgeId);
+
+        if (!edge) {
+          return null;
+        }
+
+        const sourcePosition = state.nodes.get(edge.source);
+        const targetPosition = state.nodes.get(edge.target);
+
+        if (!sourcePosition || !targetPosition) {
+          return null;
+        }
+
+        const sourceBB = sourcePosition.boundingBox;
+        const targetBB = targetPosition.boundingBox;
+
+        return {
+          start: {
+            x: sourceBB.x + sourceBB.width / 2,
+            y: sourceBB.y + sourceBB.height,
+          },
+          end: {
+            x: targetBB.x + targetBB.width / 2,
+            y: targetBB.y,
+          },
+        };
+      },
+    /** Get all edges with the respective coordinates in context of current node
+     * positions */
+    positionedEdges(state): PositionedFrontendEdge[] {
+      const positionedEdges: PositionedFrontendEdge[] = [];
+
+      state.edges.forEach((edge, id) => {
+        const coordinates = this.edgePosition(id);
+        if (coordinates) {
+          positionedEdges.push({ ...edge, coordinates, id });
+        }
+      });
+
+      return positionedEdges;
     },
   },
   actions: {

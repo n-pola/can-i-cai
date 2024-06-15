@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 
 const props = defineProps<{
-  x: number | string;
-  y: number | string;
+  x: number;
+  y: number;
   size: number;
 }>();
 
