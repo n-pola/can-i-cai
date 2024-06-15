@@ -30,6 +30,16 @@
       "move": "Move"
     }
   },
+  "addComponentModal": {
+    "title": "Add component",
+    "searchComponents": "Search components",
+    "clearSearch": "Clear search",
+    "errors": {
+      "noResults": "No components found",
+      "minCharacters": "Please enter at least {minCharacters} characters",
+      "searchFailed": "Search failed. Please try again."
+    }
+  },
   "share": "Share",
   "save": "Save",
   "untitledWorkflow": "Untitled workflow",
@@ -38,5 +48,8 @@
   "new": "New",
   "component": "component | components",
   "deleteWorkflow": "Delete workflow",
-  "workflowNotFound": "Workflow not found"
+  "workflowNotFound": "Workflow not found",
+  "search": "Search",
+  "category": "Category | Categories",
+  "back": "Back"
 }

@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import Modal from '@/components/atoms/Modal.vue';
 import { onMounted, ref, watch } from 'vue';
 import { useCategoryStore } from '@/stores/category';
-import CategoryItem from '@/components/atoms/CategoryItem.vue';
-import type { CategoryResponse, SearchResponse } from 'cic-shared';
 import { useToast } from 'vue-toastification';
-import Button from '@/components/atoms/Button.vue';
 import { useI18n } from 'vue-i18n';
+import { searchComponents } from '@/api/search';
+import HttpError from '@/types/httpError';
+import type { CategoryResponse, SearchResponse } from 'cic-shared';
+import type { ComponentType, AdditionalCategory } from '@/types/workflow';
+
+import Modal from '@/components/atoms/Modal.vue';
+import CategoryItem from '@/components/atoms/CategoryItem.vue';
+import Button from '@/components/atoms/Button.vue';
 import WorkflowComponent from '@/components/molecules/WorkflowComponent.vue';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner.vue';
-import type { ComponentType, AdditionalCategory } from '@/types/workflow';
-import SearchBar from '@/components/molecules/SearchBar.vue';
-import HttpError from '@/types/httpError';
-import { searchComponents } from '@/api/search';
+import InputBar from '@/components/molecules/InputBar.vue';
 
 // Component setup
 const isOpen = defineModel<boolean>();
@@ -23,7 +24,7 @@ const emit = defineEmits<{
 // Hooks
 const categoryStore = useCategoryStore();
 const toast = useToast();
-const { locale } = useI18n();
+const { locale, t: translate } = useI18n();
 
 // Data
 const categoriesLoading = ref(false);
@@ -106,7 +107,7 @@ const handleSearch = async (value: string) => {
   }
 
   if (value.length < 3) {
-    searchError.value = 'Please enter at least 3 characters';
+    searchError.value = translate('addComponentModal.errors.minCharacters', { minCharacters: 3 });
     return;
   }
 
@@ -119,7 +120,7 @@ const handleSearch = async (value: string) => {
       searchResult.value = [];
       return;
     }
-    toast.error('Failed to search for components');
+    toast.error(translate('addComponentModal.errors.searchFailed'));
     searchResult.value = null;
   } finally {
     searchLoading.value = false;
@@ -154,12 +155,22 @@ onMounted(async () => {
 <template>
   <Modal v-model="isOpen">
     <template #header>
-      <h3>Add Component</h3>
+      <h3>{{ translate('addComponentModal.title') }}</h3>
     </template>
     <template #default>
       <div class="add-component-modal">
         <div class="add-component-modal__search">
-          <SearchBar v-model="search" @clear-search="handleClearSearch" />
+          <InputBar
+            id="cic-search"
+            :label="translate('addComponentModal.searchComponents')"
+            v-model="search"
+            :placeholder="`${translate('search')}...`"
+            @button-click="handleClearSearch"
+            :icon="search ? 'close' : 'search'"
+            :button-title="
+              search ? translate('addComponentModal.clearSearch') : translate('search')
+            "
+          />
           <p v-if="searchError" class="add-component-modal__search-error">{{ searchError }}</p>
         </div>
         <div class="add-component-modal__content">
@@ -185,7 +196,7 @@ onMounted(async () => {
             <p v-else>No components found</p>
           </template>
           <template v-else-if="categoryStore.categories.size > 0 && selectedCategoryId === null">
-            <h4>Categories</h4>
+            <h4>{{ translate('category', 2) }}</h4>
             <CategoryItem
               v-for="[id, category] in categoryStore.categories"
               :key="id"
@@ -231,7 +242,7 @@ onMounted(async () => {
             categoriesLoading || categoryLoading || selectedCategoryId === null || searchResult
           "
           @click="selectedCategoryId = null"
-          >Back</Button
+          >{{ translate('back') }}</Button
         >
       </div>
     </template>

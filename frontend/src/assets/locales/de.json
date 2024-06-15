@@ -30,6 +30,16 @@
       "move": "Verschieben"
     }
   },
+  "addComponentModal": {
+    "title": "Bestandteil hinzufügen",
+    "searchComponents": "Bestandteil suchen",
+    "clearSearch": "Suche löschen",
+    "errors": {
+      "noResults": "Keine Bestandteile gefunden",
+      "minCharacters": "Bitte gib mindestens {minCharacters} Zeichen ein",
+      "searchFailed": "Suche fehlgeschlagen. Bitte versuche es erneut."
+    }
+  },
   "share": "Teilen",
   "save": "Speichern",
   "untitledWorkflow": "Unbenannter Prozess",
@@ -38,5 +48,8 @@
   "new": "Neu",
   "component": "Bestandteil | Bestandteile",
   "deleteWorkflow": "Prozess löschen",
-  "workflowNotFound": "Prozess nicht gefunden"
+  "workflowNotFound": "Prozess nicht gefunden",
+  "search": "Suche",
+  "category": "Kategorie | Kategorien",
+  "back": "Zurück"
 }

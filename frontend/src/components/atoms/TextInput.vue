@@ -5,10 +5,12 @@ withDefaults(
     label: string;
     id: string;
     placeholder?: string;
+    readonly?: boolean;
   }>(),
   {
     type: 'text',
     placeholder: '',
+    readonly: false,
   },
 );
 
@@ -23,5 +25,6 @@ const value = defineModel<string>();
     v-model="value"
     :aria-label="label"
     :placeholder="placeholder"
+    :readonly="readonly"
   />
 </template>
