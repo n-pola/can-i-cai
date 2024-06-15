@@ -190,8 +190,6 @@ export const useWorkflowStore = defineStore('workflow', {
         return;
       }
 
-      console.log(`recalculating node position for ${node.name}`);
-
       const inEdges = adjacency.in
         .map((edgeId) => this.edges.get(edgeId))
         .filter((edge) => edge) as Edge[];
@@ -199,8 +197,6 @@ export const useWorkflowStore = defineStore('workflow', {
       const previousNodes = inEdges
         .map((edge) => this.nodes.get(edge.source))
         .filter((iterationNode) => iterationNode) as FrontendNode[];
-
-      console.log(previousNodes);
 
       const maxPreviousNodeY = Math.max(
         ...previousNodes.map(
@@ -214,8 +210,6 @@ export const useWorkflowStore = defineStore('workflow', {
         width: node.boundingBox.width,
         height: node.boundingBox.height,
       };
-
-      console.log(newPosition);
 
       this.updateNodePosition(id, newPosition);
     },
@@ -233,12 +227,10 @@ export const useWorkflowStore = defineStore('workflow', {
           return;
         }
 
-        console.log(edge.target);
-
         this.recalculateNodePositionsFrom(edge.target);
       });
     },
-    saveToLocalStorage(): void {
+    generateSavedWorkflow(): SavedWorkflow {
       const workflowId = this.id || uuid();
       this.id = workflowId;
       const workflow: SavedWorkflow = {
@@ -247,17 +239,29 @@ export const useWorkflowStore = defineStore('workflow', {
         adjacencies: Array.from(this.adjacencies).map(([id, data]) => ({ id, data })),
         nodes: Array.from(this.nodes).map(([id, data]) => ({ id, componentId: data.id })),
         customNodes: [],
-        edges: Array.from(this.edges).map(([id, data]) => ({ id, data })),
+        edges: Array.from(this.edges).map(([id, data]) => ({
+          id,
+          data: { source: data.source, target: data.target },
+        })),
       };
+
+      return workflow;
+    },
+    saveToLocalStorage(): void {
+      const workflow = this.generateSavedWorkflow();
       WorkflowStorageHelper.saveWorkflow(workflow);
     },
     async loadFromLocalStorage(workflowId: string): Promise<void> {
-      this.clearWorkflow();
-      const componentsStore = useComponentsStore();
       const workflow = WorkflowStorageHelper.getWorkflow(workflowId);
       if (!workflow) {
         throw new Error('Workflow not found');
       }
+
+      await this.reconstructWorkflow(workflow);
+    },
+    async reconstructWorkflow(workflow: SavedWorkflow): Promise<void> {
+      this.clearWorkflow();
+      const componentsStore = useComponentsStore();
 
       this.id = workflow.id;
       this.name = workflow.name;
