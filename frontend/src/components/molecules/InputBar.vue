@@ -1,42 +1,48 @@
 <script setup lang="ts">
 import TextInput from '@/components/atoms/TextInput.vue';
 import Button from '@/components/atoms/Button.vue';
-import { computed } from 'vue';
 
 // Component setup
-const search = defineModel<string>();
-const emit = defineEmits<{
-  clearSearch: [];
+defineProps<{
+  id: string;
+  label: string;
+  icon: string;
+  placeholder?: string;
+  inputReadonly?: boolean;
+  buttonTitle?: string;
 }>();
 
-// Computed values
-const icon = computed(() => {
-  return search.value ? 'close' : 'search';
-});
+const input = defineModel<string>();
+
+const emit = defineEmits<{
+  buttonClick: [];
+}>();
 </script>
 
 <template>
-  <div class="search-bar">
+  <div class="input-bar">
     <TextInput
-      id="cic-search"
-      label="Search components"
-      v-model="search"
-      placeholder="Search..."
-      class="search-bar__input"
+      :id="id"
+      :label="label"
+      v-model="input"
+      :placeholder="placeholder"
+      class="input-bar__input"
+      :readonly="inputReadonly"
     />
     <Button
       size="xs"
       :icon="icon"
       icon-size="s"
       :rounded="false"
-      class="search-bar__icon"
-      @click="search && emit('clearSearch')"
+      :title="buttonTitle"
+      class="input-bar__icon"
+      @click="emit('buttonClick')"
     ></Button>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.search-bar {
+.input-bar {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
