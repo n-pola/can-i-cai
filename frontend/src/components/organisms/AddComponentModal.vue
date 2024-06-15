@@ -246,7 +246,7 @@ onMounted(async () => {
   &__search {
     position: sticky;
     top: 0;
-    padding: $xs $s;
+    padding: $s $xs;
     background-color: $lightest;
   }
 
@@ -265,7 +265,7 @@ onMounted(async () => {
   &__footer {
     display: flex;
     justify-content: flex-end;
-    padding: $xs $s;
+    padding: $s $xs;
   }
 
   &__loading {
