@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongoose';
 import { CustomComponent, PopulatedComponent, PopulatedCustomComponent } from './components';
 
 /** Neighboring edges of a node */

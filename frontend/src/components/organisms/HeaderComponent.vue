@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, toRefs } from 'vue';
+import { toRefs } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import TextInput from '@/components/atoms/TextInput.vue';

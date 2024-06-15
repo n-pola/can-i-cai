@@ -27,7 +27,7 @@ export const useComponentsStore = defineStore('components', {
         return ids.map((id) => this.components.get(id)!);
       }
 
-      const { components, missing } = await getBatchComponents(missingIds);
+      const { components } = await getBatchComponents(missingIds);
       components.forEach((component) => this.components.set(component.id, component));
 
       return ids.map((id) => this.components.get(id)!);
