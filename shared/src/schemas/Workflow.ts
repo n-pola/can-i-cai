@@ -69,11 +69,9 @@ const WorkflowSchema = new Schema<SavedWorkflow>({
         type: String,
         required: true,
       },
-      data: {
-        id: {
-          type: Schema.Types.ObjectId,
-          ref: 'Component',
-        },
+      componentId: {
+        type: Schema.Types.ObjectId,
+        required: true,
       },
       _id: false,
     },
