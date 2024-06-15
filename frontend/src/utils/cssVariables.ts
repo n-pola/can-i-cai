@@ -2,11 +2,8 @@ const style = getComputedStyle(document.body);
 
 const getNumberFromCssVariable = (variable: string) => {
   const value = style.getPropertyValue(variable);
-  console.log('value', value);
   return parseInt(value.replace('px', ''), 10);
 };
-
-console.log('i run');
 
 export const cssVariables = {
   size: {
