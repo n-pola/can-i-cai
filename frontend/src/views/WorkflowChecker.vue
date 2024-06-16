@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { Node, PopulatedComponent } from 'cic-shared';
+import type { PopulatedComponent } from 'cic-shared';
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useComponentsStore } from '@/stores/components';
 import { useI18n } from 'vue-i18n';
 import { shareWorkflow } from '@/api/workflow';
+import type { FrontendNode } from '@/types/workflow';
 
 import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
 import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
@@ -26,7 +27,7 @@ const workflowPlane = ref<InstanceType<typeof WorkflowPlane> | null>(null);
 const mode = ref<'select' | 'move'>('select');
 
 const detailModalIsOpen = ref(false);
-const selectedNode = ref<Node | null>(null);
+const selectedNode = ref<FrontendNode | null>(null);
 
 const addComponentModalIsOpen = ref(false);
 const tmpId = ref<string | null>(null);

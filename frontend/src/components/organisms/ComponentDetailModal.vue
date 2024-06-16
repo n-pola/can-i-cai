@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
-import type { Node } from 'cic-shared';
+import { computed, ref, watchEffect, toRef } from 'vue';
 import Modal from '@/components/atoms/Modal.vue';
 import Button from '@/components/atoms/Button.vue';
+import BooleanInputPill from '@/components/molecules/BooleanInputPill.vue';
+import type { FrontendNode } from '@/types/workflow';
 
 const props = defineProps<{
-  component: Node;
+  component: FrontendNode;
   id: string;
 }>();
 
 const isOpen = defineModel<boolean>();
 const showMissingInfo = ref(false);
+const satisfiesMinimalVersion = toRef(props.component, 'satisfiesMinimalVersion');
 
 watchEffect(() => {
   if (!isOpen.value) {
@@ -76,6 +78,13 @@ const content = computed(() => {
           >{{ item.value }}</span
         >
         <h5 v-else>{{ item.value }}</h5>
+      </div>
+      <div
+        class="component-details__detail"
+        v-if="component.minimalRequiredVersion && satisfiesMinimalVersion !== undefined"
+      >
+        <h4>My version is compatible</h4>
+        <BooleanInputPill v-model="satisfiesMinimalVersion" />
       </div>
       <div v-if="component.additionalInfo" class="component-details__additional-info">
         <h4>Additional Informations</h4>
