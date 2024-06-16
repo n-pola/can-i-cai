@@ -307,7 +307,10 @@ export const useWorkflowStore = defineStore('workflow', {
         name: this.name!,
         id: workflowId,
         adjacencies: Array.from(this.adjacencies).map(([id, data]) => ({ id, data })),
-        nodes: Array.from(this.nodes).map(([id, data]) => ({ id, componentId: data.id })),
+        nodes: Array.from(this.nodes).map(([id, data]) => ({
+          id,
+          data: { componentId: data.id, satisfiesMinimalVersion: data.satisfiesMinimalVersion },
+        })),
         customNodes: [],
         edges: Array.from(this.edges).map(([id, data]) => ({
           id,
@@ -336,12 +339,12 @@ export const useWorkflowStore = defineStore('workflow', {
       this.id = workflow.id;
       this.name = workflow.name;
 
-      const componentIds = workflow.nodes.map(({ componentId }) => componentId);
+      const componentIds = workflow.nodes.map(({ data }) => data.componentId);
       await componentsStore.getComponents(componentIds);
 
-      const loadedNodes = workflow.nodes.map(({ id, componentId }) =>
-        componentsStore.getComponent(componentId).then((component) => {
-          this.addNode(component, undefined, id);
+      const loadedNodes = workflow.nodes.map(({ id, data }) =>
+        componentsStore.getComponent(data.componentId).then((component) => {
+          this.addNode(component, undefined, id, data.satisfiesMinimalVersion);
         }),
       );
 
