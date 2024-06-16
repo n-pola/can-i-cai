@@ -4,6 +4,7 @@ import { I18nT, useI18n } from 'vue-i18n';
 import Modal from '@/components/atoms/Modal.vue';
 import Button from '@/components/atoms/Button.vue';
 
+// Component setup
 defineProps<{
   component: PopulatedComponent;
 }>();
@@ -14,6 +15,7 @@ const emit = defineEmits<{
   decision: [aboveMinimalVersion: boolean];
 }>();
 
+// Hooks
 const i18n = useI18n();
 </script>
 
