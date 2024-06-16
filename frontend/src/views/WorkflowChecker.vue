@@ -39,6 +39,8 @@ const versionInterceptionModalIsOpen = ref(false);
 const versionInterceptionComponent = ref<PopulatedComponent | null>(null);
 
 // Functions
+
+/** Handle node click event and open detail modal */
 const handleNodeClick = (nodeId: string) => {
   const node = workflowStore.nodes.get(nodeId);
   if (!node) throw new Error(`Node with id ${nodeId} not found`);
@@ -46,6 +48,7 @@ const handleNodeClick = (nodeId: string) => {
   detailModalIsOpen.value = true;
 };
 
+/** Add a component to the workflow based on current addType */
 const handleAddComponent = async (
   component: PopulatedComponent,
   satisfiesMinimalVersion?: boolean,
@@ -90,7 +93,8 @@ const interceptAddComponent = async (id: string) => {
   versionInterceptionComponent.value = component;
 };
 
-const handleAddComponentOnEdge = async (id: string) => {
+/** Prepare state to add new component on edge / between two previous ones and open modal */
+const handleAddComponentOnEdgeRequest = async (id: string) => {
   addComponentModalIsOpen.value = true;
   tmpId.value = id || null;
   if (id) {
@@ -98,6 +102,7 @@ const handleAddComponentOnEdge = async (id: string) => {
   }
 };
 
+/** Prepare state to add new component after a previous one and open modal */
 const handleAddComponentRequested = (id?: string) => {
   addComponentModalIsOpen.value = true;
   tmpId.value = id || null;
@@ -106,12 +111,14 @@ const handleAddComponentRequested = (id?: string) => {
   }
 };
 
+/** Handle the decision of the user if their version satisfies the minimal version or not and add component */
 const handleVersionInterceptionDecision = (aboveMinimalVersion: boolean) => {
   versionInterceptionModalIsOpen.value = false;
   handleAddComponent(versionInterceptionComponent.value!, aboveMinimalVersion);
   versionInterceptionComponent.value = null;
 };
 
+/** Try to save current workflow to local storage and communicate errors */
 const handleSaveRequested = () => {
   if (!workflowStore.name) {
     toast.error(
@@ -137,6 +144,7 @@ const handleSaveRequested = () => {
   }
 };
 
+/** Try to share current workflow and communicate errors */
 const handleShare = async () => {
   if (!workflowStore.name) {
     toast.error(
@@ -167,7 +175,7 @@ const handleShare = async () => {
       class="workflow-plane"
       @nodeClicked="handleNodeClick"
       @add-component-requested="handleAddComponentRequested"
-      @add-component-requested-edge="handleAddComponentOnEdge"
+      @add-component-requested-edge="handleAddComponentOnEdgeRequest"
       @delete-node="workflowStore.removeNodeAndCloseGaps"
       ref="workflowPlane"
     />
