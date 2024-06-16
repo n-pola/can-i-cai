@@ -115,6 +115,7 @@ const content = computed(() => {
   gap: $xs;
   width: 100%;
   padding: $xs $s;
+  overflow-y: auto;
 
   &__detail {
     display: flex;
