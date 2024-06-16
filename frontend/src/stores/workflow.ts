@@ -3,7 +3,6 @@ import type { PopulatedComponent, PopulatedCustomComponent, Edge, SavedWorkflow 
 import { v4 as uuid } from 'uuid';
 import type {
   BoundingBox,
-  EdgeCoordinates,
   FrontendNode,
   PositionedFrontendEdge,
   WorkflowStore,
@@ -78,29 +77,31 @@ export const useWorkflowStore = defineStore('workflow', {
       return nodes;
     },
     /**
-     * Get the position of a single edge
+     * Get the position of a single edge and reactive compatibility
      * @param edgeId - The id of the edge
      */
-    edgePosition:
+    positionedEdge:
       (state) =>
-      (edgeId: string): EdgeCoordinates | null => {
+      (edgeId: string): PositionedFrontendEdge | null => {
         const edge = state.edges.get(edgeId);
 
         if (!edge) {
           return null;
         }
 
-        const sourcePosition = state.nodes.get(edge.source);
-        const targetPosition = state.nodes.get(edge.target);
+        const sourceNode = state.nodes.get(edge.source);
+        const targetNode = state.nodes.get(edge.target);
 
-        if (!sourcePosition || !targetPosition) {
+        if (!sourceNode || !targetNode) {
           return null;
         }
 
-        const sourceBB = sourcePosition.boundingBox;
-        const targetBB = targetPosition.boundingBox;
+        const sourceBB = sourceNode.boundingBox;
+        const targetBB = targetNode.boundingBox;
+        const compatible =
+          NodeHelper.isCompatible(sourceNode) && NodeHelper.isCompatible(targetNode);
 
-        return {
+        const coordinates = {
           start: {
             x: sourceBB.x + sourceBB.width / 2,
             y: sourceBB.y + sourceBB.height,
@@ -110,16 +111,18 @@ export const useWorkflowStore = defineStore('workflow', {
             y: targetBB.y,
           },
         };
+
+        return { ...edge, coordinates, compatible, id: edgeId };
       },
     /** Get all edges with the respective coordinates in context of current node
      * positions */
     positionedEdges(state): PositionedFrontendEdge[] {
       const positionedEdges: PositionedFrontendEdge[] = [];
 
-      state.edges.forEach((edge, id) => {
-        const coordinates = this.edgePosition(id);
-        if (coordinates) {
-          positionedEdges.push({ ...edge, coordinates, id });
+      state.edges.forEach((_, id) => {
+        const edge = this.positionedEdge(id);
+        if (edge) {
+          positionedEdges.push(edge);
         }
       });
 
