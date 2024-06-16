@@ -48,6 +48,19 @@
     "success": "Dein Prozess wurde erfolgreich geteilt. Du kannst den Link kopieren und teilen.",
     "hintReshare": "Wenn du etwas an deinem Prozess änderst, musst du ihn erneut teilen, da ein neuer Link erstellt wird."
   },
+  "detailModal": {
+    "title": "Eigenschaften",
+    "manufacturer": "Hersteller",
+    "category": "Kategorie",
+    "type": "Typ",
+    "compatible": "CAI kompatibel",
+    "supportedVersions": "Unterstützte Versionen",
+    "myVersionCompatible": "Meine Version ist kompatibel",
+    "incorrectInfo": "Falsche Informationen?",
+    "additionalInfo": "Zusätzliche Informationen",
+    "contactMaintainer": "Fehler melden",
+    "viewGithub": "Auf GitHub ansehen"
+  },
   "share": "Teilen",
   "save": "Speichern",
   "untitledWorkflow": "Unbenannter Prozess",

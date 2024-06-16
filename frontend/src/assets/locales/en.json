@@ -48,6 +48,19 @@
     "success": "Your workflow was shared successfully. You can now copy the link below and share it.",
     "hintReshare": "If you change something on your workflow you will need to share it again, as a new link will be created."
   },
+  "detailModal": {
+    "title": "Detail modal",
+    "manufacturer": "Manufacturer",
+    "category": "Category",
+    "type": "Type",
+    "compatible": "CAI compatible",
+    "supportedVersions": "Supported versions",
+    "myVersionCompatible": "My version is compatible",
+    "incorrectInfo": "Incorrect information?",
+    "additionalInfo": "Additional information",
+    "contactMaintainer": "Contact maintainer",
+    "viewGithub": "View on GitHub"
+  },
   "share": "Share",
   "save": "Save",
   "untitledWorkflow": "Untitled workflow",
