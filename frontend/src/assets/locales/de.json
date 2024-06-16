@@ -36,6 +36,7 @@
     "title": "Bestandteil hinzufügen",
     "searchComponents": "Bestandteil suchen",
     "clearSearch": "Suche löschen",
+    "versionInterception": "Ist deine Version von {component} größer oder gleich {version}?",
     "errors": {
       "noResults": "Keine Bestandteile gefunden",
       "minCharacters": "Bitte gib mindestens {minCharacters} Zeichen ein",
@@ -59,5 +60,7 @@
   "search": "Suche",
   "category": "Kategorie | Kategorien",
   "back": "Zurück",
-  "copy": "Kopieren"
+  "copy": "Kopieren",
+  "yes": "Ja",
+  "no": "Nein"
 }

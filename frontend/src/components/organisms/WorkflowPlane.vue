@@ -4,6 +4,7 @@ import WorkflowForeignObject from '@/components/molecules/WorkflowForeignObject.
 import { cssVariables } from '@/utils/cssVariables';
 import { useWorkflowStore } from '@/stores/workflow';
 import SvgAddButton from '@/components/atoms/SvgAddButton.vue';
+import { NodeHelper } from '@/helpers/nodeHelper';
 
 const workflow = useWorkflowStore();
 
@@ -145,6 +146,7 @@ defineExpose({
       :y="node[1].boundingBox.y"
       :x="node[1].boundingBox.x"
       :component="node[1]"
+      :compatible="NodeHelper.isCompatible(node[1])"
       :key="node[0]"
       :id="node[0]"
       @click="emit('nodeClicked', node[0])"

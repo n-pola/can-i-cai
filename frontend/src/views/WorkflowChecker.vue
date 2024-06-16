@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Node } from 'cic-shared';
+import type { Node, PopulatedComponent } from 'cic-shared';
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
@@ -13,6 +13,7 @@ import AddComponentModal from '@/components/organisms/AddComponentModal.vue';
 import WorkflowSummary from '@/components/organisms/WorkflowSummary.vue';
 import CheckerTools from '@/components/organisms/CheckerTools.vue';
 import SharedModal from '@/components/organisms/SharedModal.vue';
+import VersionInterceptionModal from '@/components/organisms/VersionInterceptionModal.vue';
 
 // Hooks
 const toast = useToast();
@@ -34,6 +35,9 @@ const addType = ref<'after' | 'between'>('after');
 const sharedModalIsOpen = ref(false);
 const sharedWorkflowId = ref<string | null>(null);
 
+const versionInterceptionModalIsOpen = ref(false);
+const versionInterceptionComponent = ref<PopulatedComponent | null>(null);
+
 // Functions
 const handleNodeClick = (nodeId: string) => {
   const node = workflowStore.nodes.get(nodeId);
@@ -42,21 +46,17 @@ const handleNodeClick = (nodeId: string) => {
   detailModalIsOpen.value = true;
 };
 
-const handleAddComponent = async (id: string) => {
-  const component = await componentsStore.getComponent(id);
-
-  if (!component) {
-    toast.error('Failed to load component');
-    return;
-  }
-
+const handleAddComponent = async (
+  component: PopulatedComponent,
+  satisfiesMinimalVersion?: boolean,
+) => {
   if (tmpId.value) {
     switch (addType.value) {
       case 'after':
-        workflowStore.addNodeAfter(component, tmpId.value);
+        workflowStore.addNodeAfter(component, tmpId.value, satisfiesMinimalVersion);
         break;
       case 'between':
-        workflowStore.addNodeBetween(component, tmpId.value);
+        workflowStore.addNodeBetween(component, tmpId.value, satisfiesMinimalVersion);
         break;
       default:
         throw new Error('Invalid add type');
@@ -65,7 +65,29 @@ const handleAddComponent = async (id: string) => {
     return;
   }
 
-  workflowStore.addNode(component);
+  workflowStore.addNode(component, undefined, undefined, satisfiesMinimalVersion);
+};
+
+/**
+ * Intercept component adding to check if the component has a minimal required version.
+ * If it has, open a modal to ask the user if their version satisfies the minimal version.
+ * @param id - The id of the component to add
+ */
+const interceptAddComponent = async (id: string) => {
+  const component = await componentsStore.getComponent(id);
+
+  if (!component) {
+    toast.error('Failed to load component');
+    return;
+  }
+
+  if (!component.minimalRequiredVersion) {
+    handleAddComponent(component);
+    return;
+  }
+
+  versionInterceptionModalIsOpen.value = true;
+  versionInterceptionComponent.value = component;
 };
 
 const handleAddComponentOnEdge = async (id: string) => {
@@ -82,6 +104,12 @@ const handleAddComponentRequested = (id?: string) => {
   if (id) {
     addType.value = 'after';
   }
+};
+
+const handleVersionInterceptionDecision = (aboveMinimalVersion: boolean) => {
+  versionInterceptionModalIsOpen.value = false;
+  handleAddComponent(versionInterceptionComponent.value!, aboveMinimalVersion);
+  versionInterceptionComponent.value = null;
 };
 
 const handleSaveRequested = () => {
@@ -166,8 +194,14 @@ const handleShare = async () => {
       :component="selectedNode"
       id="123"
     />
-    <AddComponentModal v-model="addComponentModalIsOpen" @add-component="handleAddComponent" />
+    <AddComponentModal v-model="addComponentModalIsOpen" @add-component="interceptAddComponent" />
     <SharedModal v-if="sharedWorkflowId" v-model="sharedModalIsOpen" :id="sharedWorkflowId" />
+    <VersionInterceptionModal
+      v-if="versionInterceptionComponent"
+      v-model="versionInterceptionModalIsOpen"
+      :component="versionInterceptionComponent"
+      @decision="handleVersionInterceptionDecision"
+    />
   </div>
 </template>
 

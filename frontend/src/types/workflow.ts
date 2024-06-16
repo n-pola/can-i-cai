@@ -14,6 +14,7 @@ export interface BoundingBox {
 
 export type FrontendNode = Node & {
   boundingBox: BoundingBox;
+  satisfiesMinimalVersion?: boolean;
 };
 
 export type FrontendEdge = Edge & {

@@ -11,6 +11,7 @@ import type {
 import { cssVariables } from '@/utils/cssVariables';
 import { useComponentsStore } from '@/stores/components';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
+import { NodeHelper } from '@/helpers/nodeHelper';
 
 export const useWorkflowStore = defineStore('workflow', {
   state: (): WorkflowStore => ({
@@ -21,6 +22,7 @@ export const useWorkflowStore = defineStore('workflow', {
     edges: new Map(),
   }),
   getters: {
+    /** Array of nodes without an incoming edge */
     firstNodes: (state): string[] => {
       const nodesWithoutIncomingEdges = new Set<string>();
       state.adjacencies.forEach((adjacency, id) => {
@@ -31,6 +33,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
       return Array.from(nodesWithoutIncomingEdges);
     },
+    /** Determine if a node is at the end of a workflow */
     isLastNode:
       (state) =>
       (id: string): boolean => {
@@ -41,6 +44,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
         return adjacency.out.length === 0;
       },
+    /** Determine if the whole workflow is compatible or not */
     compatible: (state): boolean => {
       if (state.nodes.size === 0) {
         return false;
@@ -48,23 +52,25 @@ export const useWorkflowStore = defineStore('workflow', {
 
       const nodesArray = Array.from(state.nodes.values());
 
-      return !nodesArray.some((node) => !node.compatible);
+      return !nodesArray.some((node) => !NodeHelper.isCompatible(node));
     },
+    /** Get the compatibility of a single node by its id */
     nodeCompatible:
       (state) =>
-      (id: string): boolean | null => {
+      (id: string): boolean => {
         const node = state.nodes.get(id);
         if (!node) {
-          return null;
+          return false;
         }
 
-        return node.compatible;
+        return NodeHelper.isCompatible(node);
       },
+    /** Get all nodes that are not compatible */
     incompatibleNodes: (state): WorkflowStore['nodes'] => {
       const nodes = new Map(state.nodes);
 
       nodes.forEach((node, id) => {
-        if (node.compatible) {
+        if (NodeHelper.isCompatible(node)) {
           nodes.delete(id);
         }
       });
@@ -167,27 +173,37 @@ export const useWorkflowStore = defineStore('workflow', {
       node: PopulatedComponent | PopulatedCustomComponent,
       boundingBox?: BoundingBox,
       loadedId?: string,
+      satisfiesMinimalVersion?: boolean,
     ): string {
       const id = loadedId || uuid();
       this.nodes.set(id, {
         ...node,
+        satisfiesMinimalVersion,
         boundingBox: boundingBox ?? { x: 0, y: 0, width: 0, height: 0 },
       });
       this.adjacencies.set(id, { in: [], out: [] });
       return id;
     },
-    addNodeAfter(node: PopulatedComponent | PopulatedCustomComponent, after: string): void {
-      const id = this.addNode(node);
+    addNodeAfter(
+      node: PopulatedComponent | PopulatedCustomComponent,
+      after: string,
+      satisfiesMinimalVersion?: boolean,
+    ): void {
+      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion);
       this.addEdge(after, id);
     },
-    addNodeBetween(node: PopulatedComponent | PopulatedCustomComponent, edgeId: string): void {
+    addNodeBetween(
+      node: PopulatedComponent | PopulatedCustomComponent,
+      edgeId: string,
+      satisfiesMinimalVersion?: boolean,
+    ): void {
       const edge = this.edges.get(edgeId);
 
       if (!edge) {
         return;
       }
 
-      const id = this.addNode(node);
+      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion);
       const { source, target } = edge;
 
       this.removeEdge(edgeId);

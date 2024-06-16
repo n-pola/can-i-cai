@@ -8,6 +8,7 @@ import SvgAddButton from '@/components/atoms/SvgAddButton.vue';
 
 const props = defineProps<{
   component: PopulatedComponent | PopulatedCustomComponent;
+  compatible: boolean;
   id: string;
   y: number;
   x: number;
@@ -48,7 +49,12 @@ onMounted(() => {
 <template>
   <g :transform="`translate(${x}, ${y})`">
     <foreignObject :width="width" :height="height" ref="objectRef" @click="emit('click')">
-      <WorkflowComponent :component="component" ref="componentRef" @delete="emit('delete')" />
+      <WorkflowComponent
+        :component="component"
+        ref="componentRef"
+        @delete="emit('delete')"
+        :compatible="compatible"
+      />
     </foreignObject>
     <SvgAddButton
       :x="width / 2"
