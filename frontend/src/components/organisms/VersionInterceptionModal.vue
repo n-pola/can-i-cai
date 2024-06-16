@@ -24,23 +24,43 @@ const i18n = useI18n();
     </template>
 
     <template #default>
-      <I18nT keypath="addComponentModal.versionInterception" tag="p" scope="global">
-        <template #component>
-          <strong>{{ component.name }}</strong>
-        </template>
-        <template #version>
-          <strong>{{ component.minimalRequiredVersion }}</strong>
-        </template>
-      </I18nT>
+      <div class="version-interception-modal__content">
+        <I18nT keypath="addComponentModal.versionInterception" tag="p" scope="global">
+          <template #component>
+            <strong>{{ component.name }}</strong>
+          </template>
+          <template #version>
+            <strong>{{ component.minimalRequiredVersion }}</strong>
+          </template>
+        </I18nT>
+      </div>
     </template>
 
     <template #footer>
-      <Button color="secondary" @click="emit('decision', false)">
-        {{ i18n.t('no') }}
-      </Button>
-      <Button @click="emit('decision', true)">
-        {{ i18n.t('yes') }}
-      </Button>
+      <div class="version-interception-modal__footer">
+        <Button color="secondary" @click="emit('decision', false)">
+          {{ i18n.t('no') }}
+        </Button>
+        <Button @click="emit('decision', true)">
+          {{ i18n.t('yes') }}
+        </Button>
+      </div>
     </template>
   </Modal>
 </template>
+
+<style scoped lang="scss">
+.version-interception-modal {
+  &__content,
+  &__footer {
+    padding: $s $xs;
+  }
+
+  &__footer {
+    display: flex;
+    gap: $xxs;
+    justify-content: flex-end;
+    padding-top: 0;
+  }
+}
+</style>
