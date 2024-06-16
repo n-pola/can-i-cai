@@ -1,23 +1,32 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
-import type { Node } from 'cic-shared';
+import { computed, ref, watchEffect, toRef } from 'vue';
 import Modal from '@/components/atoms/Modal.vue';
 import Button from '@/components/atoms/Button.vue';
+import BooleanInputPill from '@/components/molecules/BooleanInputPill.vue';
+import type { FrontendNode } from '@/types/workflow';
+import { useI18n } from 'vue-i18n';
 
+// Component setup
 const props = defineProps<{
-  component: Node;
+  component: FrontendNode;
   id: string;
 }>();
 
 const isOpen = defineModel<boolean>();
 const showMissingInfo = ref(false);
+const satisfiesMinimalVersion = toRef(props.component, 'satisfiesMinimalVersion');
 
+// Hooks
+const i18n = useI18n();
+
+// Watchers
 watchEffect(() => {
   if (!isOpen.value) {
     showMissingInfo.value = false;
   }
 });
 
+// Computed values
 const content = computed(() => {
   return [
     {
@@ -29,19 +38,19 @@ const content = computed(() => {
         typeof props.component.manufacturer === 'string'
           ? props.component.manufacturer
           : props.component.manufacturer.name,
-      title: 'Manufacturer',
+      title: i18n.t('detailModal.manufacturer'),
     },
     {
-      value: props.component.category.name.en,
-      title: 'Category',
+      value: props.component.category.name[i18n.locale.value as 'en' | 'de'],
+      title: i18n.t('detailModal.category'),
     },
     {
       value: props.component.type,
-      title: 'Type',
+      title: i18n.t('detailModal.type'),
     },
     {
       value: props.component.compatible ? 'check_circle' : 'cancel',
-      title: 'Compatible',
+      title: i18n.t('detailModal.compatible'),
       isIcon: true,
       customClass: props.component.compatible
         ? 'component-details__icon--success'
@@ -50,7 +59,7 @@ const content = computed(() => {
     {
       value:
         props.component.minimalRequiredVersion && `>= ${props.component.minimalRequiredVersion}`,
-      title: 'Supported versions',
+      title: i18n.t('detailModal.supportedVersions'),
     },
   ];
 });
@@ -59,7 +68,7 @@ const content = computed(() => {
 <template>
   <Modal v-model="isOpen">
     <template #header>
-      <h3>Component Details</h3>
+      <h3>{{ i18n.t('detailModal.title') }}</h3>
     </template>
 
     <div class="component-details">
@@ -77,8 +86,15 @@ const content = computed(() => {
         >
         <h5 v-else>{{ item.value }}</h5>
       </div>
+      <div
+        class="component-details__detail"
+        v-if="component.minimalRequiredVersion && satisfiesMinimalVersion !== undefined"
+      >
+        <h4>{{ i18n.t('detailModal.myVersionCompatible') }}</h4>
+        <BooleanInputPill v-model="satisfiesMinimalVersion" />
+      </div>
       <div v-if="component.additionalInfo" class="component-details__additional-info">
-        <h4>Additional Informations</h4>
+        <h4>{{ i18n.t('detailModal.additionalInfo') }}</h4>
         <div v-html="component.additionalInfo"></div>
       </div>
     </div>
@@ -90,17 +106,19 @@ const content = computed(() => {
           @click="showMissingInfo = !showMissingInfo"
           type="button"
         >
-          <p>Incorrect Informations?</p>
+          <p>{{ i18n.t('detailModal.incorrectInfo') }}</p>
           <span class="material-symbols-outlined icon--s">{{
             showMissingInfo ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
           }}</span>
         </button>
         <div class="component-details__correction-body" v-show="showMissingInfo">
           <a href="mailto:n.polarek@live.de">
-            <Button full-width color="secondary">Contact Maintainer</Button>
+            <Button full-width color="secondary">{{
+              i18n.t('detailModal.contactMaintainer')
+            }}</Button>
           </a>
           <a href="https://github.com/n-pola/can-i-cai" target="_blank" rel="noopener noreferrer">
-            <Button full-width>View on GitHub</Button>
+            <Button full-width>{{ i18n.t('detailModal.viewGithub') }}</Button>
           </a>
         </div>
       </div>
@@ -115,6 +133,7 @@ const content = computed(() => {
   gap: $xs;
   width: 100%;
   padding: $xs $s;
+  overflow-y: auto;
 
   &__detail {
     display: flex;

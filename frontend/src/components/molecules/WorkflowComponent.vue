@@ -9,10 +9,12 @@ const props = withDefaults(
     component: PopulatedComponent | PopulatedCustomComponent;
     showCompatibility?: boolean;
     showDelete?: boolean;
+    compatible?: boolean;
   }>(),
   {
     showCompatibility: true,
     showDelete: true,
+    compatible: false,
   },
 );
 
@@ -49,8 +51,8 @@ defineExpose({
     <div
       class="component__category"
       :class="{
-        'component__category--compatible': component.compatible && showCompatibility,
-        'component__category--incompatible': !component.compatible && showCompatibility,
+        'component__category--compatible': compatible && showCompatibility,
+        'component__category--incompatible': !compatible && showCompatibility,
         'component__category--neutral': !showCompatibility,
       }"
     >

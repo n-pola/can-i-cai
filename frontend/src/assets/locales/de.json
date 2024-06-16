@@ -36,6 +36,7 @@
     "title": "Bestandteil hinzufügen",
     "searchComponents": "Bestandteil suchen",
     "clearSearch": "Suche löschen",
+    "versionInterception": "Ist deine Version von {component} größer oder gleich {version}?",
     "errors": {
       "noResults": "Keine Bestandteile gefunden",
       "minCharacters": "Bitte gib mindestens {minCharacters} Zeichen ein",
@@ -46,6 +47,19 @@
     "title": "Prozess geteilt",
     "success": "Dein Prozess wurde erfolgreich geteilt. Du kannst den Link kopieren und teilen.",
     "hintReshare": "Wenn du etwas an deinem Prozess änderst, musst du ihn erneut teilen, da ein neuer Link erstellt wird."
+  },
+  "detailModal": {
+    "title": "Eigenschaften",
+    "manufacturer": "Hersteller",
+    "category": "Kategorie",
+    "type": "Typ",
+    "compatible": "CAI kompatibel",
+    "supportedVersions": "Unterstützte Versionen",
+    "myVersionCompatible": "Meine Version ist kompatibel",
+    "incorrectInfo": "Falsche Informationen?",
+    "additionalInfo": "Zusätzliche Informationen",
+    "contactMaintainer": "Fehler melden",
+    "viewGithub": "Auf GitHub ansehen"
   },
   "share": "Teilen",
   "save": "Speichern",
@@ -59,5 +73,7 @@
   "search": "Suche",
   "category": "Kategorie | Kategorien",
   "back": "Zurück",
-  "copy": "Kopieren"
+  "copy": "Kopieren",
+  "yes": "Ja",
+  "no": "Nein"
 }

@@ -27,6 +27,12 @@ export interface Workflow {
   edges: Map<string, Edge>;
 }
 
+/** Node data to reconstruct node in frontend */
+interface SavedNodeData {
+  componentId: string;
+  satisfiesMinimalVersion?: boolean;
+}
+
 /**
  * Workflow saved in the database or local storage
  */
@@ -34,7 +40,7 @@ export interface SavedWorkflow {
   name: string;
   id: string; // assigned by db or frontend
   adjacencies: { id: string; data: Adjacency }[];
-  nodes: { id: string; componentId: string }[];
+  nodes: { id: string; data: SavedNodeData }[];
   customNodes: { id: string; data: CustomComponent }[];
   edges: { id: string; data: Edge }[];
 }

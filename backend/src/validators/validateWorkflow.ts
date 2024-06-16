@@ -14,7 +14,10 @@ const adjacencyValidationSchema = Joi.object<SavedWorkflow['adjacencies'][0]>({
 /** Schema to validate a single node entry */
 const nodeValidationSchema = Joi.object<SavedWorkflow['nodes'][0]>({
   id: Joi.string().required(),
-  componentId: objectIdValidation.required(),
+  data: Joi.object({
+    componentId: objectIdValidation.required(),
+    satisfiesMinimalVersion: Joi.boolean(),
+  }).required(),
 });
 
 /** Schema to validate a single custom node entry */

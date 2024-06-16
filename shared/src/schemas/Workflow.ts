@@ -69,9 +69,15 @@ const WorkflowSchema = new Schema<SavedWorkflow>({
         type: String,
         required: true,
       },
-      componentId: {
-        type: Schema.Types.ObjectId,
-        required: true,
+      data: {
+        componentId: {
+          type: Schema.Types.ObjectId,
+          required: true,
+        },
+        satisfiesMinimalVersion: {
+          type: Boolean,
+          required: false,
+        },
       },
       _id: false,
     },

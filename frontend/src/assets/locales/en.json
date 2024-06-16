@@ -36,6 +36,7 @@
     "title": "Add component",
     "searchComponents": "Search components",
     "clearSearch": "Clear search",
+    "versionInterception": "Is your Version of {component} equal to or greater than {version}?",
     "errors": {
       "noResults": "No components found",
       "minCharacters": "Please enter at least {minCharacters} characters",
@@ -46,6 +47,19 @@
     "title": "Shared workflow",
     "success": "Your workflow was shared successfully. You can now copy the link below and share it.",
     "hintReshare": "If you change something on your workflow you will need to share it again, as a new link will be created."
+  },
+  "detailModal": {
+    "title": "Detail modal",
+    "manufacturer": "Manufacturer",
+    "category": "Category",
+    "type": "Type",
+    "compatible": "CAI compatible",
+    "supportedVersions": "Supported versions",
+    "myVersionCompatible": "My version is compatible",
+    "incorrectInfo": "Incorrect information?",
+    "additionalInfo": "Additional information",
+    "contactMaintainer": "Contact maintainer",
+    "viewGithub": "View on GitHub"
   },
   "share": "Share",
   "save": "Save",
@@ -59,5 +73,7 @@
   "search": "Search",
   "category": "Category | Categories",
   "back": "Back",
-  "copy": "Copy"
+  "copy": "Copy",
+  "yes": "Yes",
+  "no": "No"
 }
