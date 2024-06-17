@@ -30,6 +30,7 @@ const value = defineModel<boolean>();
 <style scoped lang="scss">
 .bool-pill {
   display: flex;
+  max-width: fit-content;
   overflow: hidden;
   border-radius: 9999px;
 

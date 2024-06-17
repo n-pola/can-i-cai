@@ -75,5 +75,6 @@
   "back": "Zurück",
   "copy": "Kopieren",
   "yes": "Ja",
-  "no": "Nein"
+  "no": "Nein",
+  "selectOptionPlaceholder": "Option auswählen"
 }

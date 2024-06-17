@@ -75,5 +75,6 @@
   "back": "Back",
   "copy": "Copy",
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "selectOptionPlaceholder": "Select option"
 }

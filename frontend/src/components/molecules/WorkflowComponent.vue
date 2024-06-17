@@ -60,7 +60,7 @@ defineExpose({
     </div>
     <div class="component__content">
       <h4 :title="component.name" class="component__title">{{ component.name }}</h4>
-      <p class="component__manufacturer">{{ manufacturer }}</p>
+      <p class="component__manufacturer">{{ manufacturer || '&nbsp;' }}</p>
     </div>
     <div class="component__action" v-if="showDelete">
       <button

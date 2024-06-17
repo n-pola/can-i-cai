@@ -314,6 +314,7 @@ export const useWorkflowStore = defineStore('workflow', {
           id,
           data: { componentId: data.id, satisfiesMinimalVersion: data.satisfiesMinimalVersion },
         })),
+        // TODO: actually parse custom nodes
         customNodes: [],
         edges: Array.from(this.edges).map(([id, data]) => ({
           id,
@@ -336,6 +337,7 @@ export const useWorkflowStore = defineStore('workflow', {
       await this.reconstructWorkflow(workflow);
     },
     async reconstructWorkflow(workflow: SavedWorkflow): Promise<void> {
+      // TODO: reconstruct custom nodes
       this.clearWorkflow();
       const componentsStore = useComponentsStore();
 

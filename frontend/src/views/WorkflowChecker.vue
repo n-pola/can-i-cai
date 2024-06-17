@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { PopulatedComponent } from 'cic-shared';
+import type { PopulatedComponent, PopulatedCustomComponent } from 'cic-shared';
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useComponentsStore } from '@/stores/components';
 import { useI18n } from 'vue-i18n';
 import { shareWorkflow } from '@/api/workflow';
-import type { FrontendNode } from '@/types/workflow';
+import type { ComponentType, FrontendNode } from '@/types/workflow';
 
 import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
 import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
@@ -15,6 +15,7 @@ import WorkflowSummary from '@/components/organisms/WorkflowSummary.vue';
 import CheckerTools from '@/components/organisms/CheckerTools.vue';
 import SharedModal from '@/components/organisms/SharedModal.vue';
 import VersionInterceptionModal from '@/components/organisms/VersionInterceptionModal.vue';
+import AddCustomComponentModal from '@/components/organisms/AddCustomComponentModal.vue';
 
 // Hooks
 const toast = useToast();
@@ -30,6 +31,7 @@ const detailModalIsOpen = ref(false);
 const selectedNode = ref<FrontendNode | null>(null);
 
 const addComponentModalIsOpen = ref(false);
+const addCustomComponentModalIsOpen = ref(false);
 const tmpId = ref<string | null>(null);
 const addType = ref<'after' | 'between'>('after');
 
@@ -43,6 +45,7 @@ const versionInterceptionComponent = ref<PopulatedComponent | null>(null);
 
 /** Handle node click event and open detail modal */
 const handleNodeClick = (nodeId: string) => {
+  // TODO: show custom component Form on custom component click
   const node = workflowStore.nodes.get(nodeId);
   if (!node) throw new Error(`Node with id ${nodeId} not found`);
   selectedNode.value = node;
@@ -51,7 +54,7 @@ const handleNodeClick = (nodeId: string) => {
 
 /** Add a component to the workflow based on current addType */
 const handleAddComponent = async (
-  component: PopulatedComponent,
+  component: PopulatedComponent | PopulatedCustomComponent,
   satisfiesMinimalVersion?: boolean,
 ) => {
   if (tmpId.value) {
@@ -109,6 +112,12 @@ const handleAddComponentRequested = (id?: string) => {
   tmpId.value = id || null;
   if (id) {
     addType.value = 'after';
+  }
+};
+
+const handleAddSpecialComponentRequested = (type: ComponentType) => {
+  if (type === 'custom') {
+    addCustomComponentModalIsOpen.value = true;
   }
 };
 
@@ -203,13 +212,21 @@ const handleShare = async () => {
       :component="selectedNode"
       id="123"
     />
-    <AddComponentModal v-model="addComponentModalIsOpen" @add-component="interceptAddComponent" />
+    <AddComponentModal
+      v-model="addComponentModalIsOpen"
+      @add-component="interceptAddComponent"
+      @add-special-component="handleAddSpecialComponentRequested"
+    />
     <SharedModal v-if="sharedWorkflowId" v-model="sharedModalIsOpen" :id="sharedWorkflowId" />
     <VersionInterceptionModal
       v-if="versionInterceptionComponent"
       v-model="versionInterceptionModalIsOpen"
       :component="versionInterceptionComponent"
       @decision="handleVersionInterceptionDecision"
+    />
+    <AddCustomComponentModal
+      v-model="addCustomComponentModalIsOpen"
+      @add-custom-component="handleAddComponent"
     />
   </div>
 </template>
