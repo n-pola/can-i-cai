@@ -1,6 +1,4 @@
-import type { Category, Edge, Workflow, Node } from 'cic-shared';
-
-export type ComponentType = 'custom' | 'external-image';
+import type { Category, Edge, Workflow, Node, ComponentType } from 'cic-shared';
 
 /** Additional category not provided by backend, as it as custom logic in frontend */
 export type AdditionalCategory = Omit<Category, 'id'> & { type: ComponentType };

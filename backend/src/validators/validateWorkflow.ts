@@ -24,13 +24,15 @@ const nodeValidationSchema = Joi.object<SavedWorkflow['nodes'][0]>({
 const customNodeValidationSchema = Joi.object<SavedWorkflow['customNodes'][0]>({
   id: Joi.string().required(),
   data: Joi.object({
+    id: Joi.string().required(),
     name: Joi.string().required(),
     type: Joi.string().valid('input', 'output', 'input-output').required(),
     compatible: Joi.boolean().required(),
     minimalRequiredVersion: Joi.string(),
     additionalInfo: Joi.string(),
-    manufacturer: Joi.string().required(),
+    manufacturer: Joi.string().allow(''),
     category: objectIdValidation.required(),
+    dataType: Joi.string().valid('custom', 'external-image').required(),
   }).required(),
 });
 

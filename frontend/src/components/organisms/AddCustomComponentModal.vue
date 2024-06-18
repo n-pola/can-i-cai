@@ -9,12 +9,13 @@ import { useCategoryStore } from '@/stores/category';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SupportedLanguage } from '@/types/language';
-import type { ComponentBase, PopulatedCustomComponent } from 'cic-shared';
+import type { ComponentBase, PopulatedCustomComponent, ComponentType } from 'cic-shared';
+import { v4 as uuid } from 'uuid';
 
 const isOpen = defineModel<boolean>();
 
 const emit = defineEmits<{
-  addCustomComponent: [component: PopulatedCustomComponent];
+  addCustomComponent: [component: PopulatedCustomComponent, type: ComponentType];
 }>();
 
 const categoryStore = useCategoryStore();
@@ -43,7 +44,7 @@ const handleSubmit = (e: SubmitEvent) => {
   }
 
   const component: PopulatedCustomComponent = {
-    id: 'custom-component',
+    id: uuid(),
     name: name.value,
     manufacturer: manufacturer.value,
     category: fullCategory,
@@ -51,7 +52,7 @@ const handleSubmit = (e: SubmitEvent) => {
     compatible: compatible.value,
   };
 
-  emit('addCustomComponent', component);
+  emit('addCustomComponent', component, 'custom');
   (e.target as HTMLFormElement).reset();
   isOpen.value = false;
 };

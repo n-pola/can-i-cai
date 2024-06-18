@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { PopulatedComponent, PopulatedCustomComponent } from 'cic-shared';
+import type { PopulatedComponent, PopulatedCustomComponent, ComponentType } from 'cic-shared';
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useComponentsStore } from '@/stores/components';
 import { useI18n } from 'vue-i18n';
 import { shareWorkflow } from '@/api/workflow';
-import type { ComponentType, FrontendNode } from '@/types/workflow';
+import type { FrontendNode } from '@/types/workflow';
 
 import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
 import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
@@ -56,14 +56,15 @@ const handleNodeClick = (nodeId: string) => {
 const handleAddComponent = async (
   component: PopulatedComponent | PopulatedCustomComponent,
   satisfiesMinimalVersion?: boolean,
+  type?: ComponentType,
 ) => {
   if (tmpId.value) {
     switch (addType.value) {
       case 'after':
-        workflowStore.addNodeAfter(component, tmpId.value, satisfiesMinimalVersion);
+        workflowStore.addNodeAfter(component, tmpId.value, satisfiesMinimalVersion, type);
         break;
       case 'between':
-        workflowStore.addNodeBetween(component, tmpId.value, satisfiesMinimalVersion);
+        workflowStore.addNodeBetween(component, tmpId.value, satisfiesMinimalVersion, type);
         break;
       default:
         throw new Error('Invalid add type');
@@ -72,7 +73,7 @@ const handleAddComponent = async (
     return;
   }
 
-  workflowStore.addNode(component, undefined, undefined, satisfiesMinimalVersion);
+  workflowStore.addNode(component, undefined, undefined, satisfiesMinimalVersion, type);
 };
 
 /**
@@ -226,7 +227,7 @@ const handleShare = async () => {
     />
     <AddCustomComponentModal
       v-model="addCustomComponentModalIsOpen"
-      @add-custom-component="handleAddComponent"
+      @add-custom-component="(component, type) => handleAddComponent(component, undefined, type)"
     />
   </div>
 </template>

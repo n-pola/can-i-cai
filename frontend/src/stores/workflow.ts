@@ -9,6 +9,7 @@ import type {
 } from '@/types/workflow';
 import { cssVariables } from '@/utils/cssVariables';
 import { useComponentsStore } from '@/stores/components';
+import { useCategoryStore } from '@/stores/category';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 import { NodeHelper } from '@/helpers/nodeHelper';
 
@@ -177,12 +178,14 @@ export const useWorkflowStore = defineStore('workflow', {
       boundingBox?: BoundingBox,
       loadedId?: string,
       satisfiesMinimalVersion?: boolean,
+      type?: FrontendNode['dataType'],
     ): string {
       const id = loadedId || uuid();
       this.nodes.set(id, {
         ...node,
         satisfiesMinimalVersion,
         boundingBox: boundingBox ?? { x: 0, y: 0, width: 0, height: 0 },
+        ...(type ? { dataType: type } : {}),
       });
       this.adjacencies.set(id, { in: [], out: [] });
       return id;
@@ -191,14 +194,16 @@ export const useWorkflowStore = defineStore('workflow', {
       node: PopulatedComponent | PopulatedCustomComponent,
       after: string,
       satisfiesMinimalVersion?: boolean,
+      type?: FrontendNode['dataType'],
     ): void {
-      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion);
+      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
       this.addEdge(after, id);
     },
     addNodeBetween(
       node: PopulatedComponent | PopulatedCustomComponent,
       edgeId: string,
       satisfiesMinimalVersion?: boolean,
+      type?: FrontendNode['dataType'],
     ): void {
       const edge = this.edges.get(edgeId);
 
@@ -206,7 +211,7 @@ export const useWorkflowStore = defineStore('workflow', {
         return;
       }
 
-      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion);
+      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
       const { source, target } = edge;
 
       this.removeEdge(edgeId);
@@ -310,12 +315,27 @@ export const useWorkflowStore = defineStore('workflow', {
         name: this.name!,
         id: workflowId,
         adjacencies: Array.from(this.adjacencies).map(([id, data]) => ({ id, data })),
-        nodes: Array.from(this.nodes).map(([id, data]) => ({
-          id,
-          data: { componentId: data.id, satisfiesMinimalVersion: data.satisfiesMinimalVersion },
-        })),
-        // TODO: actually parse custom nodes
-        customNodes: [],
+        nodes: Array.from(this.nodes)
+          .filter(([, data]) => data.dataType === undefined)
+          .map(([id, data]) => ({
+            id,
+            data: { componentId: data.id, satisfiesMinimalVersion: data.satisfiesMinimalVersion },
+          })),
+        customNodes: Array.from(this.nodes)
+          .filter(([, data]) => data.dataType)
+          .map(([id, data]) => ({
+            id,
+            data: {
+              id: data.id,
+              name: data.name,
+              compatible: data.compatible,
+              type: data.type,
+              category: data.category.id,
+              manufacturer:
+                typeof data.manufacturer === 'string' ? data.manufacturer : data.manufacturer.name,
+              dataType: data.dataType,
+            },
+          })),
         edges: Array.from(this.edges).map(([id, data]) => ({
           id,
           data: { source: data.source, target: data.target },
@@ -337,9 +357,9 @@ export const useWorkflowStore = defineStore('workflow', {
       await this.reconstructWorkflow(workflow);
     },
     async reconstructWorkflow(workflow: SavedWorkflow): Promise<void> {
-      // TODO: reconstruct custom nodes
       this.clearWorkflow();
       const componentsStore = useComponentsStore();
+      const categoryStore = useCategoryStore();
 
       this.id = workflow.id;
       this.name = workflow.name;
@@ -353,7 +373,23 @@ export const useWorkflowStore = defineStore('workflow', {
         }),
       );
 
+      await categoryStore.getAllCategories();
+
       await Promise.all(loadedNodes);
+
+      workflow.customNodes.forEach(({ id, data }) => {
+        const category = categoryStore.categories.get(data.category);
+        if (!category) {
+          return;
+        }
+
+        const populated: PopulatedCustomComponent = {
+          ...data,
+          category,
+        };
+
+        this.addNode(populated, undefined, id, undefined, 'custom');
+      });
 
       workflow.edges.forEach(({ id, data }) => {
         this.addEdge(data.source, data.target, id);

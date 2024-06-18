@@ -5,8 +5,8 @@ import { useToast } from 'vue-toastification';
 import { useI18n } from 'vue-i18n';
 import { searchComponents } from '@/api/search';
 import HttpError from '@/types/httpError';
-import type { CategoryResponse, SearchResponse } from 'cic-shared';
-import type { ComponentType, AdditionalCategory } from '@/types/workflow';
+import type { ComponentType, CategoryResponse, SearchResponse } from 'cic-shared';
+import type { AdditionalCategory } from '@/types/workflow';
 
 import Modal from '@/components/atoms/Modal.vue';
 import CategoryItem from '@/components/atoms/CategoryItem.vue';

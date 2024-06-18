@@ -20,12 +20,7 @@ export const getWorkflow: RequestHandler<WorkflowParams> = async (
     }
 
     // Get workflow by ID
-    const workflow = await WorkflowModel.findById(id).populate({
-      path: 'customNodes',
-      populate: {
-        path: 'data.category',
-      },
-    });
+    const workflow = await WorkflowModel.findById(id);
 
     if (!workflow) {
       return next(new HttpError('Workflow not found', 404));
