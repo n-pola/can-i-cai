@@ -46,6 +46,7 @@ const copyToClipboard = () => {
             id="share-link"
             label="Share Link"
             icon="content_copy"
+            :overflow-ellipsis="true"
             :model-value="shareLink"
             :readonly="true"
             @buttonClick="copyToClipboard"
