@@ -74,7 +74,6 @@ const handleScroll = (event: WheelEvent) => {
   };
 };
 
-// TODO: no fixed values
 const centerPlane = () => {
   if (!editorRef.value) return;
   let x = -((editorRef.value.clientWidth || 0) / 2);
