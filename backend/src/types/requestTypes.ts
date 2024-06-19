@@ -3,7 +3,11 @@ export interface SearchQuery {
 }
 
 export interface CategoryParams {
-  id: string;
+  id?: string;
+}
+
+export interface CategoryQuery {
+  compatible?: boolean;
 }
 
 export interface ComponentParams {
