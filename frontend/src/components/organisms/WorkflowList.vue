@@ -3,6 +3,7 @@ import { type WorkflowStorageItem } from '@/types/workflow';
 import Button from '@/components/atoms/Button.vue';
 import { useI18n } from 'vue-i18n';
 import WorkflowListItem from '@/components/molecules/WorkflowListItem.vue';
+import { useRouter } from 'vue-router';
 
 // Component setup
 defineProps<{
@@ -16,6 +17,12 @@ const emit = defineEmits<{
 
 // Hooks
 const i18n = useI18n();
+const router = useRouter();
+
+// Functions
+const handleWorkflowClick = (id: string) => {
+  router.push(`/check/${id}`);
+};
 </script>
 
 <template>
@@ -28,9 +35,11 @@ const i18n = useI18n();
     </div>
     <ul class="workflow-list__list">
       <li v-for="workflow in workflows" :key="workflow.id" class="workflow-list__list-item">
-        <RouterLink :to="`/check/${workflow.id}`">
-          <WorkflowListItem :workflow="workflow" @delete="emit('delete', workflow.id)" />
-        </RouterLink>
+        <WorkflowListItem
+          :workflow="workflow"
+          @delete="emit('delete', workflow.id)"
+          @click="handleWorkflowClick(workflow.id)"
+        />
       </li>
     </ul>
   </div>
