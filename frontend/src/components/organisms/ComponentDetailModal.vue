@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect, toRef } from 'vue';
+import { computed, ref, watchEffect, toRef, onMounted } from 'vue';
 import Modal from '@/components/atoms/Modal.vue';
 import Button from '@/components/atoms/Button.vue';
 import BooleanInputPill from '@/components/molecules/BooleanInputPill.vue';
 import type { FrontendNode } from '@/types/workflow';
 import { useI18n } from 'vue-i18n';
+import { type PopulatedComponent } from 'cic-shared';
+import { getCategoryWithCompatibility } from '@/api/categories';
+import WorkflowComponent from '../molecules/WorkflowComponent.vue';
 
 // Component setup
 const props = defineProps<{
@@ -14,6 +17,7 @@ const props = defineProps<{
 const isOpen = defineModel<boolean>();
 const showMissingInfo = ref(false);
 const satisfiesMinimalVersion = toRef(props.component, 'satisfiesMinimalVersion');
+const alternatives = ref<PopulatedComponent[]>([]);
 
 // Hooks
 const i18n = useI18n();
@@ -62,6 +66,18 @@ const content = computed(() => {
     },
   ];
 });
+
+onMounted(() => {
+  if (props.component.compatible) return;
+
+  getCategoryWithCompatibility(props.component.category.id, true)
+    .then((data) => {
+      alternatives.value = data.components;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+});
 </script>
 
 <template>
@@ -95,6 +111,16 @@ const content = computed(() => {
       <div v-if="component.additionalInfo" class="component-details__additional-info">
         <h4>{{ i18n.t('detailModal.additionalInfo') }}</h4>
         <div v-html="component.additionalInfo"></div>
+      </div>
+      <div class="component-details__alternative" v-if="alternatives.length">
+        <h4>Compatible alternatives</h4>
+        <WorkflowComponent
+          v-for="alternative in alternatives.slice(0, 3)"
+          :key="alternative.id"
+          :component="alternative"
+          :show-compatibility="false"
+          :show-delete="false"
+        />
       </div>
     </div>
 
@@ -182,6 +208,16 @@ const content = computed(() => {
       &:hover {
         text-decoration: underline;
       }
+    }
+  }
+
+  &__alternative {
+    display: flex;
+    flex-flow: column;
+    gap: $xxs;
+
+    & > div {
+      pointer-events: none;
     }
   }
 }

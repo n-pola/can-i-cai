@@ -19,3 +19,15 @@ export const getCategory = async (id: string): Promise<CategoryResponse> =>
 
     return response.json();
   });
+
+export const getCategoryWithCompatibility = async (
+  id: string,
+  compatible: boolean,
+): Promise<CategoryResponse> =>
+  fetch(`${config.api.url}/categories/${id}?compatible=${compatible}`).then((response) => {
+    if (!response.ok) {
+      throw new HttpError(response.statusText, response.status);
+    }
+
+    return response.json();
+  });
