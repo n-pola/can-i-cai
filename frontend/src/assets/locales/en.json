@@ -83,5 +83,11 @@
   "selectOptionPlaceholder": "Select option",
   "add": "Add",
   "update": "Update",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "abort": "Abort",
+  "deleteWorkflows": "Delete workflows",
+  "deleteWorkflowConfirmation": "Are you sure you want to delete the workflow \"{name}\"?",
+  "deleteAllWorkflowsConfirmation": "Are you sure you want to delete all saved workflows?",
+  "delete": "Delete"
 }

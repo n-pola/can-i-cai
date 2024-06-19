@@ -83,5 +83,11 @@
   "selectOptionPlaceholder": "Option auswählen",
   "add": "Hinzufügen",
   "update": "Aktualisieren",
-  "cancel": "Abbrechen"
+  "cancel": "Abbrechen",
+  "confirm": "Bestätigen",
+  "abort": "Abbrechen",
+  "deleteWorkflows": "Prozesse löschen",
+  "deleteWorkflowConfirmation": "Bist du sicher, dass du den Prozess \"{name}\" löschen möchtest?",
+  "deleteAllWorkflowsConfirmation": "Bist du sicher, dass du alle gespeicherten Prozesse löschen möchtest?",
+  "delete": "Löschen"
 }

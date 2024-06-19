@@ -7,6 +7,7 @@ import { useComponentsStore } from '@/stores/components';
 import { useI18n } from 'vue-i18n';
 import { shareWorkflow } from '@/api/workflow';
 import type { FrontendNode } from '@/types/workflow';
+import { useModalInterception } from '@/hooks/useModalInterception';
 
 import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
 import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
@@ -22,6 +23,13 @@ const toast = useToast();
 const workflowStore = useWorkflowStore();
 const componentsStore = useComponentsStore();
 const i18n = useI18n();
+const {
+  interceptAction: interceptAddComponent,
+  confirmAction: confirmVersionInterceptionModal,
+  abortAction: abortVersionInterceptionModal,
+  isOpen: versionInterceptionModalIsOpen,
+  tmpData: versionInterceptionData,
+} = useModalInterception();
 
 // Data
 const workflowPlane = ref<InstanceType<typeof WorkflowPlane> | null>(null);
@@ -39,9 +47,6 @@ const editCustomComponent = ref<PopulatedCustomComponent | null>(null);
 
 const sharedModalIsOpen = ref(false);
 const sharedWorkflowId = ref<string | null>(null);
-
-const versionInterceptionModalIsOpen = ref(false);
-const versionInterceptionComponent = ref<PopulatedComponent | null>(null);
 
 // Functions
 
@@ -62,7 +67,7 @@ const handleNodeClick = (nodeId: string) => {
 };
 
 /** Add a component to the workflow based on current addType */
-const handleAddComponent = async (
+const addComponent = async (
   component: PopulatedComponent | PopulatedCustomComponent,
   satisfiesMinimalVersion?: boolean,
   type?: ComponentType,
@@ -90,7 +95,7 @@ const handleAddComponent = async (
  * If it has, open a modal to ask the user if their version satisfies the minimal version.
  * @param id - The id of the component to add
  */
-const interceptAddComponent = async (id: string) => {
+const handleAddComponent = async (id: string) => {
   const component = await componentsStore.getComponent(id);
 
   if (!component) {
@@ -99,12 +104,17 @@ const interceptAddComponent = async (id: string) => {
   }
 
   if (!component.minimalRequiredVersion) {
-    handleAddComponent(component);
+    addComponent(component);
     return;
   }
 
-  versionInterceptionModalIsOpen.value = true;
-  versionInterceptionComponent.value = component;
+  interceptAddComponent(
+    () => addComponent(component, true),
+    () => addComponent(component, false),
+    {
+      component,
+    },
+  );
 };
 
 /**
@@ -138,13 +148,6 @@ const handleAddSpecialComponentRequested = (type: ComponentType) => {
   if (type === 'custom') {
     addCustomComponentModalIsOpen.value = true;
   }
-};
-
-/** Handle the decision of the user if their version satisfies the minimal version or not and add component */
-const handleVersionInterceptionDecision = (aboveMinimalVersion: boolean) => {
-  versionInterceptionModalIsOpen.value = false;
-  handleAddComponent(versionInterceptionComponent.value!, aboveMinimalVersion);
-  versionInterceptionComponent.value = null;
 };
 
 /** Try to save current workflow to local storage and communicate errors */
@@ -205,6 +208,13 @@ watch(addCustomComponentModalIsOpen, (isOpen) => {
     editCustomComponent.value = null;
   }
 });
+
+// Clear selected node when detail modal is closed
+watch(detailModalIsOpen, (isOpen) => {
+  if (!isOpen) {
+    selectedNode.value = null;
+  }
+});
 </script>
 
 <template>
@@ -241,19 +251,20 @@ watch(addCustomComponentModalIsOpen, (isOpen) => {
     />
     <AddComponentModal
       v-model="addComponentModalIsOpen"
-      @add-component="interceptAddComponent"
+      @add-component="handleAddComponent"
       @add-special-component="handleAddSpecialComponentRequested"
     />
     <SharedModal v-if="sharedWorkflowId" v-model="sharedModalIsOpen" :id="sharedWorkflowId" />
     <VersionInterceptionModal
-      v-if="versionInterceptionComponent"
+      v-if="versionInterceptionData.component"
       v-model="versionInterceptionModalIsOpen"
-      :component="versionInterceptionComponent"
-      @decision="handleVersionInterceptionDecision"
+      :component="versionInterceptionData.component"
+      @confirm="confirmVersionInterceptionModal"
+      @abort="abortVersionInterceptionModal"
     />
     <AddCustomComponentModal
       v-model="addCustomComponentModalIsOpen"
-      @add-custom-component="(component, type) => handleAddComponent(component, undefined, type)"
+      @add-custom-component="(component, type) => addComponent(component, undefined, type)"
       @update-custom-component="handleUpdateComponent"
       :initial-data="editCustomComponent"
     />

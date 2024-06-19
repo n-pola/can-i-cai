@@ -4,27 +4,59 @@ import { useI18n } from 'vue-i18n';
 import WorkflowList from '@/components/organisms/WorkflowList.vue';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 import { useRouter } from 'vue-router';
+import { useModalInterception } from '@/hooks/useModalInterception';
+import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
 
+// Hooks
 const i18n = useI18n();
 const router = useRouter();
+const {
+  interceptAction: interceptDeleteAll,
+  confirmAction: confirmDeleteAll,
+  abortAction: abortDeleteAll,
+  isOpen: deleteAllModalIsOpen,
+} = useModalInterception();
+const {
+  interceptAction: interceptDelete,
+  confirmAction: confirmDelete,
+  abortAction: abortDelete,
+  isOpen: deleteModalIsOpen,
+  tmpData: deleteTmpData,
+} = useModalInterception();
 
+// Data
 const workflows = ref(WorkflowStorageHelper.getWorkflowStorage());
 
 if (!workflows.value) {
   router.replace('/');
 }
 
-const handleDeleteAll = () => {
-  // TODO: intercept with confirmation dialog
+// Functions
+const deleteAllWorkflows = () => {
   WorkflowStorageHelper.clearAllWorkflows();
   router.replace('/');
   workflows.value = WorkflowStorageHelper.getWorkflowStorage();
 };
 
+const handleDeleteAll = () => {
+  interceptDeleteAll(deleteAllWorkflows, () => {});
+};
+
 const handleDelete = (id: string) => {
-  // TODO: intercept with confirmation dialog
-  WorkflowStorageHelper.removeWorkflow(id);
-  workflows.value = WorkflowStorageHelper.getWorkflowStorage();
+  const workflow = workflows.value?.find((w) => w.id === id);
+
+  if (!workflow) {
+    return;
+  }
+
+  interceptDelete(
+    () => {
+      WorkflowStorageHelper.removeWorkflow(id);
+      workflows.value = WorkflowStorageHelper.getWorkflowStorage();
+    },
+    () => {},
+    { name: workflow.name },
+  );
 };
 </script>
 
@@ -40,6 +72,26 @@ const handleDelete = (id: string) => {
       />
     </section>
   </div>
+  <ConfirmModal
+    v-model="deleteAllModalIsOpen"
+    @confirm="confirmDeleteAll"
+    @abort="abortDeleteAll"
+    :title="i18n.t('deleteWorkflows')"
+    :message="i18n.t('deleteAllWorkflowsConfirmation')"
+    color="error"
+    confirm-color="error"
+    :confirm-text="i18n.t('delete')"
+  />
+  <ConfirmModal
+    v-model="deleteModalIsOpen"
+    @confirm="confirmDelete"
+    @abort="abortDelete"
+    :title="i18n.t('deleteWorkflow')"
+    :message="i18n.t('deleteWorkflowConfirmation', { name: deleteTmpData.name })"
+    color="error"
+    confirm-color="error"
+    :confirm-text="i18n.t('delete')"
+  />
 </template>
 
 <style lang="scss" scoped>
