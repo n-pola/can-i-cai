@@ -208,6 +208,13 @@ watch(addCustomComponentModalIsOpen, (isOpen) => {
     editCustomComponent.value = null;
   }
 });
+
+// Clear selected node when detail modal is closed
+watch(detailModalIsOpen, (isOpen) => {
+  if (!isOpen) {
+    selectedNode.value = null;
+  }
+});
 </script>
 
 <template>
