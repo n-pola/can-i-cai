@@ -12,7 +12,8 @@ defineProps<{
 const isOpen = defineModel<boolean>();
 
 const emit = defineEmits<{
-  decision: [aboveMinimalVersion: boolean];
+  confirm: [];
+  abort: [];
 }>();
 
 // Hooks
@@ -40,10 +41,10 @@ const i18n = useI18n();
 
     <template #footer>
       <div class="version-interception-modal__footer">
-        <Button color="secondary" @click="emit('decision', false)">
+        <Button color="secondary" @click="emit('abort')">
           {{ i18n.t('no') }}
         </Button>
-        <Button @click="emit('decision', true)">
+        <Button @click="emit('confirm')">
           {{ i18n.t('yes') }}
         </Button>
       </div>
