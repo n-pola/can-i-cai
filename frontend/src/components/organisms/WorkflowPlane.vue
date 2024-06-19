@@ -81,8 +81,23 @@ const centerPlane = () => {
   let y = -((editorRef.value.clientHeight || 0) / 2);
 
   if (workflow.nodes.size) {
-    x -= -240 / 2;
-    y += (workflow.nodes.size * 107) / 2;
+    let maxNodeWidth = 0;
+    let maxNodeY = 0;
+
+    workflow.nodes.forEach((node) => {
+      if (node.boundingBox.width > maxNodeWidth) {
+        maxNodeWidth = node.boundingBox.width;
+      }
+
+      const nodeY = node.boundingBox.y + node.boundingBox.height;
+
+      if (nodeY > maxNodeY) {
+        maxNodeY = nodeY;
+      }
+    });
+
+    x -= -maxNodeWidth / 2;
+    y += maxNodeY / 2;
   }
 
   viewPort.value = {
