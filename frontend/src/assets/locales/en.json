@@ -61,6 +61,10 @@
     "contactMaintainer": "Contact maintainer",
     "viewGithub": "View on GitHub"
   },
+  "customComponentModal": {
+    "titleAdd": "Add custom component",
+    "titleEdit": "Edit custom component"
+  },
   "share": "Share",
   "save": "Save",
   "untitledWorkflow": "Untitled workflow",
@@ -76,5 +80,8 @@
   "copy": "Copy",
   "yes": "Yes",
   "no": "No",
-  "selectOptionPlaceholder": "Select option"
+  "selectOptionPlaceholder": "Select option",
+  "add": "Add",
+  "update": "Update",
+  "cancel": "Cancel"
 }

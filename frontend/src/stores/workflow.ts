@@ -190,6 +190,16 @@ export const useWorkflowStore = defineStore('workflow', {
       this.adjacencies.set(id, { in: [], out: [] });
       return id;
     },
+    updateNodeData(id: string, node: PopulatedComponent | PopulatedCustomComponent): void {
+      const currentData = this.nodes.get(id);
+      if (!currentData) {
+        return;
+      }
+
+      const updatedNode = { ...currentData, ...node };
+
+      this.nodes.set(id, updatedNode);
+    },
     addNodeAfter(
       node: PopulatedComponent | PopulatedCustomComponent,
       after: string,

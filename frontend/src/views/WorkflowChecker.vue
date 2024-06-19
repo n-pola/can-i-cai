@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PopulatedComponent, PopulatedCustomComponent, ComponentType } from 'cic-shared';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useComponentsStore } from '@/stores/components';
@@ -29,11 +29,13 @@ const mode = ref<'select' | 'move'>('select');
 
 const detailModalIsOpen = ref(false);
 const selectedNode = ref<FrontendNode | null>(null);
+const selectedNodeId = ref<string | null>(null);
 
 const addComponentModalIsOpen = ref(false);
 const addCustomComponentModalIsOpen = ref(false);
 const tmpId = ref<string | null>(null);
 const addType = ref<'after' | 'between'>('after');
+const editCustomComponent = ref<PopulatedCustomComponent | null>(null);
 
 const sharedModalIsOpen = ref(false);
 const sharedWorkflowId = ref<string | null>(null);
@@ -45,9 +47,16 @@ const versionInterceptionComponent = ref<PopulatedComponent | null>(null);
 
 /** Handle node click event and open detail modal */
 const handleNodeClick = (nodeId: string) => {
-  // TODO: show custom component Form on custom component click
   const node = workflowStore.nodes.get(nodeId);
   if (!node) throw new Error(`Node with id ${nodeId} not found`);
+
+  if (node.dataType === 'custom') {
+    selectedNodeId.value = nodeId;
+    editCustomComponent.value = node as PopulatedCustomComponent;
+    addCustomComponentModalIsOpen.value = true;
+    return;
+  }
+
   selectedNode.value = node;
   detailModalIsOpen.value = true;
 };
@@ -96,6 +105,15 @@ const interceptAddComponent = async (id: string) => {
 
   versionInterceptionModalIsOpen.value = true;
   versionInterceptionComponent.value = component;
+};
+
+/**
+ * Update the data of a custom component and save it to the workflow.
+ */
+const handleUpdateComponent = async (component: PopulatedComponent | PopulatedCustomComponent) => {
+  if (!selectedNodeId.value) return;
+
+  workflowStore.updateNodeData(selectedNodeId.value, component);
 };
 
 /** Prepare state to add new component on edge / between two previous ones and open modal */
@@ -178,6 +196,15 @@ const handleShare = async () => {
     );
   }
 };
+
+// Watchers
+
+// Clear custom component to edit when modal is closed
+watch(addCustomComponentModalIsOpen, (isOpen) => {
+  if (!isOpen) {
+    editCustomComponent.value = null;
+  }
+});
 </script>
 
 <template>
@@ -211,7 +238,6 @@ const handleShare = async () => {
       v-if="selectedNode"
       v-model="detailModalIsOpen"
       :component="selectedNode"
-      id="123"
     />
     <AddComponentModal
       v-model="addComponentModalIsOpen"
@@ -228,6 +254,8 @@ const handleShare = async () => {
     <AddCustomComponentModal
       v-model="addCustomComponentModalIsOpen"
       @add-custom-component="(component, type) => handleAddComponent(component, undefined, type)"
+      @update-custom-component="handleUpdateComponent"
+      :initial-data="editCustomComponent"
     />
   </div>
 </template>

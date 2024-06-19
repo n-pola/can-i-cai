@@ -12,29 +12,44 @@ import type { SupportedLanguage } from '@/types/language';
 import type { ComponentBase, PopulatedCustomComponent, ComponentType } from 'cic-shared';
 import { v4 as uuid } from 'uuid';
 
+// Component definition
+const props = defineProps<{
+  initialData: PopulatedCustomComponent | null;
+}>();
+
 const isOpen = defineModel<boolean>();
 
 const emit = defineEmits<{
   addCustomComponent: [component: PopulatedCustomComponent, type: ComponentType];
+  updateCustomComponent: [component: PopulatedCustomComponent, type: ComponentType];
 }>();
 
+// Hooks
 const categoryStore = useCategoryStore();
-const { locale } = useI18n();
+const { locale, t: translate } = useI18n();
 
+// Data
 const name = ref('');
 const manufacturer = ref('');
 const category = ref('');
 const type = ref<ComponentBase['type']>('input-output');
 const compatible = ref(false);
+const modalContentElement = ref<HTMLDivElement | null>(null);
 
+// Functions
+
+/** Reset the form to its original state */
 const resetForm = () => {
   name.value = '';
   manufacturer.value = '';
   category.value = '';
   type.value = 'input-output';
   compatible.value = false;
+
+  modalContentElement.value?.scrollTo(0, 0);
 };
 
+/** Bring values in correct form, emit event and reset form for next usage */
 const handleSubmit = (e: SubmitEvent) => {
   e.preventDefault();
   const fullCategory = categoryStore.categories.get(category.value);
@@ -52,26 +67,54 @@ const handleSubmit = (e: SubmitEvent) => {
     compatible: compatible.value,
   };
 
-  emit('addCustomComponent', component, 'custom');
+  if (props.initialData) {
+    emit('updateCustomComponent', component, 'custom');
+  } else {
+    emit('addCustomComponent', component, 'custom');
+  }
+
   (e.target as HTMLFormElement).reset();
   isOpen.value = false;
 };
 
+// Watchers
+
+// Reset form when modal is closed
 watch(isOpen, (value) => {
   if (!value) {
     resetForm();
   }
 });
+
+// Set value to initial data when it changes
+watch(
+  () => props.initialData,
+  (value) => {
+    if (value) {
+      name.value = value.name;
+      manufacturer.value = value.manufacturer;
+      category.value = value.category.id;
+      type.value = value.type;
+      compatible.value = value.compatible;
+    }
+  },
+);
 </script>
 
 <template>
   <Modal v-model="isOpen" is-form @submit="handleSubmit">
     <template #header>
-      <h3>Add Custom Component</h3>
+      <h3>
+        {{
+          initialData
+            ? translate('customComponentModal.titleEdit')
+            : translate('customComponentModal.titleAdd')
+        }}
+      </h3>
     </template>
 
     <template #default>
-      <div class="custom-component-modal__body">
+      <div class="custom-component-modal__body" ref="modalContentElement">
         <div class="custom-component-modal__group">
           <label for="name" class="is-h4">Name</label>
           <TextInput
@@ -85,7 +128,9 @@ watch(isOpen, (value) => {
         </div>
 
         <div class="custom-component-modal__group">
-          <label for="manufacturer" class="is-h4">Manufacturer</label>
+          <label for="manufacturer" class="is-h4">{{
+            translate('detailModal.manufacturer')
+          }}</label>
           <TextInput
             id="manufacturer"
             label="Manufacturer"
@@ -96,7 +141,7 @@ watch(isOpen, (value) => {
         </div>
 
         <div class="custom-component-modal__group">
-          <label for="category" class="is-h4">Category</label>
+          <label for="category" class="is-h4">{{ translate('detailModal.category') }}</label>
           <SelectInput
             id="category"
             label="Category"
@@ -107,7 +152,7 @@ watch(isOpen, (value) => {
         </div>
 
         <div class="custom-component-modal__group">
-          <label for="type" class="is-h4">Type</label>
+          <label for="type" class="is-h4">{{ translate('detailModal.type') }}</label>
           <SelectPill
             :options="[
               { id: 'input', name: 'Input' },
@@ -119,7 +164,7 @@ watch(isOpen, (value) => {
         </div>
 
         <div class="custom-component-modal__group">
-          <label for="compatible" class="is-h4">Compatible</label>
+          <label for="compatible" class="is-h4">{{ translate('detailModal.compatible') }}</label>
           <BooleanInputPill id="compatible" label="Compatible" v-model="compatible" />
         </div>
       </div>
@@ -127,10 +172,10 @@ watch(isOpen, (value) => {
 
     <template #footer>
       <div class="custom-component-modal__footer">
-        <Button @click="isOpen = false && resetForm()" type="reset" color="secondary"
-          >Cancel</Button
-        >
-        <Button type="submit">Add</Button>
+        <Button @click="isOpen = false && resetForm()" type="reset" color="secondary">{{
+          translate('cancel')
+        }}</Button>
+        <Button type="submit">{{ initialData ? translate('update') : translate('add') }}</Button>
       </div>
     </template>
   </Modal>
