@@ -5,8 +5,8 @@ import { useToast } from 'vue-toastification';
 import { useI18n } from 'vue-i18n';
 import { searchComponents } from '@/api/search';
 import HttpError from '@/types/httpError';
-import type { CategoryResponse, SearchResponse } from 'cic-shared';
-import type { ComponentType, AdditionalCategory } from '@/types/workflow';
+import type { ComponentType, CategoryResponse, SearchResponse } from 'cic-shared';
+import type { AdditionalCategory } from '@/types/workflow';
 
 import Modal from '@/components/atoms/Modal.vue';
 import CategoryItem from '@/components/atoms/CategoryItem.vue';
@@ -18,7 +18,8 @@ import InputBar from '@/components/molecules/InputBar.vue';
 // Component setup
 const isOpen = defineModel<boolean>();
 const emit = defineEmits<{
-  addComponent: [componentId: string, type: ComponentType];
+  addComponent: [componentId: string];
+  addSpecialComponent: [type: ComponentType];
 }>();
 
 // Hooks
@@ -102,7 +103,7 @@ const handleAddComponent = (componentId: string) => {
   resetComponentState();
 
   isOpen.value = false;
-  emit('addComponent', componentId, 'component');
+  emit('addComponent', componentId);
 };
 
 /** Emit the request to add a special component */
@@ -110,7 +111,7 @@ const handleAddSpecialComponent = (type: ComponentType) => {
   resetComponentState();
 
   isOpen.value = false;
-  emit('addComponent', '', type);
+  emit('addSpecialComponent', type);
 };
 
 /** Handle api calls, errors and clearing in context of search */
@@ -238,7 +239,7 @@ onMounted(async () => {
               :key="category.name[locale as 'de' | 'en']"
               :category="category"
               @click="handleAddSpecialComponent(category.type)"
-              @keypress.enter="handleAddComponent(category.name[locale as 'de' | 'en'])"
+              @keypress.enter="handleAddSpecialComponent(category.type)"
               tabindex="0"
             />
           </template>

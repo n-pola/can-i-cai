@@ -1,11 +1,13 @@
-import type { SavedWorkflow, ShareWorkflowRequest } from 'cic-shared';
+import type { SavedWorkflow, ShareWorkflowRequest, SharedWorkflowResponse } from 'cic-shared';
 import { config } from '@/config';
 
 /**
  * Post a workflow in the proper format for saving to the backend to obtain sharable ID
  * @param workflow - The workflow to share
  */
-export const shareWorkflow = async (workflow: SavedWorkflow): Promise<SavedWorkflow> => {
+export const shareWorkflow = async (
+  workflow: SharedWorkflowResponse,
+): Promise<SharedWorkflowResponse> => {
   // Remove id from the workflow
   const body: ShareWorkflowRequest = {
     name: workflow.name,

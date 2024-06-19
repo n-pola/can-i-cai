@@ -6,11 +6,13 @@ withDefaults(
     id: string;
     placeholder?: string;
     readonly?: boolean;
+    required?: boolean;
   }>(),
   {
     type: 'text',
     placeholder: '',
     readonly: false,
+    required: false,
   },
 );
 
@@ -26,5 +28,6 @@ const value = defineModel<string>();
     :aria-label="label"
     :placeholder="placeholder"
     :readonly="readonly"
+    :required="required"
   />
 </template>

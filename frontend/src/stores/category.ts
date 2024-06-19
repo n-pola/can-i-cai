@@ -2,6 +2,8 @@ import type { Category, CategoryResponse } from 'cic-shared';
 import { defineStore } from 'pinia';
 import { getAllCategories, getCategory } from '@/api/categories';
 import { useComponentsStore } from '@/stores/components';
+import type { SelectOption } from '@/types/inputs';
+import type { SupportedLanguage } from '@/types/language';
 
 interface CategoryStore {
   categories: Map<string, Category | CategoryResponse>;
@@ -11,6 +13,16 @@ export const useCategoryStore = defineStore('category', {
   state: (): CategoryStore => ({
     categories: new Map(),
   }),
+  getters: {
+    getCategoriesOptions:
+      (state) =>
+      (language: SupportedLanguage): SelectOption[] => {
+        return Array.from(state.categories.values()).map((category) => ({
+          id: category.id,
+          name: category.name[language],
+        }));
+      },
+  },
   actions: {
     async getAllCategories() {
       if (this.categories.size > 0) {

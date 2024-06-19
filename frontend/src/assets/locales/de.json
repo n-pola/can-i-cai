@@ -61,6 +61,10 @@
     "contactMaintainer": "Fehler melden",
     "viewGithub": "Auf GitHub ansehen"
   },
+  "customComponentModal": {
+    "titleAdd": "Eigenen Bestandteil hinzufügen",
+    "titleEdit": "Bestandteil bearbeiten"
+  },
   "share": "Teilen",
   "save": "Speichern",
   "untitledWorkflow": "Unbenannter Prozess",
@@ -75,5 +79,9 @@
   "back": "Zurück",
   "copy": "Kopieren",
   "yes": "Ja",
-  "no": "Nein"
+  "no": "Nein",
+  "selectOptionPlaceholder": "Option auswählen",
+  "add": "Hinzufügen",
+  "update": "Aktualisieren",
+  "cancel": "Abbrechen"
 }

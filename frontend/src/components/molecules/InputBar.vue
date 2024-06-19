@@ -10,6 +10,7 @@ defineProps<{
   placeholder?: string;
   inputReadonly?: boolean;
   buttonTitle?: string;
+  overflowEllipsis?: boolean;
 }>();
 
 const input = defineModel<string>();
@@ -27,6 +28,7 @@ const emit = defineEmits<{
       v-model="input"
       :placeholder="placeholder"
       class="input-bar__input"
+      :class="{ 'input-bar__input--ellipsis': overflowEllipsis }"
       :readonly="inputReadonly"
     />
     <Button
@@ -60,6 +62,12 @@ const emit = defineEmits<{
     &:focus {
       border: 1px solid $primary;
       outline: none;
+    }
+
+    &--ellipsis {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 

@@ -13,7 +13,12 @@ withDefaults(
     isForm: false,
   },
 );
+
 const isOpen = defineModel<boolean>();
+
+// const emit = defineEmits<{
+//   submit: [];
+// }>();
 
 // Data
 const dialog = ref<HTMLDialogElement | null>(null);
@@ -38,10 +43,10 @@ const handleClick = (event: Event) => {
   }
 };
 
-const handleSubmit = (event: Event) => {
-  event.preventDefault();
-  handleClose();
-};
+// const handleSubmit = (event: Event) => {
+//   event.preventDefault();
+//   emit('submit');
+// };
 </script>
 
 <template>
@@ -62,7 +67,7 @@ const handleSubmit = (event: Event) => {
       </button>
     </header>
 
-    <form v-if="isForm" @submit="handleSubmit">
+    <form v-if="isForm" class="modal__form">
       <div class="modal__content">
         <slot>
           <p>Default Content</p>
@@ -101,9 +106,11 @@ const handleSubmit = (event: Event) => {
   border: 0;
   border-radius: $border-radius;
 
-  &[open] {
+  &[open],
+  &__form {
     display: flex;
     flex-flow: column;
+    overflow: hidden;
   }
 
   &::backdrop {

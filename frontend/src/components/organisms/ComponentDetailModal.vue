@@ -9,7 +9,6 @@ import { useI18n } from 'vue-i18n';
 // Component setup
 const props = defineProps<{
   component: FrontendNode;
-  id: string;
 }>();
 
 const isOpen = defineModel<boolean>();
