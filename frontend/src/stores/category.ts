@@ -29,6 +29,16 @@ export const useCategoryStore = defineStore('category', {
           category.types.some((categoryType) => types.includes(categoryType)),
         );
       },
+    categorySatisfiesTypes:
+      (state) =>
+      (categoryId: string, types: ComponentFunctionType[]): boolean => {
+        const category = state.categories.get(categoryId);
+        if (!category) {
+          return false;
+        }
+
+        return category.types.some((categoryType) => types.includes(categoryType));
+      },
   },
   actions: {
     async getAllCategories() {

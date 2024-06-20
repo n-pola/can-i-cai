@@ -1,7 +1,7 @@
 import type { Category, Edge, Workflow, Node, ComponentType } from 'cic-shared';
 
 /** Additional category not provided by backend, as it as custom logic in frontend */
-export type AdditionalCategory = Omit<Category, 'id' | 'types'> & { type: ComponentType };
+export type AdditionalCategory = Omit<Category, 'id'> & { type: ComponentType };
 
 export interface BoundingBox {
   x: number;

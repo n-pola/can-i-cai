@@ -40,7 +40,8 @@
     "errors": {
       "noResults": "No components found",
       "minCharacters": "Please enter at least {minCharacters} characters",
-      "searchFailed": "Search failed. Please try again."
+      "searchFailed": "Search failed. Please try again.",
+      "categoryNotCorrectType": "This category does not contain components that can be added to the workflow at the selected position."
     }
   },
   "sharedModal":{

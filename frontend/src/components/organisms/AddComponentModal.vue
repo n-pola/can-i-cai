@@ -21,7 +21,7 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner.vue';
 import InputBar from '@/components/molecules/InputBar.vue';
 
 // Component setup
-defineProps<{
+const props = defineProps<{
   type: ComponentFunctionType[] | null;
 }>();
 const isOpen = defineModel<boolean>();
@@ -55,6 +55,7 @@ const additionalCategories: AdditionalCategory[] = [
     },
     icon: 'image',
     type: 'external-image',
+    types: ['output'],
   },
   {
     name: {
@@ -63,6 +64,7 @@ const additionalCategories: AdditionalCategory[] = [
     },
     icon: 'dashboard_customize',
     type: 'custom',
+    types: ['input', 'output', 'input-output'],
   },
 ];
 
@@ -84,13 +86,16 @@ const resetComponentState = () => {
 
 /** Load component for a category and populate ref with it */
 const handleCategoryClick = (categoryId: string) => {
+  if (!categoryStore.categorySatisfiesTypes(categoryId, props.type ?? [])) {
+    return;
+  }
+
   const timeout = setTimeout(() => {
     categoryLoading.value = true;
   }, 50);
   categoryStore
     .getCategory(categoryId)
     .then((category) => {
-      console.log(category);
       selectedCategory.value = category;
       selectedCategoryId.value = categoryId;
       scrollToTop();
@@ -236,12 +241,14 @@ onMounted(async () => {
           <template v-else-if="categoryStore.categories.size > 0 && selectedCategoryId === null">
             <h4>{{ translate('category', 2) }}</h4>
             <CategoryItem
-              v-for="category in categoryStore.getCategoriesByTypes(type ?? [])"
+              v-for="[, category] in categoryStore.categories"
               :key="category.id"
               :category="category"
               @click="handleCategoryClick(category.id)"
               @keypress.enter="handleCategoryClick(category.id)"
               tabindex="0"
+              :disabled="!categoryStore.categorySatisfiesTypes(category.id, type ?? [])"
+              :title="translate('addComponentModal.errors.categoryNotCorrectType')"
             />
             <CategoryItem
               v-for="category in additionalCategories"
@@ -250,6 +257,8 @@ onMounted(async () => {
               @click="handleAddSpecialComponent(category.type)"
               @keypress.enter="handleAddSpecialComponent(category.type)"
               tabindex="0"
+              :disabled="!category.types.some((t) => type?.includes(t))"
+              :title="translate('addComponentModal.errors.categoryNotCorrectType')"
             />
           </template>
           <template v-else-if="selectedCategory">
