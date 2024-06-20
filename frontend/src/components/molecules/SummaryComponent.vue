@@ -1,10 +1,22 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { computed, defineProps } from 'vue';
 import { type PopulatedComponent, type PopulatedCustomComponent } from 'cic-shared';
+import { useI18n } from 'vue-i18n';
 
-defineProps<{
+// Component setup
+const props = defineProps<{
   component: PopulatedComponent | PopulatedCustomComponent;
 }>();
+
+// Hooks
+const i18n = useI18n();
+
+// Computed
+const componentName = computed(() =>
+  props.component.dataType === 'external-image'
+    ? i18n.t(props.component.name)
+    : props.component.name,
+);
 </script>
 
 <template>
@@ -13,7 +25,7 @@ defineProps<{
       <span class="material-symbols-outlined icon--s">{{ component.category.icon }}</span>
     </div>
     <div class="component__content">
-      <p :title="component.name" class="component__title">{{ component.name }}</p>
+      <p :title="componentName" class="component__title">{{ componentName }}</p>
     </div>
   </div>
 </template>
