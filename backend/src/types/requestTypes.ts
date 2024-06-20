@@ -1,5 +1,8 @@
+import { ComponentFunctionType } from 'cic-shared';
+
 export interface SearchQuery {
   query?: string;
+  type?: ComponentFunctionType[] | ComponentFunctionType;
 }
 
 export interface CategoryParams {

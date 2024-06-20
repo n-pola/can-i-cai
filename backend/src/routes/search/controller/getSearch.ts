@@ -12,7 +12,7 @@ export const getSearch: RequestHandler<
   SearchQuery
 > = async (req, res, next) => {
   try {
-    const { query } = req.query;
+    const { query, type } = req.query;
 
     if (!query) {
       throw new HttpError('"query" parameter is required', 400);
@@ -45,10 +45,22 @@ export const getSearch: RequestHandler<
       (manufacturer) => manufacturer.id,
     );
 
-    // Try to match search query against components
-    const possibleComponents = await ComponentModel.find({
+    const componentSearchQuery = { $and: [] } as FilterQuery<Component>;
+
+    componentSearchQuery.$and?.push({
       $or: [{ manufacturer: { $in: possibleManufacturersIds } }, searchQuery],
-    })
+    });
+
+    if (type) {
+      if (Array.isArray(type)) {
+        componentSearchQuery.$and?.push({ type: { $in: type } });
+      } else {
+        componentSearchQuery.$and?.push({ type });
+      }
+    }
+
+    // Try to match search query against components
+    const possibleComponents = await ComponentModel.find(componentSearchQuery)
       .populate('manufacturer')
       .populate('category');
 
