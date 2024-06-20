@@ -98,4 +98,4 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd /home/${{ secrets.SSH_USERNAME }}/app
-            docker compose --env DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} --env DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} --env REGISTRY=${{ env.REGISTRY }} --env IMAGE_NAME=${{ env.IMAGE_NAME }} --env TAG=latest -f docker-compose.prod.yaml up -d
+            export DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} REGISTRY=${{ env.REGISTRY }} IMAGE_NAME=${{ env.IMAGE_NAME }} TAG=latest docker compose -f docker-compose.prod.yaml up -d
