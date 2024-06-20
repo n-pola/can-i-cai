@@ -8,7 +8,7 @@ COPY ./backend .
 RUN npm run build
 
 FROM node:lts-alpine as runtime
-ENV PORT=3000
+ENV PORT=80
 EXPOSE ${PORT}
 COPY ./shared /shared
 RUN cd /shared && npm ci
