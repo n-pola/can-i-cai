@@ -10,7 +10,11 @@
     },
     "type": {
       "description": "The type of the component",
-      "enum": ["output", "input", "input-output"]
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["output", "input", "input-output"]
+      }
     },
     "compatible": {
        "description": "Wether or not the component supports c2pa",

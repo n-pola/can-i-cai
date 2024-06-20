@@ -38,10 +38,12 @@ export const parseComponent = async (
   const types = categoryTypes.get(category);
 
   if (!types) {
-    categoryTypes.set(category, new Set([attributes.type]));
-  } else {
-    types.add(attributes.type);
+    categoryTypes.set(category, new Set([]));
   }
+
+  attributes.type.forEach((type) => {
+    categoryTypes.get(category)?.add(type);
+  });
 
   // Create a new component in the database
   await createComponent(
