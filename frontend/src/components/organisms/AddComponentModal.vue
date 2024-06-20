@@ -143,7 +143,7 @@ const handleSearch = async (value: string) => {
   try {
     searchError.value = null;
     searchLoading.value = true;
-    searchResult.value = await searchComponents(value);
+    searchResult.value = await searchComponents(value, props.type ?? []);
   } catch (error: HttpError | unknown) {
     if (error instanceof HttpError && error.statusCode === 404) {
       searchResult.value = [];
