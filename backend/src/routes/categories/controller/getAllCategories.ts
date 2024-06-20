@@ -1,8 +1,7 @@
 import { RequestHandler } from 'express';
 import HttpError from '@/types/httpError';
-import { CategoryModel, CategoryTypeView } from '@/helpers/mongoHelper';
+import { CategoryModel } from '@/helpers/mongoHelper';
 import { CategoriesResponse } from 'cic-shared';
-import mongoose from 'mongoose';
 import { AllCategoriesQuery } from '@/types/requestTypes';
 
 export const getAllCategories: RequestHandler<
@@ -12,26 +11,7 @@ export const getAllCategories: RequestHandler<
   AllCategoriesQuery
 > = async (req, res, next) => {
   try {
-    const { type } = req.query;
-    let matchedIds: mongoose.Types.ObjectId[] = [];
-
-    if (type) {
-      const categoriesWithType = await CategoryTypeView.find({
-        types: { $regex: `.*${type}.*` },
-      });
-
-      matchedIds = categoriesWithType.map(
-        (category) => new mongoose.Types.ObjectId(category.id),
-      );
-    }
-
-    const categories = await CategoryModel.find({
-      ...(matchedIds.length && {
-        _id: {
-          $in: matchedIds,
-        },
-      }),
-    });
+    const categories = await CategoryModel.find({});
 
     if (!categories.length) {
       throw new HttpError('No categories found', 404);

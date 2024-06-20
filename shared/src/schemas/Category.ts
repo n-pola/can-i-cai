@@ -16,19 +16,11 @@ const CategorySchema = new Schema<Category>({
     type: String,
     required: true,
   },
+  types: {
+    type: [String],
+    required: true,
+  },
 });
-
-export const CategoryTypeViewSchema = new Schema(
-  {
-    types: {
-      type: [String],
-      required: true,
-    },
-  },
-  {
-    autoCreate: false,
-  },
-);
 
 // enable virtuals
 CategorySchema.set('toObject', {

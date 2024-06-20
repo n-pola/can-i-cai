@@ -6,4 +6,5 @@ export interface Category {
     en: string;
   };
   icon: string;
+  types: string[];
 }
