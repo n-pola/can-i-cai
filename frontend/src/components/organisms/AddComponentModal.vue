@@ -5,7 +5,12 @@ import { useToast } from 'vue-toastification';
 import { useI18n } from 'vue-i18n';
 import { searchComponents } from '@/api/search';
 import HttpError from '@/types/httpError';
-import type { ComponentType, CategoryResponse, SearchResponse } from 'cic-shared';
+import type {
+  ComponentType,
+  CategoryResponse,
+  SearchResponse,
+  ComponentFunctionType,
+} from 'cic-shared';
 import type { AdditionalCategory } from '@/types/workflow';
 
 import Modal from '@/components/atoms/Modal.vue';
@@ -16,6 +21,9 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner.vue';
 import InputBar from '@/components/molecules/InputBar.vue';
 
 // Component setup
+defineProps<{
+  type: ComponentFunctionType[] | null;
+}>();
 const isOpen = defineModel<boolean>();
 const emit = defineEmits<{
   addComponent: [componentId: string];
@@ -82,6 +90,7 @@ const handleCategoryClick = (categoryId: string) => {
   categoryStore
     .getCategory(categoryId)
     .then((category) => {
+      console.log(category);
       selectedCategory.value = category;
       selectedCategoryId.value = categoryId;
       scrollToTop();
@@ -227,11 +236,11 @@ onMounted(async () => {
           <template v-else-if="categoryStore.categories.size > 0 && selectedCategoryId === null">
             <h4>{{ translate('category', 2) }}</h4>
             <CategoryItem
-              v-for="[id, category] in categoryStore.categories"
-              :key="id"
+              v-for="category in categoryStore.getCategoriesByTypes(type ?? [])"
+              :key="category.id"
               :category="category"
-              @click="handleCategoryClick(id)"
-              @keypress.enter="handleCategoryClick(id)"
+              @click="handleCategoryClick(category.id)"
+              @keypress.enter="handleCategoryClick(category.id)"
               tabindex="0"
             />
             <CategoryItem
@@ -246,7 +255,9 @@ onMounted(async () => {
           <template v-else-if="selectedCategory">
             <h4>{{ selectedCategory.name[locale as 'de' | 'en'] }}</h4>
             <WorkflowComponent
-              v-for="component in selectedCategory.components"
+              v-for="component in selectedCategory.components.filter((c) =>
+                c.type.some((t) => type?.includes(t)),
+              )"
               :key="component.id"
               @click="handleAddComponent(component.id)"
               :component="component"

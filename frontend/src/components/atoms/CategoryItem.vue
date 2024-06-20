@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { Category } from 'cic-shared';
 import { useI18n } from 'vue-i18n';
+import type { AdditionalCategory } from '@/types/workflow';
 
 defineProps<{
-  category: Category | Omit<Category, 'id'>;
+  category: Category | AdditionalCategory;
 }>();
 
 const { locale } = useI18n();

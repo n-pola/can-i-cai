@@ -5,7 +5,7 @@ import { type PopulatedComponent } from 'cic-shared';
 const dummyComponents: PopulatedComponent[] = [
   {
     name: 'M11-P',
-    type: 'output',
+    type: ['output'],
     compatible: true,
     manufacturer: {
       name: 'Leica',
@@ -18,12 +18,13 @@ const dummyComponents: PopulatedComponent[] = [
       },
       icon: 'photo_camera',
       id: '123',
+      types: ['output'],
     },
     id: '123',
   },
   {
     name: 'Photoshop',
-    type: 'input-output',
+    type: ['input-output', 'output'],
     compatible: true,
     manufacturer: {
       name: 'Adobe',
@@ -36,6 +37,7 @@ const dummyComponents: PopulatedComponent[] = [
       },
       icon: 'design_services',
       id: '123',
+      types: ['input-output', 'output'],
     },
     id: '123',
   },
@@ -47,12 +49,14 @@ const dummyComponents: PopulatedComponent[] = [
     :component="dummyComponents[0]"
     :key="dummyComponents[0].id"
     class="dummy-component"
+    :compatible="true"
   />
   <div class="dummy-edge" />
   <WorkflowComponent
     :component="dummyComponents[1]"
     :key="dummyComponents[1].id"
     class="dummy-component"
+    :compatible="true"
   />
 </template>
 

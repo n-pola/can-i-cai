@@ -9,7 +9,7 @@ import { useCategoryStore } from '@/stores/category';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SupportedLanguage } from '@/types/language';
-import type { ComponentBase, PopulatedCustomComponent, ComponentType } from 'cic-shared';
+import type { PopulatedCustomComponent, ComponentType, ComponentFunctionType } from 'cic-shared';
 import { v4 as uuid } from 'uuid';
 
 // Component definition
@@ -32,7 +32,7 @@ const { locale, t: translate } = useI18n();
 const name = ref('');
 const manufacturer = ref('');
 const category = ref('');
-const type = ref<ComponentBase['type']>('input-output');
+const type = ref<ComponentFunctionType>('input-output');
 const compatible = ref(false);
 const modalContentElement = ref<HTMLDivElement | null>(null);
 
@@ -63,7 +63,7 @@ const handleSubmit = (e: SubmitEvent) => {
     name: name.value,
     manufacturer: manufacturer.value,
     category: fullCategory,
-    type: type.value,
+    type: [type.value],
     compatible: compatible.value,
   };
 
@@ -94,7 +94,7 @@ watch(
       name.value = value.name;
       manufacturer.value = value.manufacturer;
       category.value = value.category.id;
-      type.value = value.type;
+      [type.value] = value.type;
       compatible.value = value.compatible;
     }
   },
