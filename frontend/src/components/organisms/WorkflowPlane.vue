@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import WorkflowForeignObject from '@/components/molecules/WorkflowForeignObject.vue';
 import { cssVariables } from '@/utils/cssVariables';
 import { useWorkflowStore } from '@/stores/workflow';
@@ -107,6 +107,12 @@ const centerPlane = () => {
   };
 };
 
+watch(workflow.nodes, (value) => {
+  if (value.size === 0) {
+    centerPlane();
+  }
+});
+
 // Lifecycle hooks
 onMounted(() => {
   centerPlane();
@@ -168,6 +174,7 @@ defineExpose({
       @keypress.enter="emit('nodeClicked', node[0])"
       @requestAddAfter="emit('addComponentRequested', node[0], 'after')"
       @requestAddBefore="emit('addComponentRequested', node[0], 'before')"
+      @recenter-plane="centerPlane"
       ref="componentRefs"
       tabindex="0"
     />

@@ -19,6 +19,7 @@ const emit = defineEmits<{
   requestAddAfter: [];
   requestAddBefore: [];
   click: [];
+  recenterPlane: [];
 }>();
 
 const workflowStore = useWorkflowStore();
@@ -43,6 +44,10 @@ onMounted(() => {
       height: componentRef.value.componentRef.scrollHeight,
     });
     workflowStore.recalculateNodePositionsFrom(props.id);
+
+    if (workflowStore.isFirstNode(props.id) && workflowStore.nodes.size === 1) {
+      emit('recenterPlane');
+    }
   }
 });
 </script>
@@ -55,7 +60,10 @@ onMounted(() => {
       :size="cssVariables.size.m"
       @click="emit('requestAddBefore')"
       title="Add component after this one"
-      v-if="workflowStore.isFirstNode(props.id) && !component.type.includes('output')"
+      v-if="
+        workflowStore.isFirstNode(props.id) &&
+        !(component.type.length === 1 && component.type.includes('output'))
+      "
     />
     <foreignObject :width="width" :height="height" ref="objectRef" @click="emit('click')">
       <WorkflowComponent
