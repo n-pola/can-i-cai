@@ -21,7 +21,7 @@ const port = process.env.PORT || 3000;
 
 mongoose
   .connect(
-    `mongodb://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@${
+    `mongodb://${process.env.DATABASE_USERNAME}:${encodeURIComponent(process.env.DATABASE_PASSWORD ?? '')}@${
       process.env.DATABASE_HOST
     }/${process.env.DATABASE_NAME}?authSource=admin`,
   )
