@@ -80,7 +80,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: "docker-compose.prod.yaml"
-          target: /home/${{ secrets.SSH_USERNAME }}/app/docker-compose.prod.yaml
+          target: /home/${{ secrets.SSH_USERNAME }}/app/
 
       - name: Transfer nginx configs
         uses: appleboy/scp-action@v0.1.7
@@ -91,6 +91,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: "deployment/nginx/*"
           target: /home/${{ secrets.SSH_USERNAME }}/app/nginx
+          strip_components: 2
 
       - name: Deploy to remote server
         uses: appleboy/ssh-action@v1.0.3
