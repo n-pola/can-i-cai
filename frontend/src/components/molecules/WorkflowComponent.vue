@@ -35,6 +35,12 @@ const manufacturer = computed(() =>
     : props.component.manufacturer.name,
 );
 
+const componentName = computed(() =>
+  props.component.dataType === 'external-image'
+    ? i18n.t(props.component.name)
+    : props.component.name,
+);
+
 // Functions
 const handleDeleteClick = (e: MouseEvent) => {
   e.stopImmediatePropagation();
@@ -59,7 +65,7 @@ defineExpose({
       <span class="material-symbols-outlined icon--m">{{ component.category.icon }}</span>
     </div>
     <div class="component__content">
-      <h4 :title="component.name" class="component__title">{{ component.name }}</h4>
+      <h4 :title="componentName" class="component__title">{{ componentName }}</h4>
       <p class="component__manufacturer">{{ manufacturer || '&nbsp;' }}</p>
     </div>
     <div class="component__action" v-if="showDelete">

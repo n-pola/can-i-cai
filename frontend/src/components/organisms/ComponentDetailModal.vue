@@ -30,10 +30,16 @@ watchEffect(() => {
 });
 
 // Computed values
+const componentName = computed(() =>
+  props.component.dataType === 'external-image'
+    ? i18n.t(props.component.name)
+    : props.component.name,
+);
+
 const content = computed(() => {
   return [
     {
-      value: props.component.name,
+      value: componentName.value,
       title: 'Name',
     },
     {
@@ -66,6 +72,8 @@ const content = computed(() => {
     },
   ];
 });
+
+// Lifecycle hooks
 
 onMounted(() => {
   if (props.component.compatible) return;

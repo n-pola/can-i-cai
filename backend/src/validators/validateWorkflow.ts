@@ -26,7 +26,9 @@ const customNodeValidationSchema = Joi.object<SavedWorkflow['customNodes'][0]>({
   data: Joi.object({
     id: Joi.string().required(),
     name: Joi.string().required(),
-    type: Joi.string().valid('input', 'output', 'input-output').required(),
+    type: Joi.array()
+      .items(Joi.string().valid('input', 'output', 'input-output'))
+      .required(),
     compatible: Joi.boolean().required(),
     minimalRequiredVersion: Joi.string(),
     additionalInfo: Joi.string(),

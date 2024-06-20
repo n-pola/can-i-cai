@@ -17,6 +17,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   delete: [];
   requestAddAfter: [];
+  requestAddBefore: [];
   click: [];
 }>();
 
@@ -48,6 +49,14 @@ onMounted(() => {
 
 <template>
   <g :transform="`translate(${x}, ${y})`">
+    <SvgAddButton
+      :x="width / 2"
+      :y="-cssVariables.size.s - cssVariables.size.m / 2"
+      :size="cssVariables.size.m"
+      @click="emit('requestAddBefore')"
+      title="Add component after this one"
+      v-if="workflowStore.isFirstNode(props.id) && !component.type.includes('output')"
+    />
     <foreignObject :width="width" :height="height" ref="objectRef" @click="emit('click')">
       <WorkflowComponent
         :component="component"

@@ -12,6 +12,7 @@ import { useComponentsStore } from '@/stores/components';
 import { useCategoryStore } from '@/stores/category';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 import { NodeHelper } from '@/helpers/nodeHelper';
+import { externalImageCategory } from '@/constants/externalImageCategory';
 
 export const useWorkflowStore = defineStore('workflow', {
   state: (): WorkflowStore => ({
@@ -43,6 +44,17 @@ export const useWorkflowStore = defineStore('workflow', {
         }
 
         return adjacency.out.length === 0;
+      },
+    /** Determine if a node is at the start of a workflow */
+    isFirstNode:
+      (state) =>
+      (id: string): boolean => {
+        const adjacency = state.adjacencies.get(id);
+        if (!adjacency) {
+          return false;
+        }
+
+        return adjacency.in.length === 0;
       },
     /** Determine if the whole workflow is compatible or not */
     compatible: (state): boolean => {
@@ -199,6 +211,15 @@ export const useWorkflowStore = defineStore('workflow', {
       const updatedNode = { ...currentData, ...node };
 
       this.nodes.set(id, updatedNode);
+    },
+    addNodeBefore(
+      node: PopulatedComponent | PopulatedCustomComponent,
+      before: string,
+      satisfiesMinimalVersion?: boolean,
+      type?: FrontendNode['dataType'],
+    ): void {
+      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
+      this.addEdge(id, before);
     },
     addNodeAfter(
       node: PopulatedComponent | PopulatedCustomComponent,
@@ -388,7 +409,11 @@ export const useWorkflowStore = defineStore('workflow', {
       await Promise.all(loadedNodes);
 
       workflow.customNodes.forEach(({ id, data }) => {
-        const category = categoryStore.categories.get(data.category);
+        const isExternalImage = data.dataType === 'external-image';
+
+        const category = isExternalImage
+          ? externalImageCategory
+          : categoryStore.categories.get(data.category);
         if (!category) {
           return;
         }
@@ -398,7 +423,7 @@ export const useWorkflowStore = defineStore('workflow', {
           category,
         };
 
-        this.addNode(populated, undefined, id, undefined, 'custom');
+        this.addNode(populated, undefined, id, undefined, data.dataType);
       });
 
       workflow.edges.forEach(({ id, data }) => {
