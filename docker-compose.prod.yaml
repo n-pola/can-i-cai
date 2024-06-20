@@ -16,6 +16,8 @@ services:
   frontend:
     image: ${REGISTRY}/${IMAGE_NAME}-frontend:${TAG}
     restart: always
+    environment:
+      BACKEND_URL: https://backend.can-i-cai.de
     depends_on:
       - backend
 
