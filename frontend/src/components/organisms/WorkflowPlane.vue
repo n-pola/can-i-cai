@@ -11,7 +11,7 @@ const workflow = useWorkflowStore();
 const emit = defineEmits<{
   nodeClicked: [id: string];
   deleteNode: [id: string];
-  addComponentRequested: [id?: string];
+  addComponentRequested: [id?: string, place?: 'before' | 'after'];
   addComponentRequestedEdge: [id: string];
 }>();
 
@@ -166,7 +166,8 @@ defineExpose({
       @click="emit('nodeClicked', node[0])"
       @delete="emit('deleteNode', node[0])"
       @keypress.enter="emit('nodeClicked', node[0])"
-      @requestAddAfter="emit('addComponentRequested', node[0])"
+      @requestAddAfter="emit('addComponentRequested', node[0], 'after')"
+      @requestAddBefore="emit('addComponentRequested', node[0], 'before')"
       ref="componentRefs"
       tabindex="0"
     />

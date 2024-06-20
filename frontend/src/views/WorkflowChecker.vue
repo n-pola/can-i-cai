@@ -56,7 +56,7 @@ const addComponentModalIsOpen = ref(false);
 const addCustomComponentModalIsOpen = ref(false);
 const addComponentType = ref<ComponentFunctionType[] | null>(null);
 const tmpId = ref<string | null>(null);
-const addType = ref<'after' | 'between'>('after');
+const addType = ref<'after' | 'between' | 'before'>('after');
 const editCustomComponent = ref<PopulatedCustomComponent | null>(null);
 
 const sharedModalIsOpen = ref(false);
@@ -88,6 +88,9 @@ const addComponent = async (
 ) => {
   if (tmpId.value) {
     switch (addType.value) {
+      case 'before':
+        workflowStore.addNodeBefore(component, tmpId.value, satisfiesMinimalVersion, type);
+        break;
       case 'after':
         workflowStore.addNodeAfter(component, tmpId.value, satisfiesMinimalVersion, type);
         break;
@@ -105,15 +108,19 @@ const addComponent = async (
 };
 
 const addExternalImage = (compatible: boolean) => {
-  workflowStore.addNode({
-    type: ['output'],
-    name: 'externalImage.name',
-    dataType: 'external-image',
-    category: externalImageCategory,
-    manufacturer: '',
-    compatible,
-    id: 'external-image',
-  });
+  addComponent(
+    {
+      type: ['output'],
+      name: 'externalImage.name',
+      dataType: 'external-image',
+      category: externalImageCategory,
+      manufacturer: '',
+      compatible,
+      id: 'external-image',
+    },
+    undefined,
+    'external-image',
+  );
 };
 
 /**
@@ -164,14 +171,15 @@ const handleAddComponentOnEdgeRequest = async (id: string) => {
 };
 
 /** Prepare state to add new component after a previous one and open modal */
-const handleAddComponentRequested = (id?: string) => {
+const handleAddComponentRequested = (id?: string, place?: 'before' | 'after') => {
   addComponentModalIsOpen.value = true;
   tmpId.value = id || null;
   addComponentType.value = ['output'];
 
   if (id) {
-    addType.value = 'after';
-    addComponentType.value = ['input', 'input-output'];
+    addType.value = place ?? 'after';
+    addComponentType.value =
+      addType.value === 'after' ? ['input', 'input-output'] : ['output', 'input-output'];
   }
 };
 

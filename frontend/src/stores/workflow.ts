@@ -45,6 +45,17 @@ export const useWorkflowStore = defineStore('workflow', {
 
         return adjacency.out.length === 0;
       },
+    /** Determine if a node is at the start of a workflow */
+    isFirstNode:
+      (state) =>
+      (id: string): boolean => {
+        const adjacency = state.adjacencies.get(id);
+        if (!adjacency) {
+          return false;
+        }
+
+        return adjacency.in.length === 0;
+      },
     /** Determine if the whole workflow is compatible or not */
     compatible: (state): boolean => {
       if (state.nodes.size === 0) {
@@ -200,6 +211,15 @@ export const useWorkflowStore = defineStore('workflow', {
       const updatedNode = { ...currentData, ...node };
 
       this.nodes.set(id, updatedNode);
+    },
+    addNodeBefore(
+      node: PopulatedComponent | PopulatedCustomComponent,
+      before: string,
+      satisfiesMinimalVersion?: boolean,
+      type?: FrontendNode['dataType'],
+    ): void {
+      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
+      this.addEdge(id, before);
     },
     addNodeAfter(
       node: PopulatedComponent | PopulatedCustomComponent,
