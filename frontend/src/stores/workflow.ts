@@ -12,6 +12,7 @@ import { useComponentsStore } from '@/stores/components';
 import { useCategoryStore } from '@/stores/category';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 import { NodeHelper } from '@/helpers/nodeHelper';
+import { externalImageCategory } from '@/constants/externalImageCategory';
 
 export const useWorkflowStore = defineStore('workflow', {
   state: (): WorkflowStore => ({
@@ -388,7 +389,11 @@ export const useWorkflowStore = defineStore('workflow', {
       await Promise.all(loadedNodes);
 
       workflow.customNodes.forEach(({ id, data }) => {
-        const category = categoryStore.categories.get(data.category);
+        const isExternalImage = data.dataType === 'external-image';
+
+        const category = isExternalImage
+          ? externalImageCategory
+          : categoryStore.categories.get(data.category);
         if (!category) {
           return;
         }
@@ -398,7 +403,7 @@ export const useWorkflowStore = defineStore('workflow', {
           category,
         };
 
-        this.addNode(populated, undefined, id, undefined, 'custom');
+        this.addNode(populated, undefined, id, undefined, data.dataType);
       });
 
       workflow.edges.forEach(({ id, data }) => {

@@ -90,5 +90,10 @@
   "deleteWorkflows": "Prozesse löschen",
   "deleteWorkflowConfirmation": "Bist du sicher, dass du den Prozess \"{name}\" löschen möchtest?",
   "deleteAllWorkflowsConfirmation": "Bist du sicher, dass du alle gespeicherten Prozesse löschen möchtest?",
-  "delete": "Löschen"
+  "delete": "Löschen",
+  "externalImage": {
+    "name": "Externe Bilddatei",
+    "modalTitle": "Externe Bilddatei hinzufügen",
+    "modalPrompt": "Verfügt das externe Bild über CAI-Metadaten?"
+  }
 }

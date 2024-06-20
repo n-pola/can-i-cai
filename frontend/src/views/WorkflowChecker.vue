@@ -13,6 +13,7 @@ import { useI18n } from 'vue-i18n';
 import { shareWorkflow } from '@/api/workflow';
 import type { FrontendNode } from '@/types/workflow';
 import { useModalInterception } from '@/hooks/useModalInterception';
+import { externalImageCategory } from '@/constants/externalImageCategory';
 
 import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
 import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
@@ -22,6 +23,7 @@ import CheckerTools from '@/components/organisms/CheckerTools.vue';
 import SharedModal from '@/components/organisms/SharedModal.vue';
 import VersionInterceptionModal from '@/components/organisms/VersionInterceptionModal.vue';
 import AddCustomComponentModal from '@/components/organisms/AddCustomComponentModal.vue';
+import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
 
 // Hooks
 const toast = useToast();
@@ -34,6 +36,12 @@ const {
   abortAction: abortVersionInterceptionModal,
   isOpen: versionInterceptionModalIsOpen,
   tmpData: versionInterceptionData,
+} = useModalInterception();
+const {
+  interceptAction: interceptAddExternalImage,
+  confirmAction: confirmAddExternalImage,
+  abortAction: abortAddExternalImage,
+  isOpen: addExternalImageModalIsOpen,
 } = useModalInterception();
 
 // Data
@@ -94,6 +102,18 @@ const addComponent = async (
   }
 
   workflowStore.addNode(component, undefined, undefined, satisfiesMinimalVersion, type);
+};
+
+const addExternalImage = (compatible: boolean) => {
+  workflowStore.addNode({
+    type: ['output'],
+    name: 'externalImage.name',
+    dataType: 'external-image',
+    category: externalImageCategory,
+    manufacturer: '',
+    compatible,
+    id: 'external-image',
+  });
 };
 
 /**
@@ -158,6 +178,13 @@ const handleAddComponentRequested = (id?: string) => {
 const handleAddSpecialComponentRequested = (type: ComponentType) => {
   if (type === 'custom') {
     addCustomComponentModalIsOpen.value = true;
+  }
+
+  if (type === 'external-image') {
+    interceptAddExternalImage(
+      () => addExternalImage(true),
+      () => addExternalImage(false),
+    );
   }
 };
 
@@ -279,6 +306,15 @@ watch(detailModalIsOpen, (isOpen) => {
       @add-custom-component="(component, type) => addComponent(component, undefined, type)"
       @update-custom-component="handleUpdateComponent"
       :initial-data="editCustomComponent"
+    />
+    <ConfirmModal
+      v-model="addExternalImageModalIsOpen"
+      :title="i18n.t('externalImage.modalTitle')"
+      :message="i18n.t('externalImage.modalPrompt')"
+      @confirm="confirmAddExternalImage"
+      @abort="abortAddExternalImage"
+      :confirm-text="i18n.t('yes')"
+      :abort-text="i18n.t('no')"
     />
   </div>
 </template>
