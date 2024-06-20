@@ -37,6 +37,8 @@ jobs:
           file: ./${{ matrix.service }}/Dockerfile
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.service }}:latest
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.service }}:latest
+          cache-to: type=inline
 
   pull-images:
     runs-on: ubuntu-latest
@@ -96,4 +98,4 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd /home/${{ secrets.SSH_USERNAME }}/app
-            docker-compose --env DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} --env DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} --env REGISTRY=${{ env.REGISTRY }} --env IMAGE_NAME=${{ env.IMAGE_NAME }} --env TAG=latest -f docker-compose.prod.yaml up -d
+            docker compose --env DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} --env DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} --env REGISTRY=${{ env.REGISTRY }} --env IMAGE_NAME=${{ env.IMAGE_NAME }} --env TAG=latest -f docker-compose.prod.yaml up -d
