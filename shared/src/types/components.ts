@@ -1,13 +1,14 @@
 import { ObjectId } from 'mongoose';
 import { Manufacturer } from './manufacturer';
 import { Category } from './category';
+import { ComponentFunctionType } from './componentFunctionType';
 
 export type ComponentType = 'custom' | 'external-image';
 
 export interface ComponentBase {
   id: string;
   name: string;
-  type: 'input' | 'output' | 'input-output';
+  type: ComponentFunctionType[];
   compatible: boolean;
   minimalRequiredVersion?: string;
   additionalInfo?: string;

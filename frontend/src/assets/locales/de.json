@@ -38,9 +38,10 @@
     "clearSearch": "Suche löschen",
     "versionInterception": "Ist deine Version von {component} größer oder gleich {version}?",
     "errors": {
-      "noResults": "Keine Bestandteile gefunden",
+      "noResults": "Keine passenden Bestandteile gefunden",
       "minCharacters": "Bitte gib mindestens {minCharacters} Zeichen ein",
-      "searchFailed": "Suche fehlgeschlagen. Bitte versuche es erneut."
+      "searchFailed": "Suche fehlgeschlagen. Bitte versuche es erneut.",
+      "categoryNotCorrectType": "Diese Kategorie enthält keine Bestandteile, welche an der gewählten Position platziert werden können."
     }
   },
   "sharedModal":{

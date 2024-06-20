@@ -1,3 +1,5 @@
+import { ComponentFunctionType } from 'cic-shared';
+
 export interface MarkdownCategory {
   en: string;
   de: string;
@@ -7,7 +9,7 @@ export interface MarkdownCategory {
 
 export interface MarkdownComponent {
   name: string;
-  type: 'input' | 'output' | 'input-output';
+  type: ComponentFunctionType[];
   compatible: boolean;
   minimalRequiredVersion?: string;
   _id?: string;

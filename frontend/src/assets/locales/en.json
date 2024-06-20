@@ -38,9 +38,10 @@
     "clearSearch": "Clear search",
     "versionInterception": "Is your Version of {component} equal to or greater than {version}?",
     "errors": {
-      "noResults": "No components found",
+      "noResults": "No matching components found",
       "minCharacters": "Please enter at least {minCharacters} characters",
-      "searchFailed": "Search failed. Please try again."
+      "searchFailed": "Search failed. Please try again.",
+      "categoryNotCorrectType": "This category does not contain components that can be added to the workflow at the selected position."
     }
   },
   "sharedModal":{

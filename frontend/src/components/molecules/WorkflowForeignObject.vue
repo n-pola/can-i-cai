@@ -62,7 +62,7 @@ onMounted(() => {
       :size="cssVariables.size.m"
       @click="emit('requestAddAfter')"
       title="Add component after this one"
-      v-if="workflowStore.isLastNode(props.id) && component.type !== 'input'"
+      v-if="workflowStore.isLastNode(props.id) && !component.type.includes('input')"
     />
   </g>
 </template>

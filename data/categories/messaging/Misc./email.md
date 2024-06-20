@@ -1,6 +1,7 @@
 ---
 name: Email
-type: input-output
+type:
+  - input-output
 compatible: true
 _id: 666594b244dfcae739555d15
 ---

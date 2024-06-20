@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import type { PopulatedComponent, PopulatedCustomComponent, ComponentType } from 'cic-shared';
+import type {
+  PopulatedComponent,
+  PopulatedCustomComponent,
+  ComponentType,
+  ComponentFunctionType,
+} from 'cic-shared';
 import { ref, watch } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
@@ -41,6 +46,7 @@ const selectedNodeId = ref<string | null>(null);
 
 const addComponentModalIsOpen = ref(false);
 const addCustomComponentModalIsOpen = ref(false);
+const addComponentType = ref<ComponentFunctionType[] | null>(null);
 const tmpId = ref<string | null>(null);
 const addType = ref<'after' | 'between'>('after');
 const editCustomComponent = ref<PopulatedCustomComponent | null>(null);
@@ -130,6 +136,8 @@ const handleUpdateComponent = async (component: PopulatedComponent | PopulatedCu
 const handleAddComponentOnEdgeRequest = async (id: string) => {
   addComponentModalIsOpen.value = true;
   tmpId.value = id || null;
+  addComponentType.value = ['input-output'];
+
   if (id) {
     addType.value = 'between';
   }
@@ -139,8 +147,11 @@ const handleAddComponentOnEdgeRequest = async (id: string) => {
 const handleAddComponentRequested = (id?: string) => {
   addComponentModalIsOpen.value = true;
   tmpId.value = id || null;
+  addComponentType.value = ['output'];
+
   if (id) {
     addType.value = 'after';
+    addComponentType.value = ['input', 'input-output'];
   }
 };
 
@@ -253,6 +264,7 @@ watch(detailModalIsOpen, (isOpen) => {
       v-model="addComponentModalIsOpen"
       @add-component="handleAddComponent"
       @add-special-component="handleAddSpecialComponentRequested"
+      :type="addComponentType"
     />
     <SharedModal v-if="sharedWorkflowId" v-model="sharedModalIsOpen" :id="sharedWorkflowId" />
     <VersionInterceptionModal

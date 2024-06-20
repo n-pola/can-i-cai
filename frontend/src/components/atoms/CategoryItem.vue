@@ -1,16 +1,23 @@
 <script setup lang="ts">
 import type { Category } from 'cic-shared';
 import { useI18n } from 'vue-i18n';
+import type { AdditionalCategory } from '@/types/workflow';
 
-defineProps<{
-  category: Category | Omit<Category, 'id'>;
+const props = defineProps<{
+  category: Category | AdditionalCategory;
+  disabled?: boolean;
+  title?: string;
 }>();
 
 const { locale } = useI18n();
 </script>
 
 <template>
-  <div class="category">
+  <div
+    class="category"
+    :class="{ 'category--disabled': props.disabled }"
+    :title="title || category.name[locale as 'en' | 'de']"
+  >
     <div class="category__icon">
       <span class="material-symbols-outlined icon--s">{{ category.icon }}</span>
     </div>
@@ -38,6 +45,23 @@ const { locale } = useI18n();
     #{$self}__icon {
       color: $lightest;
       background-color: $dark;
+    }
+  }
+
+  &--disabled {
+    color: $light;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: $lighter;
+      #{$self}__icon {
+        color: $lighter;
+        background-color: $light;
+      }
+    }
+
+    #{$self}__icon {
+      color: $lighter;
     }
   }
 

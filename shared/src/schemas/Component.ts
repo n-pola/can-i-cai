@@ -10,7 +10,7 @@ const componentSchemasBase: SchemaDefinition<ComponentBase> = {
     required: true,
   },
   type: {
-    type: String,
+    type: [String],
     enum: ['input', 'output', 'input-output'],
     required: true,
   },

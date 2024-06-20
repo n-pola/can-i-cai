@@ -1,4 +1,4 @@
-import type { Category, CategoryResponse } from 'cic-shared';
+import type { Category, CategoryResponse, ComponentFunctionType } from 'cic-shared';
 import { defineStore } from 'pinia';
 import { getAllCategories, getCategory } from '@/api/categories';
 import { useComponentsStore } from '@/stores/components';
@@ -21,6 +21,23 @@ export const useCategoryStore = defineStore('category', {
           id: category.id,
           name: category.name[language],
         }));
+      },
+    getCategoriesByTypes:
+      (state) =>
+      (types: ComponentFunctionType[]): Category[] => {
+        return Array.from(state.categories.values()).filter((category) =>
+          category.types.some((categoryType) => types.includes(categoryType)),
+        );
+      },
+    categorySatisfiesTypes:
+      (state) =>
+      (categoryId: string, types: ComponentFunctionType[]): boolean => {
+        const category = state.categories.get(categoryId);
+        if (!category) {
+          return false;
+        }
+
+        return category.types.some((categoryType) => types.includes(categoryType));
       },
   },
   actions: {

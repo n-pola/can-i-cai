@@ -76,4 +76,5 @@ export const createCategory = async (category: MarkdownCategory) =>
     },
     icon: category.icon,
     _id: category._id,
+    types: [],
   });

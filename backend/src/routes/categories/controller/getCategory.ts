@@ -1,20 +1,30 @@
 import { RequestHandler } from 'express';
-import { CategoryParams } from '@/types/requestTypes';
+import { CategoryParams, CategoryQuery } from '@/types/requestTypes';
 import { CategoryModel, ComponentModel } from '@/helpers/mongoHelper';
 import HttpError from '@/types/httpError';
 import { CategoryResponse, PopulatedComponent } from 'cic-shared';
 
-export const getCategory: RequestHandler<CategoryParams> = async (
-  req,
-  res,
-  next,
-) => {
+/** Get a single category with it's components */
+export const getCategory: RequestHandler<
+  CategoryParams,
+  unknown,
+  unknown,
+  CategoryQuery
+> = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const { compatible } = req.query;
+
+    if (!id) {
+      throw new HttpError('Category ID is required', 400);
+    }
 
     const categoryPromise = CategoryModel.findById(id);
 
-    const componentsPromise = ComponentModel.find({ category: id })
+    const componentsPromise = ComponentModel.find({
+      category: id,
+      ...(compatible !== undefined && { compatible }),
+    })
       .populate<Pick<PopulatedComponent, 'manufacturer'>>('manufacturer')
       .populate<Pick<PopulatedComponent, 'category'>>('category');
 

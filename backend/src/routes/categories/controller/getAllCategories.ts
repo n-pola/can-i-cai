@@ -5,7 +5,7 @@ import { CategoriesResponse } from 'cic-shared';
 
 export const getAllCategories: RequestHandler = async (req, res, next) => {
   try {
-    const categories = await CategoryModel.find();
+    const categories = await CategoryModel.find({});
 
     if (!categories.length) {
       throw new HttpError('No categories found', 404);

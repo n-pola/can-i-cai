@@ -16,6 +16,10 @@ const CategorySchema = new Schema<Category>({
     type: String,
     required: true,
   },
+  types: {
+    type: [String],
+    required: true,
+  },
 });
 
 // enable virtuals

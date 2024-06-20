@@ -15,6 +15,8 @@ import {
   appendPropToFrontMatter,
 } from '@/utils/fsHelper';
 
+const categoryTypes = new Map<string, Set<string>>();
+
 /**
  * Parse a single component markdown file and save it to the database
  * @param file - Path to the component markdown file
@@ -32,6 +34,16 @@ export const parseComponent = async (
   const { attributes, body } = fm<MarkdownComponent>(componentMarkdown);
 
   const additionalInfo = await marked(body, { gfm: true, async: true });
+
+  const types = categoryTypes.get(category);
+
+  if (!types) {
+    categoryTypes.set(category, new Set([]));
+  }
+
+  attributes.type.forEach((type) => {
+    categoryTypes.get(category)?.add(type);
+  });
 
   // Create a new component in the database
   await createComponent(
@@ -111,4 +123,9 @@ export const parseCategory = async (directory: string): Promise<void> => {
   });
 
   await Promise.all(manufacturerPromises);
+
+  // update the category with the types of components it contains
+  await newCategory.updateOne({
+    types: Array.from(categoryTypes.get(newCategory.id) ?? []),
+  });
 };

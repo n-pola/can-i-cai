@@ -1,6 +1,7 @@
 ---
 name: Alpha 1
-type: output
+type:
+  - output
 compatible: true
 minimalRequiredVersion: 2.0.0
 _id: 666594b244dfcae739555cdd

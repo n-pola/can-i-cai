@@ -1,3 +1,5 @@
+import { ComponentFunctionType } from './componentFunctionType';
+
 /** Category in mongodb */
 export interface Category {
   id: string; // assigned by db
@@ -6,4 +8,5 @@ export interface Category {
     en: string;
   };
   icon: string;
+  types: ComponentFunctionType[];
 }
