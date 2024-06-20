@@ -1,6 +1,7 @@
 FROM node:lts as build
 
 COPY shared /shared
+RUN cd /shared && npm ci
 WORKDIR /app
 COPY ./frontend/package*.json ./
 RUN npm ci
