@@ -6,6 +6,7 @@ import { useWorkflowStore } from '@/stores/workflow';
 import SvgAddButton from '@/components/atoms/SvgAddButton.vue';
 import { NodeHelper } from '@/helpers/nodeHelper';
 import type { PlaneMode } from '@/types/checkerPlane';
+import { i18n } from '../../utils/i18n';
 
 const workflow = useWorkflowStore();
 
@@ -201,7 +202,7 @@ defineExpose({
         dominant-baseline="middle"
         :y="cssVariables.size.xxl / 2 + cssVariables.size.s"
       >
-        Add first component
+        {{ i18n.t('addFirstComponent') }}
       </text>
     </g>
     <line

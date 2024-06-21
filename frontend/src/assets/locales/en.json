@@ -48,7 +48,7 @@
       "categoryNotCorrectType": "This category does not contain components that can be added to the workflow at the selected position."
     }
   },
-  "sharedModal":{
+  "sharedModal": {
     "title": "Shared workflow",
     "success": "Your workflow was shared successfully. You can now copy the link below and share it.",
     "hintReshare": "If you change something on your workflow you will need to share it again, as a new link will be created."
@@ -100,5 +100,6 @@
     "modalTitle": "Add external image",
     "modalPrompt": "Does the external image have CAI metadata?"
   },
-  "clear": "Clear"
+  "clear": "Clear",
+  "addFirstComponent": "Add first component"
 }

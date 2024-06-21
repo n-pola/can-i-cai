@@ -100,5 +100,6 @@
     "modalTitle": "Externe Bilddatei hinzufügen",
     "modalPrompt": "Verfügt das externe Bild über CAI-Metadaten?"
   },
-  "clear": "Löschen"
+  "clear": "Löschen",
+  "addFirstComponent": "Ersten Bestandteil hinzufügen"
 }
