@@ -48,6 +48,7 @@ services:
     restart: always
     volumes:
       - ./nginx/:/etc/nginx/conf.d/:ro
+      - ./.htpasswd:/etc/nginx/.htpasswd:ro
       - ./certbot/www/:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
 
