@@ -1,4 +1,5 @@
 # can-i-cai
+[![Deployment](https://github.com/n-pola/can-i-cai/actions/workflows/deployment.yaml/badge.svg)](https://github.com/n-pola/can-i-cai/actions/workflows/deployment.yaml)
 [![CI-Backend](https://github.com/n-pola/can-i-cai/actions/workflows/backendIntegration.yaml/badge.svg)](https://github.com/n-pola/can-i-cai/actions/workflows/backendIntegration.yaml)
 [![CI-Frontend](https://github.com/n-pola/can-i-cai/actions/workflows/frontendIntegration.yaml/badge.svg)](https://github.com/n-pola/can-i-cai/actions/workflows/frontendIntegration.yaml)
 [![CI-Parser](https://github.com/n-pola/can-i-cai/actions/workflows/parserIntegration.yaml/badge.svg)](https://github.com/n-pola/can-i-cai/actions/workflows/parserIntegration.yaml)
