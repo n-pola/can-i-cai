@@ -11,6 +11,10 @@ app.use(
     origin: process.env.CORS_ORIGIN || '*',
   }),
 );
+
+// Disable x-powered-by header
+app.disable('x-powered-by');
+
 app.use(express.json());
 
 app.use('/', apiRouter);
