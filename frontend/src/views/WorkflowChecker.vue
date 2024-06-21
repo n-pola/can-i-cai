@@ -45,6 +45,13 @@ const {
   isOpen: addExternalImageModalIsOpen,
 } = useModalInterception();
 
+const {
+  interceptAction: interceptClearWorkflow,
+  confirmAction: confirmClearWorkflow,
+  abortAction: abortClearWorkflow,
+  isOpen: ClearWorkflowModalIsOpen,
+} = useModalInterception();
+
 // Data
 const workflowPlane = ref<InstanceType<typeof WorkflowPlane> | null>(null);
 const mode = ref<PlaneMode>('select');
@@ -308,7 +315,7 @@ onUnmounted(() => {
       <CheckerTools
         :mode="mode"
         @recenter="workflowPlane?.centerPlane"
-        @clear-plane="workflowStore.clearWorkflow"
+        @clear-plane="interceptClearWorkflow(workflowStore.clearWorkflow, () => {})"
         @update:mode="mode = $event"
       />
     </aside>
@@ -355,6 +362,16 @@ onUnmounted(() => {
       @abort="abortAddExternalImage"
       :confirm-text="i18n.t('yes')"
       :abort-text="i18n.t('no')"
+    />
+    <ConfirmModal
+      v-model="ClearWorkflowModalIsOpen"
+      color="error"
+      :title="i18n.t('workflowChecker.clearWorkflowPrompt.title')"
+      :message="i18n.t('workflowChecker.clearWorkflowPrompt.message')"
+      @confirm="confirmClearWorkflow"
+      @abort="abortClearWorkflow"
+      confirm-color="error"
+      :confirm-text="i18n.t('clear')"
     />
   </div>
 </template>

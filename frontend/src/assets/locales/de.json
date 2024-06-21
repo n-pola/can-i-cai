@@ -30,6 +30,10 @@
       "clearWorkflow": "Prozess löschen",
       "select": "Auswählen",
       "move": "Verschieben"
+    },
+    "clearWorkflowPrompt": {
+      "title": "Prozess löschen",
+      "message": "Bist du sicher, dass du den Prozess löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
     }
   },
   "addComponentModal": {
@@ -95,5 +99,6 @@
     "name": "Externe Bilddatei",
     "modalTitle": "Externe Bilddatei hinzufügen",
     "modalPrompt": "Verfügt das externe Bild über CAI-Metadaten?"
-  }
+  },
+  "clear": "Löschen"
 }

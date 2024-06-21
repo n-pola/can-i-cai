@@ -30,6 +30,10 @@
       "clearWorkflow": "Clear workflow",
       "select": "Select",
       "move": "Move"
+    },
+    "clearWorkflowPrompt": {
+      "title": "Clear workflow",
+      "message": "Are you sure you want to clear the workflow? This action cannot be undone."
     }
   },
   "addComponentModal": {
@@ -95,5 +99,6 @@
     "name": "External image",
     "modalTitle": "Add external image",
     "modalPrompt": "Does the external image have CAI metadata?"
-  }
+  },
+  "clear": "Clear"
 }
