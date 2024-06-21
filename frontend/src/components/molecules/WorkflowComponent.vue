@@ -85,8 +85,8 @@ defineExpose({
 .component {
   $self: &;
 
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
+  height: $f-s * $lh-base + $f-xs * $lh-base + $xxs * 2;
   overflow: hidden;
   user-select: none;
   background-color: $lighter;
@@ -128,6 +128,7 @@ defineExpose({
   }
 
   &__content {
+    flex: 1;
     padding: $xxs;
     overflow: hidden;
 
