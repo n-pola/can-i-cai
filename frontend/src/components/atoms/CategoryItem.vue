@@ -32,8 +32,8 @@ const { locale } = useI18n();
 .category {
   $self: &;
 
-  display: grid;
-  grid-template-columns: auto 1fr;
+  display: flex;
+  height: $m + $xxs * 2;
   overflow: hidden;
   cursor: pointer;
   background-color: $lighter;
@@ -75,6 +75,7 @@ const { locale } = useI18n();
 
   &__content {
     display: flex;
+    flex: 1;
     align-items: center;
     justify-content: space-between;
     padding: $xxs;
