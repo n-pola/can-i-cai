@@ -22,7 +22,9 @@ const { host, protocol } = window.location;
 const shareLink = computed(() => `${protocol}//${host}/check/shared/${props.id}`);
 
 // Functions
-const copyToClipboard = () => {
+const copyToClipboard = (e: Event) => {
+  e?.preventDefault();
+  e.stopImmediatePropagation();
   window.navigator.clipboard.writeText(shareLink.value);
 };
 </script>

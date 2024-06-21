@@ -16,7 +16,7 @@ defineProps<{
 const input = defineModel<string>();
 
 const emit = defineEmits<{
-  buttonClick: [];
+  buttonClick: [e: MouseEvent];
 }>();
 </script>
 
@@ -38,7 +38,7 @@ const emit = defineEmits<{
       :rounded="false"
       :title="buttonTitle"
       class="input-bar__icon"
-      @click="emit('buttonClick')"
+      @click="(e) => emit('buttonClick', e)"
     ></Button>
   </div>
 </template>
