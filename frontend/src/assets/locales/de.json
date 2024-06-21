@@ -30,6 +30,10 @@
       "clearWorkflow": "Prozess löschen",
       "select": "Auswählen",
       "move": "Verschieben"
+    },
+    "clearWorkflowPrompt": {
+      "title": "Prozess löschen",
+      "message": "Bist du sicher, dass du den Prozess löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
     }
   },
   "addComponentModal": {
@@ -60,7 +64,8 @@
     "incorrectInfo": "Falsche Informationen?",
     "additionalInfo": "Zusätzliche Informationen",
     "contactMaintainer": "Fehler melden",
-    "viewGithub": "Auf GitHub ansehen"
+    "viewGithub": "Auf GitHub ansehen",
+    "compatibleAlternatives": "Kompatible Alternativen"
   },
   "customComponentModal": {
     "titleAdd": "Eigenen Bestandteil hinzufügen",
@@ -95,5 +100,7 @@
     "name": "Externe Bilddatei",
     "modalTitle": "Externe Bilddatei hinzufügen",
     "modalPrompt": "Verfügt das externe Bild über CAI-Metadaten?"
-  }
+  },
+  "clear": "Löschen",
+  "addFirstComponent": "Ersten Bestandteil hinzufügen"
 }

@@ -5,7 +5,7 @@ import type {
   ComponentType,
   ComponentFunctionType,
 } from 'cic-shared';
-import { ref, watch } from 'vue';
+import { onUnmounted, ref, watch, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useComponentsStore } from '@/stores/components';
@@ -24,6 +24,7 @@ import SharedModal from '@/components/organisms/SharedModal.vue';
 import VersionInterceptionModal from '@/components/organisms/VersionInterceptionModal.vue';
 import AddCustomComponentModal from '@/components/organisms/AddCustomComponentModal.vue';
 import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
+import type { PlaneMode } from '@/types/checkerPlane';
 
 // Hooks
 const toast = useToast();
@@ -44,9 +45,16 @@ const {
   isOpen: addExternalImageModalIsOpen,
 } = useModalInterception();
 
+const {
+  interceptAction: interceptClearWorkflow,
+  confirmAction: confirmClearWorkflow,
+  abortAction: abortClearWorkflow,
+  isOpen: ClearWorkflowModalIsOpen,
+} = useModalInterception();
+
 // Data
 const workflowPlane = ref<InstanceType<typeof WorkflowPlane> | null>(null);
-const mode = ref<'select' | 'move'>('select');
+const mode = ref<PlaneMode>('select');
 
 const detailModalIsOpen = ref(false);
 const selectedNode = ref<FrontendNode | null>(null);
@@ -246,6 +254,24 @@ const handleShare = async () => {
   }
 };
 
+/**
+ * set the mode to move
+ * Own function so the keyboard event listener can be removed
+ */
+const enableMoveMode = (e: KeyboardEvent) => {
+  if (e.code !== 'Space') return;
+  mode.value = 'move';
+};
+
+/**
+ * set the mode to select
+ * Own function so the keyboard event listener can be removed
+ */
+const disableMoveMode = (e: KeyboardEvent) => {
+  if (e.code !== 'Space') return;
+  mode.value = 'select';
+};
+
 // Watchers
 
 // Clear custom component to edit when modal is closed
@@ -261,6 +287,17 @@ watch(detailModalIsOpen, (isOpen) => {
     selectedNode.value = null;
   }
 });
+
+// Lifecycle hooks
+onMounted(() => {
+  window.addEventListener('keydown', enableMoveMode);
+  window.addEventListener('keyup', disableMoveMode);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', enableMoveMode);
+  window.removeEventListener('keyup', disableMoveMode);
+});
 </script>
 
 <template>
@@ -271,13 +308,15 @@ watch(detailModalIsOpen, (isOpen) => {
       @add-component-requested="handleAddComponentRequested"
       @add-component-requested-edge="handleAddComponentOnEdgeRequest"
       @delete-node="workflowStore.removeNodeAndCloseGaps"
+      :mode="mode"
       ref="workflowPlane"
     />
     <aside class="workflow-tools">
       <CheckerTools
         :mode="mode"
         @recenter="workflowPlane?.centerPlane"
-        @clear-plane="workflowStore.clearWorkflow"
+        @clear-plane="interceptClearWorkflow(workflowStore.clearWorkflow, () => {})"
+        @update:mode="mode = $event"
       />
     </aside>
     <aside class="workflow-summary">
@@ -323,6 +362,16 @@ watch(detailModalIsOpen, (isOpen) => {
       @abort="abortAddExternalImage"
       :confirm-text="i18n.t('yes')"
       :abort-text="i18n.t('no')"
+    />
+    <ConfirmModal
+      v-model="ClearWorkflowModalIsOpen"
+      color="error"
+      :title="i18n.t('workflowChecker.clearWorkflowPrompt.title')"
+      :message="i18n.t('workflowChecker.clearWorkflowPrompt.message')"
+      @confirm="confirmClearWorkflow"
+      @abort="abortClearWorkflow"
+      confirm-color="error"
+      :confirm-text="i18n.t('clear')"
     />
   </div>
 </template>

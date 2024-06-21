@@ -30,6 +30,10 @@
       "clearWorkflow": "Clear workflow",
       "select": "Select",
       "move": "Move"
+    },
+    "clearWorkflowPrompt": {
+      "title": "Clear workflow",
+      "message": "Are you sure you want to clear the workflow? This action cannot be undone."
     }
   },
   "addComponentModal": {
@@ -44,7 +48,7 @@
       "categoryNotCorrectType": "This category does not contain components that can be added to the workflow at the selected position."
     }
   },
-  "sharedModal":{
+  "sharedModal": {
     "title": "Shared workflow",
     "success": "Your workflow was shared successfully. You can now copy the link below and share it.",
     "hintReshare": "If you change something on your workflow you will need to share it again, as a new link will be created."
@@ -60,7 +64,8 @@
     "incorrectInfo": "Incorrect information?",
     "additionalInfo": "Additional information",
     "contactMaintainer": "Contact maintainer",
-    "viewGithub": "View on GitHub"
+    "viewGithub": "View on GitHub",
+    "compatibleAlternatives": "Compatible alternatives"
   },
   "customComponentModal": {
     "titleAdd": "Add custom component",
@@ -95,5 +100,7 @@
     "name": "External image",
     "modalTitle": "Add external image",
     "modalPrompt": "Does the external image have CAI metadata?"
-  }
+  },
+  "clear": "Clear",
+  "addFirstComponent": "Add first component"
 }

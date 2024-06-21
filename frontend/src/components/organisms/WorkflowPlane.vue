@@ -5,8 +5,14 @@ import { cssVariables } from '@/utils/cssVariables';
 import { useWorkflowStore } from '@/stores/workflow';
 import SvgAddButton from '@/components/atoms/SvgAddButton.vue';
 import { NodeHelper } from '@/helpers/nodeHelper';
+import type { PlaneMode } from '@/types/checkerPlane';
+import { i18n } from '../../utils/i18n';
 
 const workflow = useWorkflowStore();
+
+const props = defineProps<{
+  mode: PlaneMode;
+}>();
 
 const emit = defineEmits<{
   nodeClicked: [id: string];
@@ -16,7 +22,7 @@ const emit = defineEmits<{
 }>();
 
 // Data
-const editorRef = ref<HTMLElement | null>(null);
+const editorRef = ref<SVGSVGElement | null>(null);
 const componentRefs = ref<{ objectRef: SVGForeignObjectElement | null }[]>([]);
 const viewPort = ref({
   x: 0,
@@ -25,9 +31,24 @@ const viewPort = ref({
   height: 0,
 });
 
+const isDragging = ref(false);
+const dragStart = ref<DOMPoint | null>(null);
+
 // Computed values
 const viewBox = computed(() => {
   return `${viewPort.value.x} ${viewPort.value.y} ${viewPort.value.width} ${viewPort.value.height}`;
+});
+
+/** Scale between user coordinate space and svg coordinate space */
+const scale = computed(() => {
+  if (!editorRef.value) return 1;
+  return viewPort.value.width / editorRef.value.width.baseVal.value;
+});
+
+const cursor = computed(() => {
+  if (isDragging.value) return 'grabbing';
+
+  return props.mode === 'move' ? 'grab' : 'default';
 });
 
 // Functions
@@ -74,11 +95,45 @@ const handleScroll = (event: WheelEvent) => {
   };
 };
 
+const handleMouseDown = (event: MouseEvent) => {
+  if (props.mode !== 'move' || event.target !== editorRef.value) return;
+
+  isDragging.value = true;
+  dragStart.value = new DOMPoint(event.offsetX, event.offsetY);
+};
+
+const handleMouseMove = (event: MouseEvent) => {
+  if (props.mode !== 'move' || event.target !== editorRef.value) return;
+
+  if (!isDragging.value || !dragStart.value) return;
+
+  const { offsetX, offsetY } = event;
+  const changeX = (dragStart.value.x - offsetX) * scale.value;
+  const changeY = (dragStart.value.y - offsetY) * scale.value;
+
+  viewPort.value = {
+    x: viewPort.value.x + changeX,
+    y: viewPort.value.y + changeY,
+    width: viewPort.value.width,
+    height: viewPort.value.height,
+  };
+
+  dragStart.value = new DOMPoint(offsetX, offsetY);
+};
+
+const handleMouseUp = () => {
+  isDragging.value = false;
+  dragStart.value = null;
+};
+
 const centerPlane = () => {
   if (!editorRef.value) return;
+
+  // Bring 0,0 to the center of the screen
   let x = -((editorRef.value.clientWidth || 0) / 2);
   let y = -((editorRef.value.clientHeight || 0) / 2);
 
+  // If there are nodes, center the plane around them
   if (workflow.nodes.size) {
     let maxNodeWidth = 0;
     let maxNodeY = 0;
@@ -124,7 +179,16 @@ defineExpose({
 </script>
 
 <template>
-  <svg ref="editorRef" :viewBox="viewBox" @wheel="handleScroll" class="workflow-plane">
+  <svg
+    ref="editorRef"
+    :viewBox="viewBox"
+    @wheel="handleScroll"
+    class="workflow-plane"
+    :style="{ cursor }"
+    @mousedown="handleMouseDown"
+    @mousemove="handleMouseMove"
+    @mouseup="handleMouseUp"
+  >
     <g
       v-if="workflow.nodes.size === 0"
       @click="emit('addComponentRequested')"
@@ -138,7 +202,7 @@ defineExpose({
         dominant-baseline="middle"
         :y="cssVariables.size.xxl / 2 + cssVariables.size.s"
       >
-        Add first component
+        {{ i18n.t('addFirstComponent') }}
       </text>
     </g>
     <line
