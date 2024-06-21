@@ -121,7 +121,7 @@ onMounted(() => {
         <div v-html="component.additionalInfo"></div>
       </div>
       <div class="component-details__alternative" v-if="alternatives.length">
-        <h4>Compatible alternatives</h4>
+        <h4>{{ i18n.t('detailModal.compatibleAlternatives') }}</h4>
         <WorkflowComponent
           v-for="alternative in alternatives.slice(0, 3)"
           :key="alternative.id"

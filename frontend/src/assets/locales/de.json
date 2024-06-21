@@ -64,7 +64,8 @@
     "incorrectInfo": "Falsche Informationen?",
     "additionalInfo": "Zusätzliche Informationen",
     "contactMaintainer": "Fehler melden",
-    "viewGithub": "Auf GitHub ansehen"
+    "viewGithub": "Auf GitHub ansehen",
+    "compatibleAlternatives": "Kompatible Alternativen"
   },
   "customComponentModal": {
     "titleAdd": "Eigenen Bestandteil hinzufügen",
