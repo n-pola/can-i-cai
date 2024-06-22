@@ -379,11 +379,11 @@ onUnmounted(() => {
 <style lang="scss">
 .workflow-checker {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: $s;
+  grid-template-columns: repeat($grid-columns, 1fr);
+  gap: $grid-gap;
   align-items: center;
   height: 100%;
-  padding: 0 $l;
+  margin: 0 $grid-margin;
 }
 
 .workflow-summary {

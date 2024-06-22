@@ -1,0 +1,40 @@
+/* stylelint-disable-next-line selector-class-pattern */
+.Vue-Toastification {
+  &__container {
+    &.top-right {
+      right: $grid-margin;
+      padding: 0;
+    }
+  }
+
+  &__toast {
+    width: calc((($grid-column-width) * 2) + $grid-gap);
+    min-width: auto;
+    min-height: auto;
+    padding: $xxs;
+    border-radius: $border-radius;
+
+    &--error {
+      background-color: $error;
+    }
+
+    &--success {
+      background-color: $success;
+    }
+  }
+
+  &__toast-body {
+    font-size: $f-xs;
+    line-height: $lh-base
+  }
+
+  &__close-button {
+    padding-left: $xxs;
+    color: $lighter;
+    opacity: 1;
+
+    &:hover {
+      color: $lightest;
+    }
+  }
+}
