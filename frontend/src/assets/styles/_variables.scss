@@ -44,6 +44,12 @@ $dark: #525252;
 $darker: #262626;
 $darkest: #121212;
 
+// Grid
+$grid-columns: 10;
+$grid-gap: $s;
+$grid-margin: $l;
+$grid-column-width: calc((100vw - 2 * $grid-margin - $grid-gap * ($grid-columns - 1)) / $grid-columns);
+
 // Misc.
 $border-radius: 4px;
 $modal-width: 40 * $base;

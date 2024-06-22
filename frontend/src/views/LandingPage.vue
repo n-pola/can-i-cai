@@ -42,11 +42,11 @@ const i18n = useI18n();
 <style lang="scss">
 .landing-page {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: $s;
+  grid-template-columns: repeat($grid-columns, 1fr);
+  gap: $grid-gap;
   align-items: center;
   height: 100%;
-  margin: 0 $l;
+  margin: 0 $grid-margin;
 
   &__hero {
     display: flex;

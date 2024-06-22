@@ -98,10 +98,10 @@ const handleDelete = (id: string) => {
 .workflow-overview {
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: $s;
+  grid-template-columns: repeat($grid-columns, 1fr);
+  gap: $grid-gap;
   height: 100%;
-  padding: $l;
+  padding: $grid-margin;
 
   &__content {
     display: flex;
