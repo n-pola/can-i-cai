@@ -12,6 +12,8 @@
 
 The webapp is developed as part of Nils Polareks bachelor thesis at the Cologne University of Applied Sciences.
 
+See the [wiki](https://github.com/n-pola/can-i-cai/wiki) for further information about the development process and choices.
+
 ## Content
 1. [Contributions](#contributions)
     1. [General](#general)
