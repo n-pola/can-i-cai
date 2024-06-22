@@ -15,7 +15,7 @@ const iconStyle = computed(() => {
   };
 });
 
-const IS_SAFARI = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
 </script>
 
 <template>
@@ -25,7 +25,7 @@ const IS_SAFARI = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(na
     :width="size"
     :height="size"
     class="add-button"
-    :class="{ 'add-button--safari': IS_SAFARI }"
+    :class="{ 'add-button--safari': isSafari }"
   >
     <span class="material-symbols-outlined add-button__background" :style="iconStyle"
       >add_circle</span
