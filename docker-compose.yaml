@@ -7,7 +7,7 @@ services:
     working_dir: /app
     volumes:
       - ./backend:/app
-      - ./shared:/app/node_modules/cic-shared
+      - ./shared:/shared
     ports:
       - '3000:3000'
     environment:
@@ -27,7 +27,7 @@ services:
       - '8080:8080'
     volumes:
       - ./frontend:/app
-      - ./shared:/app/node_modules/cic-shared
+      - ./shared:/shared
     command: sh -c "npm install && npm run dev"
 
   db:
@@ -47,7 +47,7 @@ services:
     working_dir: /app
     volumes:
       - ./parser:/app
-      - ./shared:/app/node_modules/cic-shared
+      - ./shared:/shared
       - ./data:/app/data
     command: sh -c "npm install && npm run dev"
     environment:
