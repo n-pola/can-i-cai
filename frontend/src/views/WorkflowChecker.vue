@@ -14,6 +14,7 @@ import { shareWorkflow } from '@/api/workflow';
 import type { FrontendNode } from '@/types/workflow';
 import { useModalInterception } from '@/hooks/useModalInterception';
 import { externalImageCategory } from '@/constants/externalImageCategory';
+import type { PlaneMode } from '@/types/checkerPlane';
 
 import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
 import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
@@ -24,7 +25,7 @@ import SharedModal from '@/components/organisms/SharedModal.vue';
 import VersionInterceptionModal from '@/components/organisms/VersionInterceptionModal.vue';
 import AddCustomComponentModal from '@/components/organisms/AddCustomComponentModal.vue';
 import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
-import type { PlaneMode } from '@/types/checkerPlane';
+import CompatibilityLegend from '@/components/molecules/CompatibilityLegend.vue';
 
 // Hooks
 const toast = useToast();
@@ -305,7 +306,7 @@ onUnmounted(() => {
 <template>
   <div class="workflow-checker">
     <WorkflowPlane
-      class="workflow-plane"
+      class="workflow-checker__plane"
       @nodeClicked="handleNodeClick"
       @add-component-requested="handleAddComponentRequested"
       @add-component-requested-edge="handleAddComponentOnEdgeRequest"
@@ -313,7 +314,7 @@ onUnmounted(() => {
       :mode="mode"
       ref="workflowPlane"
     />
-    <aside class="workflow-tools">
+    <aside class="workflow-checker__tools">
       <CheckerTools
         :mode="mode"
         @recenter="workflowPlane?.centerPlane"
@@ -321,7 +322,7 @@ onUnmounted(() => {
         @update:mode="mode = $event"
       />
     </aside>
-    <aside class="workflow-summary">
+    <aside class="workflow-checker__summary">
       <WorkflowSummary
         :componentCount="workflowStore.nodes.size"
         :workflowCompatible="workflowStore.compatible"
@@ -330,6 +331,9 @@ onUnmounted(() => {
         @save="handleSaveRequested"
         @share="handleShare"
       />
+    </aside>
+    <aside class="workflow-checker__legend">
+      <CompatibilityLegend />
     </aside>
     <ComponentDetailModal
       v-if="selectedNode && selectedNodeId"
@@ -387,23 +391,29 @@ onUnmounted(() => {
   align-items: center;
   height: 100%;
   margin: 0 $grid-margin;
-}
 
-.workflow-summary {
-  z-index: 1;
-  grid-column: 9 / span 2;
-}
+  &__summary {
+    z-index: 1;
+    grid-column: 9 / span 2;
+  }
 
-.workflow-tools {
-  z-index: 1;
-  grid-column: 1;
-}
+  &__tools {
+    z-index: 1;
+    grid-column: 1;
+  }
 
-.workflow-plane {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  &__plane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__legend {
+    position: absolute;
+    bottom: $s;
+    z-index: 1;
+  }
 }
 </style>

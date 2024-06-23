@@ -107,5 +107,11 @@
     "output": "Output",
     "input-output": "Input/Output",
     "input": "Input"
+  },
+  "compatibilityLegend": {
+    "compatible": "Kompatibel",
+    "incompatible": "Inkompatibel",
+    "partial": "Teilweise kompatibel",
+    "partialExplanation": "Die Verbindung selber ist kompatibel, jedoch ist ein vorheriger Bestandteil inkompatibel und unterbricht so die Kette von CAI-kompatiblen Metadaten."
   }
 }
