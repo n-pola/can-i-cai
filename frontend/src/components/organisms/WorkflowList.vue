@@ -4,6 +4,7 @@ import Button from '@/components/atoms/Button.vue';
 import { useI18n } from 'vue-i18n';
 import WorkflowListItem from '@/components/molecules/WorkflowListItem.vue';
 import { useRouter } from 'vue-router';
+import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 
 // Component setup
 defineProps<{
@@ -21,7 +22,8 @@ const router = useRouter();
 
 // Functions
 const handleWorkflowClick = (id: string) => {
-  router.push(`/check/${id}`);
+  WorkflowStorageHelper.setCurrentWorkflow(id);
+  router.push(`/check`);
 };
 </script>
 
@@ -29,7 +31,7 @@ const handleWorkflowClick = (id: string) => {
   <div class="workflow-list">
     <div class="workflow-list__actions">
       <Button color="error" @click="emit('deleteAll')">{{ i18n.t('deleteAll') }}</Button>
-      <RouterLink to="/check">
+      <RouterLink to="/check/new">
         <Button>{{ i18n.t('new') }}</Button>
       </RouterLink>
     </div>

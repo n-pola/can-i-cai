@@ -26,6 +26,7 @@ import VersionInterceptionModal from '@/components/organisms/VersionInterception
 import AddCustomComponentModal from '@/components/organisms/AddCustomComponentModal.vue';
 import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
 import CompatibilityLegend from '@/components/molecules/CompatibilityLegend.vue';
+import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 
 // Hooks
 const toast = useToast();
@@ -45,12 +46,17 @@ const {
   abortAction: abortAddExternalImage,
   isOpen: addExternalImageModalIsOpen,
 } = useModalInterception();
-
 const {
   interceptAction: interceptClearWorkflow,
   confirmAction: confirmClearWorkflow,
   abortAction: abortClearWorkflow,
   isOpen: ClearWorkflowModalIsOpen,
+} = useModalInterception();
+const {
+  interceptAction: interceptSaveWorkflow,
+  confirmAction: confirmSaveWorkflow,
+  abortAction: abortSaveWorkflow,
+  isOpen: saveWorkflowModalIsOpen,
 } = useModalInterception();
 
 // Data
@@ -206,17 +212,8 @@ const handleAddSpecialComponentRequested = (type: ComponentType) => {
   }
 };
 
-/** Try to save current workflow to local storage and communicate errors */
-const handleSaveRequested = () => {
-  if (!workflowStore.name) {
-    toast.error(
-      i18n.t('workflowChecker.toasts.missingTitle', {
-        action: i18n.t('workflowChecker.actions.saved'),
-      }),
-    );
-    return;
-  }
-
+/** Save current workflow to local storage and communicate with toasts */
+const saveWorkflow = () => {
   try {
     workflowStore.saveToLocalStorage();
     toast.success(
@@ -230,6 +227,37 @@ const handleSaveRequested = () => {
       i18n.t('workflowChecker.toasts.error', { action: i18n.t('workflowChecker.actions.saved') }),
     );
   }
+};
+
+/** Try to save current workflow to local storage and communicate errors */
+const handleSaveRequested = () => {
+  if (!workflowStore.name) {
+    toast.error(
+      i18n.t('workflowChecker.toasts.missingTitle', {
+        action: i18n.t('workflowChecker.actions.saved'),
+      }),
+    );
+    return;
+  }
+
+  // If we have a workflow id we are handling an already saved workflow, so we
+  // need to ask the user if they want to overwrite it or save it as a new one
+  if (workflowStore.id) {
+    interceptSaveWorkflow(
+      // Overwrite current workflow
+      () => {
+        saveWorkflow();
+      },
+      // Save as new workflow
+      () => {
+        workflowStore.id = '';
+        saveWorkflow();
+      },
+    );
+    return;
+  }
+
+  saveWorkflow();
 };
 
 /** Try to share current workflow and communicate errors */
@@ -318,7 +346,15 @@ onUnmounted(() => {
       <CheckerTools
         :mode="mode"
         @recenter="workflowPlane?.centerPlane"
-        @clear-plane="interceptClearWorkflow(workflowStore.clearWorkflow, () => {})"
+        @clear-plane="
+          interceptClearWorkflow(
+            () => {
+              workflowStore.clearWorkflow();
+              WorkflowStorageHelper.clearCurrentWorkflow();
+            },
+            () => {},
+          )
+        "
         @update:mode="mode = $event"
       />
     </aside>
@@ -379,6 +415,16 @@ onUnmounted(() => {
       @abort="abortClearWorkflow"
       confirm-color="error"
       :confirm-text="i18n.t('clear')"
+    />
+    <ConfirmModal
+      v-model="saveWorkflowModalIsOpen"
+      :title="i18n.t('workflowChecker.saveInterception.title')"
+      :message="i18n.t('workflowChecker.saveInterception.message')"
+      @confirm="confirmSaveWorkflow"
+      @abort="abortSaveWorkflow"
+      confirm-color="primary"
+      :confirm-text="i18n.t('workflowChecker.saveInterception.overwrite')"
+      :abort-text="i18n.t('workflowChecker.saveInterception.saveAsNew')"
     />
   </div>
 </template>
