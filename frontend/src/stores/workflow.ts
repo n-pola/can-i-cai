@@ -3,6 +3,7 @@ import type { PopulatedComponent, PopulatedCustomComponent, Edge, SavedWorkflow 
 import { v4 as uuid } from 'uuid';
 import type {
   BoundingBox,
+  FrontendEdge,
   FrontendNode,
   PositionedFrontendEdge,
   WorkflowStore,
@@ -111,8 +112,6 @@ export const useWorkflowStore = defineStore('workflow', {
 
         const sourceBB = sourceNode.boundingBox;
         const targetBB = targetNode.boundingBox;
-        const compatible =
-          NodeHelper.isCompatible(sourceNode) && NodeHelper.isCompatible(targetNode);
 
         const coordinates = {
           start: {
@@ -125,7 +124,7 @@ export const useWorkflowStore = defineStore('workflow', {
           },
         };
 
-        return { ...edge, coordinates, compatible, id: edgeId };
+        return { ...edge, coordinates, id: edgeId };
       },
     /** Get all edges with the respective coordinates in context of current node
      * positions */
@@ -150,6 +149,63 @@ export const useWorkflowStore = defineStore('workflow', {
       this.nodes.clear();
       this.edges.clear();
     },
+    /** Determine the compatibility of an edge based on its source node and
+     * previous edges compatibility */
+    determineEdgeCompatibility(id: string): void {
+      const edge = this.edges.get(id);
+      if (!edge) {
+        return;
+      }
+
+      const sourceAdjacency = this.adjacencies.get(edge.source);
+      const sourceCompatible = this.nodeCompatible(edge.source);
+      if (!sourceAdjacency || sourceCompatible === null) {
+        return;
+      }
+
+      let edgeCompatible: FrontendEdge['compatible'] = sourceCompatible ? 'yes' : 'no';
+
+      const previousEdges = sourceAdjacency.in.map((edgeId) => {
+        const prevEdge = this.edges.get(edgeId);
+        if (!prevEdge) {
+          return null;
+        }
+
+        return prevEdge.compatible;
+      });
+
+      if (previousEdges.length) {
+        const previousEdgesCompatibility = previousEdges.some(
+          (compatibility) => !(compatibility !== 'yes'),
+        );
+
+        if (!previousEdgesCompatibility && edgeCompatible === 'yes') {
+          edgeCompatible = 'partial';
+        }
+      }
+
+      this.edges.set(id, { ...edge, compatible: edgeCompatible });
+    },
+    /** Recursively (re)determine compatibility from a given edge onwards */
+    determineEdgeCompatibilityFromEdge(id: string): void {
+      const edge = this.edges.get(id);
+      if (!edge) {
+        return;
+      }
+
+      this.determineEdgeCompatibility(id);
+      this.determineEdgeCompatibilityFromNode(edge.target);
+    },
+    /** Redetermine compatibility of all outgoing edges of a
+     * given node */
+    determineEdgeCompatibilityFromNode(id: string): void {
+      const adjacency = this.adjacencies.get(id);
+      if (!adjacency) {
+        return;
+      }
+
+      adjacency.out.forEach((edgeId) => this.determineEdgeCompatibilityFromEdge(edgeId));
+    },
     addEdge(source: string, target: string, id?: string): void {
       const sourceAdjacency = this.adjacencies.get(source);
       const targetAdjacency = this.adjacencies.get(target);
@@ -165,9 +221,10 @@ export const useWorkflowStore = defineStore('workflow', {
       }
 
       const edgeId = id || uuid();
-      this.edges.set(edgeId, { source, target, compatible: sourceCompatible && targetCompatible });
+      this.edges.set(edgeId, { source, target, compatible: 'no' });
       sourceAdjacency.out.push(edgeId);
       targetAdjacency.in.push(edgeId);
+      this.determineEdgeCompatibility(edgeId);
     },
     removeEdge(edgeId: string): void {
       const edge = this.edges.get(edgeId);
@@ -211,6 +268,7 @@ export const useWorkflowStore = defineStore('workflow', {
       const updatedNode = { ...currentData, ...node };
 
       this.nodes.set(id, updatedNode);
+      this.determineEdgeCompatibilityFromNode(id);
     },
     addNodeBefore(
       node: PopulatedComponent | PopulatedCustomComponent,
@@ -336,6 +394,7 @@ export const useWorkflowStore = defineStore('workflow', {
           return;
         }
 
+        this.determineEdgeCompatibility(edgeId);
         this.recalculateNodePositionsFrom(edge.target);
       });
     },

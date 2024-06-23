@@ -129,6 +129,12 @@ const handleMouseUp = () => {
 const centerPlane = () => {
   if (!editorRef.value) return;
 
+  // Wait for next frame if the editor is not visible
+  if (editorRef.value.clientWidth === 0 || editorRef.value.clientHeight === 0) {
+    requestAnimationFrame(centerPlane);
+    return;
+  }
+
   // Bring 0,0 to the center of the screen
   let x = -((editorRef.value.clientWidth || 0) / 2);
   let y = -((editorRef.value.clientHeight || 0) / 2);
@@ -205,26 +211,29 @@ defineExpose({
         {{ i18n.t('addFirstComponent') }}
       </text>
     </g>
-    <line
-      v-for="line in workflow.positionedEdges"
-      :x1="line.coordinates.start.x"
-      :y1="line.coordinates.start.y"
-      :x2="line.coordinates.end.x"
-      :y2="line.coordinates.end.y"
-      class="workflow-plane__edge"
-      :class="{ 'workflow-plane__edge--compatible': line.compatible }"
-      :key="line.id"
-    />
-    <SvgAddButton
-      v-for="(line, index) in workflow.positionedEdges"
-      :x="(line.coordinates.start.x + line.coordinates.end.x) / 2"
-      :y="(line.coordinates.start.y + line.coordinates.end.y) / 2"
-      :size="cssVariables.size.m"
-      :key="index"
-      @click="emit('addComponentRequestedEdge', line.id)"
-      @keypress.enter="emit('addComponentRequestedEdge', line.id)"
-      tabindex="0"
-    />
+    <g class="workflow-plane__edge-wrap" v-for="line in workflow.positionedEdges" :key="line.id">
+      <line
+        :x1="line.coordinates.start.x"
+        :y1="line.coordinates.start.y"
+        :x2="line.coordinates.end.x"
+        :y2="line.coordinates.end.y"
+        class="workflow-plane__edge"
+        :class="{
+          'workflow-plane__edge--compatible': line.compatible === 'yes',
+          'workflow-plane__edge--partial': line.compatible === 'partial',
+        }"
+        :key="line.id"
+      />
+      <SvgAddButton
+        :x="(line.coordinates.start.x + line.coordinates.end.x) / 2"
+        :y="(line.coordinates.start.y + line.coordinates.end.y) / 2"
+        :size="cssVariables.size.m"
+        @click="emit('addComponentRequestedEdge', line.id)"
+        @keypress.enter="emit('addComponentRequestedEdge', line.id)"
+        tabindex="0"
+        class="workflow-plane__add-button"
+      />
+    </g>
     <WorkflowForeignObject
       v-for="node in workflow.nodes"
       :y="node[1].boundingBox.y"
@@ -247,6 +256,8 @@ defineExpose({
 
 <style lang="scss" scoped>
 .workflow-plane {
+  $self: &;
+
   & g {
     transition: $animation;
   }
@@ -261,6 +272,25 @@ defineExpose({
 
     &--compatible {
       stroke: $success;
+    }
+
+    &--partial {
+      stroke: $warning;
+    }
+  }
+
+  &__add-button {
+    opacity: 0;
+  }
+
+  &__edge-wrap {
+    padding: 0 $m;
+    pointer-events: bounding-box;
+
+    &:hover {
+      & #{$self}__add-button {
+        opacity: 1;
+      }
     }
   }
 }

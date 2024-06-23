@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "cic-shared": "file:../shared",
+    "floating-vue": "^5.2.2",
     "pinia": "^2.1.7",
     "uuid": "^10.0.0",
     "vue": "^3.4.21",

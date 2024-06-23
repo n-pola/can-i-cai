@@ -16,7 +16,7 @@ export type FrontendNode = Node & {
 };
 
 export type FrontendEdge = Edge & {
-  compatible: boolean;
+  compatible: 'yes' | 'no' | 'partial';
 };
 
 /** Coordinates of an Edge to draw on svg plane */
