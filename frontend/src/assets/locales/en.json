@@ -102,5 +102,10 @@
     "modalPrompt": "Does the external image have CAI metadata?"
   },
   "clear": "Clear",
-  "addFirstComponent": "Add first component"
+  "addFirstComponent": "Add first component",
+  "types": {
+    "output": "Output",
+    "input-output": "Input/Output",
+    "input": "Input"
+  }
 }

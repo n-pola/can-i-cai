@@ -54,7 +54,7 @@ const content = computed(() => {
       title: i18n.t('detailModal.category'),
     },
     {
-      value: props.component.type,
+      value: props.component.type.map((type) => i18n.t(`types.${type}`)).join(', '),
       title: i18n.t('detailModal.type'),
     },
     {
