@@ -6,7 +6,7 @@ import type { AdditionalCategory } from '@/types/workflow';
 const props = defineProps<{
   category: Category | AdditionalCategory;
   disabled?: boolean;
-  title?: string;
+  disabledTitle: string;
 }>();
 
 const { locale } = useI18n();
@@ -16,7 +16,7 @@ const { locale } = useI18n();
   <div
     class="category"
     :class="{ 'category--disabled': props.disabled }"
-    :title="title || category.name[locale as 'en' | 'de']"
+    :title="disabled ? disabledTitle : category.name[locale as 'en' | 'de']"
   >
     <div class="category__icon">
       <span class="material-symbols-outlined icon--s">{{ category.icon }}</span>

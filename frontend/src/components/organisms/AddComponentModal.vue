@@ -248,7 +248,7 @@ onMounted(async () => {
               @keypress.enter="handleCategoryClick(category.id)"
               tabindex="0"
               :disabled="!categoryStore.categorySatisfiesTypes(category.id, type ?? [])"
-              :title="translate('addComponentModal.errors.categoryNotCorrectType')"
+              :disabled-title="translate('addComponentModal.errors.categoryNotCorrectType')"
             />
             <CategoryItem
               v-for="category in additionalCategories"
@@ -258,7 +258,7 @@ onMounted(async () => {
               @keypress.enter="handleAddSpecialComponent(category.type)"
               tabindex="0"
               :disabled="!category.types.some((t) => type?.includes(t))"
-              :title="translate('addComponentModal.errors.categoryNotCorrectType')"
+              :disabled-title="translate('addComponentModal.errors.categoryNotCorrectType')"
             />
           </template>
           <template v-else-if="selectedCategory">
