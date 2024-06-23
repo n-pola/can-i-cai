@@ -31,11 +31,7 @@ const height = computed(() => componentRef.value?.componentRef.scrollHeight || 0
 
 const width = cssVariables.size.xxs * 24;
 
-defineExpose({
-  objectRef,
-});
-
-onMounted(() => {
+const updateMyPosition = () => {
   if (componentRef.value?.componentRef) {
     workflowStore.updateNodePosition(props.id, {
       x: props.x,
@@ -44,6 +40,17 @@ onMounted(() => {
       height: componentRef.value.componentRef.scrollHeight,
     });
     workflowStore.recalculateNodePositionsFrom(props.id);
+  }
+};
+
+defineExpose({
+  objectRef,
+  updateMyPosition,
+});
+
+onMounted(() => {
+  if (componentRef.value?.componentRef) {
+    updateMyPosition();
 
     if (workflowStore.isFirstNode(props.id) && workflowStore.nodes.size === 1) {
       emit('recenterPlane');

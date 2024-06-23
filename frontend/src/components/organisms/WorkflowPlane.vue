@@ -6,7 +6,7 @@ import { useWorkflowStore } from '@/stores/workflow';
 import SvgAddButton from '@/components/atoms/SvgAddButton.vue';
 import { NodeHelper } from '@/helpers/nodeHelper';
 import type { PlaneMode } from '@/types/checkerPlane';
-import { i18n } from '../../utils/i18n';
+import { i18n } from '@/utils/i18n';
 
 const workflow = useWorkflowStore();
 
@@ -23,7 +23,7 @@ const emit = defineEmits<{
 
 // Data
 const editorRef = ref<SVGSVGElement | null>(null);
-const componentRefs = ref<{ objectRef: SVGForeignObjectElement | null }[]>([]);
+const componentRefs = ref<InstanceType<typeof WorkflowForeignObject>[]>([]);
 const viewPort = ref({
   x: 0,
   y: 0,
@@ -134,6 +134,9 @@ const centerPlane = () => {
     requestAnimationFrame(centerPlane);
     return;
   }
+  componentRefs.value.forEach((component) => {
+    component?.updateMyPosition();
+  });
 
   // Bring 0,0 to the center of the screen
   let x = -((editorRef.value.clientWidth || 0) / 2);
