@@ -212,7 +212,10 @@ defineExpose({
       :x2="line.coordinates.end.x"
       :y2="line.coordinates.end.y"
       class="workflow-plane__edge"
-      :class="{ 'workflow-plane__edge--compatible': line.compatible }"
+      :class="{
+        'workflow-plane__edge--compatible': line.compatible === 'yes',
+        'workflow-plane__edge--partial': line.compatible === 'partial',
+      }"
       :key="line.id"
     />
     <SvgAddButton
@@ -261,6 +264,10 @@ defineExpose({
 
     &--compatible {
       stroke: $success;
+    }
+
+    &--partial {
+      stroke: $warning;
     }
   }
 }

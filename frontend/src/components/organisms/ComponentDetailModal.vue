@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect, toRef, onMounted } from 'vue';
+import { computed, ref, watchEffect, toRef, onMounted, watch } from 'vue';
 import Modal from '@/components/atoms/Modal.vue';
 import Button from '@/components/atoms/Button.vue';
 import BooleanInputPill from '@/components/molecules/BooleanInputPill.vue';
@@ -7,26 +7,34 @@ import type { FrontendNode } from '@/types/workflow';
 import { useI18n } from 'vue-i18n';
 import { type PopulatedComponent } from 'cic-shared';
 import { getCategoryWithCompatibility } from '@/api/categories';
-import WorkflowComponent from '../molecules/WorkflowComponent.vue';
+import WorkflowComponent from '@/components/molecules/WorkflowComponent.vue';
+import { useWorkflowStore } from '@/stores/workflow';
 
 // Component setup
 const props = defineProps<{
   component: FrontendNode;
+  nodeId: string;
 }>();
-
 const isOpen = defineModel<boolean>();
+
+// Hooks
+const workflowStore = useWorkflowStore();
+const i18n = useI18n();
+
+// Data
 const showMissingInfo = ref(false);
 const satisfiesMinimalVersion = toRef(props.component, 'satisfiesMinimalVersion');
 const alternatives = ref<PopulatedComponent[]>([]);
-
-// Hooks
-const i18n = useI18n();
 
 // Watchers
 watchEffect(() => {
   if (!isOpen.value) {
     showMissingInfo.value = false;
   }
+});
+
+watch(satisfiesMinimalVersion, () => {
+  workflowStore.determineEdgeCompatibilityFromNode(props.nodeId);
 });
 
 // Computed values

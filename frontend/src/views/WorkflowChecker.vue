@@ -77,8 +77,9 @@ const handleNodeClick = (nodeId: string) => {
   const node = workflowStore.nodes.get(nodeId);
   if (!node) throw new Error(`Node with id ${nodeId} not found`);
 
+  selectedNodeId.value = nodeId;
+
   if (node.dataType === 'custom') {
-    selectedNodeId.value = nodeId;
     editCustomComponent.value = node as PopulatedCustomComponent;
     addCustomComponentModalIsOpen.value = true;
     return;
@@ -285,6 +286,7 @@ watch(addCustomComponentModalIsOpen, (isOpen) => {
 watch(detailModalIsOpen, (isOpen) => {
   if (!isOpen) {
     selectedNode.value = null;
+    selectedNodeId.value = null;
   }
 });
 
@@ -330,9 +332,10 @@ onUnmounted(() => {
       />
     </aside>
     <ComponentDetailModal
-      v-if="selectedNode"
+      v-if="selectedNode && selectedNodeId"
       v-model="detailModalIsOpen"
       :component="selectedNode"
+      :node-id="selectedNodeId"
     />
     <AddComponentModal
       v-model="addComponentModalIsOpen"
