@@ -7,7 +7,7 @@ const i18n = useI18n();
 
 withDefaults(
   defineProps<{
-    color: 'secondary' | 'primary' | 'error';
+    color?: 'secondary' | 'primary' | 'error';
     title: string;
     message: string;
     confirmText?: string;
