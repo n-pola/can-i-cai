@@ -21,7 +21,6 @@ const i18n = useI18n();
       <span
         class="material-symbols-outlined icon--xs legend__info"
         v-tooltip="i18n.t('compatibilityLegend.partialExplanation')"
-        data-popper-shown
         >info</span
       >
     </div>
