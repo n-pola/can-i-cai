@@ -326,6 +326,9 @@ export const useWorkflowStore = defineStore('workflow', {
 
       const inEdges = adjacency.in;
       const outEdges = adjacency.out;
+      const outNodes = outEdges
+        .map((edgeId) => this.edges.get(edgeId)?.target)
+        .filter((node) => node) as string[];
 
       if (inEdges.length === 1 && outEdges.length === 1) {
         const inEdge = this.edges.get(inEdges[0]);
@@ -338,6 +341,9 @@ export const useWorkflowStore = defineStore('workflow', {
         }
       } else {
         this.removeNode(id);
+        outNodes.forEach((nodeId) => {
+          this.determineEdgeCompatibilityFromNode(nodeId);
+        });
       }
     },
     updateNodePosition(id: string, boundingBox: BoundingBox): void {
