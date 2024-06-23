@@ -34,6 +34,12 @@
     "clearWorkflowPrompt": {
       "title": "Prozess löschen",
       "message": "Bist du sicher, dass du den Prozess löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "saveInterception": {
+      "title": "Prozess speichern",
+      "message": "Du arbeitest an einem bereits gespeicherten Prozess. Möchtest du ihn überschreiben oder als neuen Prozess speichern?",
+      "saveAsNew": "Als neuen speichern",
+      "overwrite": "Überschreiben"
     }
   },
   "addComponentModal": {

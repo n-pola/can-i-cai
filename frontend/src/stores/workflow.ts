@@ -443,6 +443,7 @@ export const useWorkflowStore = defineStore('workflow', {
     saveToLocalStorage(): void {
       const workflow = this.generateSavedWorkflow();
       WorkflowStorageHelper.saveWorkflow(workflow);
+      WorkflowStorageHelper.setCurrentWorkflow(workflow.id);
     },
     async loadFromLocalStorage(workflowId: string): Promise<void> {
       const workflow = WorkflowStorageHelper.getWorkflow(workflowId);

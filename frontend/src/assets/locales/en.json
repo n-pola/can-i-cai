@@ -34,6 +34,12 @@
     "clearWorkflowPrompt": {
       "title": "Clear workflow",
       "message": "Are you sure you want to clear the workflow? This action cannot be undone."
+    },
+    "saveInterception": {
+      "title": "Save workflow",
+      "message": "You are working on an already saved workflow. Do you want to overwrite it or save it as a new one?",
+      "saveAsNew": "Save as new",
+      "overwrite": "Overwrite"
     }
   },
   "addComponentModal": {
