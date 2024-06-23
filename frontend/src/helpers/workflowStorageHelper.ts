@@ -101,4 +101,26 @@ export class WorkflowStorageHelper {
     });
     localStorage.removeItem(workflowStorageKey);
   }
+
+  /**
+   * Set current workflow in loacl storage
+   * @param id - Id of the workflow to set as current
+   */
+  static setCurrentWorkflow(id: string): void {
+    localStorage.setItem(`${config.localStorage.prefix}-currentWorkflow`, id);
+  }
+
+  /**
+   * Get current workflow from local storage
+   */
+  static getCurrentWorkflow(): string | null {
+    return localStorage.getItem(`${config.localStorage.prefix}-currentWorkflow`);
+  }
+
+  /**
+   * Remove current workflow from local storage
+   */
+  static clearCurrentWorkflow(): void {
+    localStorage.removeItem(`${config.localStorage.prefix}-currentWorkflow`);
+  }
 }

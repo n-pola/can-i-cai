@@ -30,19 +30,30 @@ const router = createRouter({
       path: '/check',
       name: 'Workflow Checker',
       component: () => import('@/views/WorkflowChecker.vue'),
+      beforeEnter: async (to, from, next) => {
+        const workflowStore = useWorkflowStore();
+        const currentWorkflow = WorkflowStorageHelper.getCurrentWorkflow();
+        workflowStore.clearWorkflow();
+
+        if (currentWorkflow) {
+          try {
+            await workflowStore.loadFromLocalStorage(currentWorkflow);
+          } catch (error) {
+            toast.error(i18n.t('workflowNotFound'));
+            WorkflowStorageHelper.clearCurrentWorkflow();
+          }
+        }
+
+        return next();
+      },
       children: [
         {
-          path: ':id',
+          path: 'new',
+          name: 'New Workflow',
           component: () => import('@/views/WorkflowChecker.vue'),
-          beforeEnter: async (to, from, next) => {
-            try {
-              const workflowStore = useWorkflowStore();
-              await workflowStore.loadFromLocalStorage(to.params.id as string);
-              return next('/check');
-            } catch (error) {
-              toast.error(i18n.t('workflowNotFound'));
-              return next('/');
-            }
+          beforeEnter: (to, from, next) => {
+            WorkflowStorageHelper.clearCurrentWorkflow();
+            next('/check');
           },
         },
         {

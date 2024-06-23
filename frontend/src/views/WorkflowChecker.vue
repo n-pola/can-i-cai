@@ -26,6 +26,7 @@ import VersionInterceptionModal from '@/components/organisms/VersionInterception
 import AddCustomComponentModal from '@/components/organisms/AddCustomComponentModal.vue';
 import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
 import CompatibilityLegend from '@/components/molecules/CompatibilityLegend.vue';
+import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 
 // Hooks
 const toast = useToast();
@@ -318,7 +319,15 @@ onUnmounted(() => {
       <CheckerTools
         :mode="mode"
         @recenter="workflowPlane?.centerPlane"
-        @clear-plane="interceptClearWorkflow(workflowStore.clearWorkflow, () => {})"
+        @clear-plane="
+          interceptClearWorkflow(
+            () => {
+              workflowStore.clearWorkflow();
+              WorkflowStorageHelper.clearCurrentWorkflow();
+            },
+            () => {},
+          )
+        "
         @update:mode="mode = $event"
       />
     </aside>
