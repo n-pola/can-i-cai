@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { useGlobalStore } from '@/stores/global';
 import HeaderComponent from '@/components/organisms/HeaderComponent.vue';
+import LoadingSpinner from '@/components/atoms/LoadingSpinner.vue';
 
 const i18n = useI18n();
+const globalStore = useGlobalStore();
 </script>
 
 <template>
@@ -20,6 +23,10 @@ const i18n = useI18n();
       <RouterLink to="/privacy" class="footer-legal">{{ i18n.t('privacyPolicy') }}</RouterLink>
     </div>
   </footer>
+
+  <div class="global-spinner" v-show="globalStore.spinnerVisible">
+    <LoadingSpinner />
+  </div>
 </template>
 
 <style lang="scss">
@@ -57,5 +64,18 @@ footer {
   &:hover {
     color: $primary;
   }
+}
+
+.global-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: $darkest-50;
 }
 </style>
