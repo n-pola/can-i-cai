@@ -37,11 +37,15 @@ const router = createRouter({
         workflowStore.clearWorkflow();
 
         if (currentWorkflow) {
+          const globalStore = useGlobalStore();
           try {
+            globalStore.spinnerVisible = true;
             await workflowStore.loadFromLocalStorage(currentWorkflow);
           } catch (error) {
             toast.error(i18n.t('workflowNotFound'));
             WorkflowStorageHelper.clearCurrentWorkflow();
+          } finally {
+            globalStore.spinnerVisible = false;
           }
         }
 
