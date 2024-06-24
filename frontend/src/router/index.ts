@@ -4,7 +4,8 @@ import { useWorkflowStore } from '@/stores/workflow';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 import { useToast } from 'vue-toastification';
 import { i18n } from '@/utils/i18n';
-import { getSharedWorkflow } from '../api/workflow';
+import { getSharedWorkflow } from '@/api/workflow';
+import { useGlobalStore } from '@/stores/global';
 
 const toast = useToast();
 
@@ -61,14 +62,18 @@ const router = createRouter({
           name: 'Shared Workflow',
           component: () => import('@/views/WorkflowChecker.vue'),
           beforeEnter: async (to, from, next) => {
+            const workflowStore = useWorkflowStore();
+            const globalStore = useGlobalStore();
             try {
-              const workflowStore = useWorkflowStore();
+              globalStore.spinnerVisible = true;
               const workflow = await getSharedWorkflow(to.params.id as string);
-              workflowStore.reconstructWorkflow(workflow);
+              await workflowStore.reconstructWorkflow(workflow);
               return next();
             } catch (error) {
               toast.error(i18n.t('workflowNotFound'));
               return next('/');
+            } finally {
+              globalStore.spinnerVisible = false;
             }
           },
         },
