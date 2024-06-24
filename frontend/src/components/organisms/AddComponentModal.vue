@@ -337,7 +337,7 @@ onMounted(async () => {
     justify-content: center;
     width: 100%;
     height: 100%;
-    background-color: rgba($darkest, 0.5);
+    background-color: $darkest-50;
   }
 
   &__placeholder {
