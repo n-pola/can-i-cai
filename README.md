@@ -55,6 +55,9 @@ data
 
 If you want to contribute or update data, please create or change the respective markdown files in the data directory. See [general contribution infos above](#general) for more information on how to contribute.
 
+> [!IMPORTANT]
+> If you create new data, you need to run the Parser locally at least once so that i can populate the newly created files with a persistend ID.
+
 Changed data will be validated against predefined schemas to assure their correctness on pull requests. If your PR gets merged the data will be populated into the live db on the next deployment.
 
 See the following sections for the schema of categories and components.
