@@ -110,3 +110,5 @@ The types are used to define what a component can do with an image.
     docker compose logs -f parser
     ```
 7. Open the frontend in your browser at [http://localhost:8080](http://localhost:8080)
+
+Use the `insomnia-request-collection.json` in the root of this repository to explore the API of the backend.
