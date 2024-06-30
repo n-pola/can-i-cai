@@ -53,12 +53,28 @@ const i18n = useI18n();
     flex-flow: column;
     grid-column: 3 / 6;
     gap: $l;
+
+    @media screen and (width <= $bp-tablet) {
+      grid-column: 1 / 4;
+    }
+
+    @media screen and (width <= $bp-mobile) {
+      grid-column: 1 / -1;
+    }
   }
 
   &__dummy {
     display: flex;
     flex-flow: column;
     grid-column: 8 / 10;
+
+    @media screen and (width <= $bp-tablet) {
+      grid-column: 5 / 8;
+    }
+
+    @media screen and (width <= $bp-mobile) {
+      display: none;
+    }
   }
 
   &__introduction,

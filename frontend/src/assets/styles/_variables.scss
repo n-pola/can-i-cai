@@ -45,10 +45,35 @@ $darker: #262626;
 $darkest: #121212;
 $darkest-50: rgba($darkest, .5);
 
+// Breakpoints
+$bp-mobile: 768px;
+$bp-tablet: 1200px;
+
 // Grid
-$grid-columns: 10;
-$grid-gap: $s;
-$grid-margin: $l;
+:root {
+  --grid-columns: 10;
+  --grid-gap: #{$s};
+  --grid-margin: #{$l};
+}
+
+@media screen and (width <= $bp-tablet){
+  :root {
+    --grid-columns: 7;
+  }
+}
+
+@media screen and (width <= $bp-mobile) {
+  :root {
+    --grid-columns: 5;
+    --grid-gap: #{$xxs};
+    --grid-margin: #{$s};
+  }
+}
+
+
+$grid-columns: var(--grid-columns);
+$grid-gap: var(--grid-gap);
+$grid-margin: var(--grid-margin);
 $grid-column-width: calc((100vw - 2 * $grid-margin - $grid-gap * ($grid-columns - 1)) / $grid-columns);
 
 // Misc.
