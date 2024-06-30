@@ -52,23 +52,25 @@ const handleDeleteClick = (e: MouseEvent) => {
 .workflow-list-item {
   $self: &;
 
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
+  height: $f-m * $lh-base + $f-xs * $lh-base + $xxs * 2;
   overflow: hidden;
   background-color: $lighter;
   border-radius: $border-radius;
 
-  &:hover {
-    cursor: pointer;
-    background-color: $light;
+  @media (hover: hover) {
+    &:hover {
+      cursor: pointer;
+      background-color: $light;
 
-    & #{$self}__icon {
-      color: $lightest;
-      background-color: $dark;
-    }
+      & #{$self}__icon {
+        color: $lightest;
+        background-color: $dark;
+      }
 
-    & #{$self}__delete {
-      display: block;
+      & #{$self}__delete {
+        opacity: 1;
+      }
     }
   }
 
@@ -83,6 +85,7 @@ const handleDeleteClick = (e: MouseEvent) => {
 
   &__body {
     display: flex;
+    width: 100%;
   }
 
   &__content {
@@ -92,7 +95,8 @@ const handleDeleteClick = (e: MouseEvent) => {
   }
 
   &__delete {
-    display: none;
+    display: flex;
+    padding: $xxs / 2;
     color: $lightest;
     background-color: $error;
     border-bottom-left-radius: $border-radius;
@@ -101,8 +105,8 @@ const handleDeleteClick = (e: MouseEvent) => {
       cursor: pointer;
     }
 
-    @media (hover: none) {
-      display: block;
+    @media (hover: hover) {
+      opacity: 0;
     }
   }
 }
