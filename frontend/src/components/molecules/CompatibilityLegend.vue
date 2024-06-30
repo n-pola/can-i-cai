@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 
+// Component setup
+withDefaults(
+  defineProps<{
+    useTooltip: boolean;
+  }>(),
+  {
+    useTooltip: true,
+  },
+);
+
 // Hooks
 const i18n = useI18n();
 </script>
@@ -17,8 +27,16 @@ const i18n = useI18n();
     </div>
     <div class="legend__item">
       <div class="legend__icon legend__icon--partial"></div>
-      <span class="legend__text">{{ i18n.t('compatibilityLegend.partial') }}</span>
+      <span v-if="useTooltip" class="legend__text">{{
+        i18n.t('compatibilityLegend.partial')
+      }}</span>
+      <div v-else class="legend__text">
+        {{ i18n.t('compatibilityLegend.partial') }}:<br />{{
+          i18n.t('compatibilityLegend.partialExplanation')
+        }}
+      </div>
       <span
+        v-if="useTooltip"
         class="material-symbols-outlined icon--xs legend__info"
         v-tooltip="i18n.t('compatibilityLegend.partialExplanation')"
         >info</span
@@ -62,6 +80,7 @@ const i18n = useI18n();
   }
 
   &__icon {
+    flex-shrink: 0;
     width: $xxs;
     height: 4px;
 

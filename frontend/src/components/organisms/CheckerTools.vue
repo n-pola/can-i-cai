@@ -1,20 +1,26 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import Button from '@/components/atoms/Button.vue';
+import type { PlaneMode } from '@/types/checkerPlane';
+import { useGlobalStore } from '@/stores/global';
 
 // Component setup
 defineProps<{
-  mode: 'select' | 'move';
+  mode: PlaneMode;
 }>();
 
 const emit = defineEmits<{
-  'update:mode': [mode: 'select' | 'move'];
+  'update:mode': [mode: PlaneMode];
   recenter: [];
   clearPlane: [];
+  showLegend: [];
+  share: [];
+  save: [];
 }>();
 
 // Hooks
 const i18n = useI18n();
+const globalStore = useGlobalStore();
 </script>
 
 <template>
@@ -31,6 +37,7 @@ const i18n = useI18n();
         :rounded="false"
         size="xs"
         icon-size="s"
+        v-if="!globalStore.isMobile"
       />
       <Button
         class="checker-tool__button"
@@ -44,6 +51,21 @@ const i18n = useI18n();
         size="xs"
         icon-size="s"
         :icon-filled="true"
+        v-if="!globalStore.isMobile"
+      />
+      <Button
+        class="checker-tool__button"
+        :class="{
+          'checker-tool__button--active': mode === 'delete',
+        }"
+        @click="mode === 'delete' ? emit('update:mode', 'select') : emit('update:mode', 'delete')"
+        :title="i18n.t('workflowChecker.tools.delete')"
+        icon="delete"
+        :rounded="false"
+        size="xs"
+        icon-size="s"
+        :icon-filled="true"
+        v-if="globalStore.isMobile"
       />
     </div>
     <div class="checker-tool__group">
@@ -65,6 +87,36 @@ const i18n = useI18n();
         size="xs"
         icon-size="s"
       />
+      <Button
+        class="checker-tool__button"
+        @click="emit('showLegend')"
+        :title="i18n.t('workflowChecker.tools.showLegend')"
+        icon="info"
+        :rounded="false"
+        size="xs"
+        icon-size="s"
+        v-if="globalStore.isMobile"
+      />
+    </div>
+    <div class="checker-tool__group" v-if="globalStore.isMobile">
+      <Button
+        class="checker-tool__button"
+        @click="emit('save')"
+        :title="i18n.t('save')"
+        icon="bookmark"
+        :rounded="false"
+        size="xs"
+        icon-size="s"
+      />
+      <Button
+        class="checker-tool__button"
+        @click="emit('share')"
+        :title="i18n.t('share')"
+        icon="ios_share"
+        :rounded="false"
+        size="xs"
+        icon-size="s"
+      />
     </div>
   </div>
 </template>
@@ -75,22 +127,37 @@ const i18n = useI18n();
   flex-flow: column;
   gap: $xxs;
 
+  @media screen and (width <= $bp-mobile) {
+    flex-flow: row;
+  }
+
   &__group {
     display: flex;
     flex-flow: column;
     overflow: hidden;
     border-radius: $border-radius;
     box-shadow: $shadow;
+
+    @media screen and (width <= $bp-mobile) {
+      flex-flow: row;
+    }
   }
 
   &__button {
     color: $darkest;
     background-color: $lighter;
 
-    &--active,
-    &:hover {
+    &--active {
       color: $lightest;
       background-color: $secondary;
+    }
+
+    // when device can hover
+    @media (hover: hover) {
+      &:hover {
+        color: $lightest;
+        background-color: $secondary;
+      }
     }
   }
 }

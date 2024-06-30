@@ -116,6 +116,7 @@ const { name: workflowName } = toRefs(useWorkflowStore());
   }
 
   &__input-ghost {
+    height: $f-xs * $lh-base;
     padding: $xxs $xxs calc($xxs / 2);
     pointer-events: none;
     user-select: none;

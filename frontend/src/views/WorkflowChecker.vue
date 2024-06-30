@@ -9,6 +9,7 @@ import { onUnmounted, ref, watch, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useComponentsStore } from '@/stores/components';
+import { useGlobalStore } from '@/stores/global';
 import { useI18n } from 'vue-i18n';
 import { shareWorkflow } from '@/api/workflow';
 import type { FrontendNode } from '@/types/workflow';
@@ -20,6 +21,7 @@ import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
 import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
 import AddComponentModal from '@/components/organisms/AddComponentModal.vue';
 import WorkflowSummary from '@/components/organisms/WorkflowSummary.vue';
+import MobileSummary from '@/components/organisms/MobileSummary.vue';
 import CheckerTools from '@/components/organisms/CheckerTools.vue';
 import SharedModal from '@/components/organisms/SharedModal.vue';
 import VersionInterceptionModal from '@/components/organisms/VersionInterceptionModal.vue';
@@ -27,11 +29,13 @@ import AddCustomComponentModal from '@/components/organisms/AddCustomComponentMo
 import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
 import CompatibilityLegend from '@/components/molecules/CompatibilityLegend.vue';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
+import LegendModal from '@/components/organisms/LegendModal.vue';
 
 // Hooks
 const toast = useToast();
 const workflowStore = useWorkflowStore();
 const componentsStore = useComponentsStore();
+const globalStore = useGlobalStore();
 const i18n = useI18n();
 const {
   interceptAction: interceptAddComponent,
@@ -84,12 +88,19 @@ const editCustomComponent = ref<PopulatedCustomComponent | null>(null);
 const sharedModalIsOpen = ref(false);
 const sharedWorkflowId = ref<string | null>(null);
 
+const legendModalIsOpen = ref(false);
+
 // Functions
 
 /** Handle node click event and open detail modal */
 const handleNodeClick = (nodeId: string) => {
   const node = workflowStore.nodes.get(nodeId);
   if (!node) throw new Error(`Node with id ${nodeId} not found`);
+
+  if (mode.value === 'delete') {
+    workflowStore.removeNodeAndCloseGaps(nodeId);
+    return;
+  }
 
   selectedNodeId.value = nodeId;
 
@@ -387,10 +398,23 @@ onUnmounted(() => {
           )
         "
         @update:mode="mode = $event"
+        @save="handleSaveRequested"
+        @share="handleShare"
+        @show-legend="legendModalIsOpen = true"
       />
     </aside>
     <aside class="workflow-checker__summary">
       <WorkflowSummary
+        v-if="!globalStore.isMobile"
+        :componentCount="workflowStore.nodes.size"
+        :workflowCompatible="workflowStore.compatible"
+        :incompatibleComponents="workflowStore.incompatibleNodes"
+        @node-click="handleNodeClick"
+        @save="handleSaveRequested"
+        @share="handleShare"
+      />
+      <MobileSummary
+        v-else
         :componentCount="workflowStore.nodes.size"
         :workflowCompatible="workflowStore.compatible"
         :incompatibleComponents="workflowStore.incompatibleNodes"
@@ -399,7 +423,7 @@ onUnmounted(() => {
         @share="handleShare"
       />
     </aside>
-    <aside class="workflow-checker__legend">
+    <aside class="workflow-checker__legend" v-if="!globalStore.isMobile">
       <CompatibilityLegend />
     </aside>
     <ComponentDetailModal
@@ -473,10 +497,11 @@ onUnmounted(() => {
       :confirm-text="i18n.t('yes')"
       :abort-text="i18n.t('no')"
     />
+    <LegendModal v-model="legendModalIsOpen" />
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .workflow-checker {
   display: grid;
   grid-template-columns: repeat($grid-columns, 1fr);
@@ -488,11 +513,24 @@ onUnmounted(() => {
   &__summary {
     z-index: 1;
     grid-column: 9 / span 2;
+
+    @media screen and (width <= $bp-mobile) {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      grid-column: unset;
+      width: 100%;
+    }
   }
 
   &__tools {
     z-index: 1;
     grid-column: 1;
+
+    @media screen and (width <= $bp-mobile) {
+      position: absolute;
+      top: $s;
+    }
   }
 
   &__plane {

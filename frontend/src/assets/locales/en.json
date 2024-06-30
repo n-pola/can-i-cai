@@ -12,7 +12,8 @@
     "incompatibleComponents": "Incompatible components",
     "componentCountHint": "{compatibleCount}/{totalCount} component is compatible | {compatibleCount}/{totalCount} components are compatible",
     "information": "Information",
-    "addComponentsHint": "Please add components to your workflow"
+    "addComponentsHint": "Please add components to your workflow",
+    "addComponentsShort": "Please add components"
   },
   "workflowChecker": {
     "toasts": {
@@ -31,7 +32,9 @@
       "recenter": "Recenter",
       "clearWorkflow": "Clear workflow",
       "select": "Select",
-      "move": "Move"
+      "move": "Move",
+      "delete": "Delete components",
+      "showLegend": "Show legend"
     },
     "clearWorkflowPrompt": {
       "title": "Clear workflow",
@@ -125,5 +128,6 @@
     "incompatible": "Incompatible",
     "partial": "Partial compatibility",
     "partialExplanation": "The connection itself is compatibility, but a previous component is not compatible and thus breaks the chain of CAI-compatible metadata."
-  }
+  },
+  "legend": "Legend"
 }
