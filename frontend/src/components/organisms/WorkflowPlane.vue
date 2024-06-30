@@ -35,9 +35,9 @@ const viewPort = ref({
   height: 0,
 });
 
-const pointerId = ref<number | null>(null);
+const pointers: Map<number, DOMPoint> = new Map();
+let previousDistance: number = 0;
 const isDragging = ref(false);
-const dragStart = ref<DOMPoint | null>(null);
 
 // Computed values
 const viewBox = computed(() => {
@@ -56,39 +56,43 @@ const cursor = computed(() => {
   return props.mode === 'move' ? 'grab' : 'default';
 });
 
+/** Zoom the plane around a given point in client space */
+const zoomPlane = (clientX: number, clientY: number, deltaY: number) => {
+  if (!editorRef.value) return;
+  const svgWidth = editorRef.value.clientWidth;
+  const svgHeight = editorRef.value.clientHeight;
+  const svgBoundingRect = editorRef.value.getBoundingClientRect();
+  const offsetX = clientX - svgBoundingRect.left;
+  const offsetY = clientY - svgBoundingRect.top;
+
+  // Determine the change in width and height (zooming in or out)
+  const changeWidth = viewPort.value.width * Math.sign(deltaY) * 0.05;
+  const changeHeight = viewPort.value.height * Math.sign(deltaY) * 0.05;
+
+  // Determine the weight of the mouse position in the svg
+  // (e.g. if the mouse is in the middle of the svg, the weight is 0.5)
+  const weightX = offsetX / svgWidth;
+  const weightY = offsetY / svgHeight;
+
+  // Determine the change in x and y (panning)
+  const changeX = changeWidth * weightX;
+  const changeY = changeHeight * weightY;
+
+  viewPort.value = {
+    x: viewPort.value.x - changeX,
+    y: viewPort.value.y - changeY,
+    width: viewPort.value.width + changeWidth,
+    height: viewPort.value.height + changeHeight,
+  };
+};
+
 // Functions
 const handleScroll = (event: WheelEvent) => {
   event.preventDefault();
 
   const { deltaX, deltaY, clientX, clientY } = event;
   if (event.ctrlKey) {
-    if (!editorRef.value) return;
-    const svgWidth = editorRef.value.clientWidth;
-    const svgHeight = editorRef.value.clientHeight;
-    const svgBoundingRect = editorRef.value.getBoundingClientRect();
-    const offsetX = clientX - svgBoundingRect.left;
-    const offsetY = clientY - svgBoundingRect.top;
-
-    // Determine the change in width and height (zooming in or out)
-    const changeWidth = viewPort.value.width * Math.sign(deltaY) * 0.05;
-    const changeHeight = viewPort.value.height * Math.sign(deltaY) * 0.05;
-
-    // Determine the weight of the mouse position in the svg
-    // (e.g. if the mouse is in the middle of the svg, the weight is 0.5)
-    const weightX = offsetX / svgWidth;
-    const weightY = offsetY / svgHeight;
-
-    // Determine the change in x and y (panning)
-    const changeX = changeWidth * weightX;
-    const changeY = changeHeight * weightY;
-
-    viewPort.value = {
-      x: viewPort.value.x - changeX,
-      y: viewPort.value.y - changeY,
-      width: viewPort.value.width + changeWidth,
-      height: viewPort.value.height + changeHeight,
-    };
-
+    zoomPlane(clientX, clientY, deltaY);
     return;
   }
 
@@ -102,32 +106,63 @@ const handleScroll = (event: WheelEvent) => {
 
 const handleMouseDown = (event: PointerEvent) => {
   if (
-    (props.mode !== 'move' && event.pointerType !== 'touch') ||
-    event.target !== editorRef.value ||
-    isDragging.value
+    event.pointerType === 'mouse' &&
+    (props.mode !== 'move' || event.target !== editorRef.value)
   ) {
     return;
   }
 
-  isDragging.value = true;
-  dragStart.value = new DOMPoint(event.offsetX, event.offsetY);
-  pointerId.value = event.pointerId;
+  if (event.pointerType === 'mouse') {
+    isDragging.value = true;
+  }
+
+  pointers.set(event.pointerId, new DOMPoint(event.clientX, event.clientY));
 };
 
 const handleMouseMove = (event: PointerEvent) => {
+  if (pointers.size > 2) {
+    return;
+  }
+
+  const startPointer = pointers.get(event.pointerId);
   if (
-    (props.mode !== 'move' && event.pointerType !== 'touch') ||
-    event.target !== editorRef.value ||
-    !(pointerId.value === event.pointerId)
+    (event.pointerType === 'mouse' &&
+      (props.mode !== 'move' || event.target !== editorRef.value)) ||
+    !startPointer
   ) {
     return;
   }
 
-  if (!isDragging.value || !dragStart.value) return;
+  const { clientX, clientY } = event;
 
-  const { offsetX, offsetY } = event;
-  const changeX = (dragStart.value.x - offsetX) * scale.value;
-  const changeY = (dragStart.value.y - offsetY) * scale.value;
+  // Zooming on touch devices
+  if (pointers.size === 2) {
+    const pointerArray = Array.from(pointers.values());
+
+    // Calc the distance between the two pointers
+    const distance = Math.hypot(
+      pointerArray[0].x - pointerArray[1].x,
+      pointerArray[0].y - pointerArray[1].y,
+    );
+
+    // Determine point to zoom around
+    const centerPoint = new DOMPoint(
+      (pointerArray[0].x + pointerArray[1].x) / 2,
+      (pointerArray[0].y + pointerArray[1].y) / 2,
+    );
+
+    // Delta between the current and the previous distance to determine zoom
+    const difference = previousDistance - distance;
+
+    zoomPlane(centerPoint.x, centerPoint.y, difference);
+
+    previousDistance = distance;
+    pointers.set(event.pointerId, new DOMPoint(clientX, clientY));
+    return;
+  }
+
+  const changeX = (startPointer.x - clientX) * scale.value;
+  const changeY = (startPointer.y - clientY) * scale.value;
 
   viewPort.value = {
     x: viewPort.value.x + changeX,
@@ -136,15 +171,15 @@ const handleMouseMove = (event: PointerEvent) => {
     height: viewPort.value.height,
   };
 
-  dragStart.value = new DOMPoint(offsetX, offsetY);
+  pointers.set(event.pointerId, new DOMPoint(clientX, clientY));
 };
 
 const handleMouseUp = (event: PointerEvent) => {
-  if (pointerId.value !== event.pointerId) return;
+  if (event.pointerType === 'mouse') {
+    isDragging.value = false;
+  }
 
-  isDragging.value = false;
-  dragStart.value = null;
-  pointerId.value = null;
+  pointers.delete(event.pointerId);
 };
 
 const centerPlane = () => {
