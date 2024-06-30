@@ -54,7 +54,8 @@ const { name: workflowName } = toRefs(useWorkflowStore());
 <style lang="scss" scoped>
 .header {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr auto 1fr;
+  gap: $xxs;
   align-items: center;
   padding: $s $l;
   border-bottom: 1px solid $lighter;
@@ -77,6 +78,8 @@ const { name: workflowName } = toRefs(useWorkflowStore());
   }
 
   &__language-button {
+    padding: 0 $xxs / 2;
+
     &:hover {
       cursor: pointer;
     }

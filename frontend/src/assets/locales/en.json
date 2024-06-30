@@ -66,7 +66,9 @@
   "sharedModal": {
     "title": "Shared workflow",
     "success": "Your workflow was shared successfully. You can now copy the link below and share it.",
-    "hintReshare": "If you change something on your workflow you will need to share it again, as a new link will be created."
+    "hintReshare": "If you change something on your workflow you will need to share it again, as a new link will be created.",
+    "copySuccess": "Link copied to clipboard",
+    "copyError": "Link could not be copied"
   },
   "detailModal": {
     "title": "Detail modal",

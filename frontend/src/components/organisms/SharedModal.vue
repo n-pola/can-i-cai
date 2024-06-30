@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import Modal from '@/components/atoms/Modal.vue';
@@ -17,15 +17,23 @@ const i18n = useI18n();
 
 // Data
 const { host, protocol } = window.location;
+const showCopySuccess = ref(false);
+const showCopyError = ref(false);
 
 // Computed values
 const shareLink = computed(() => `${protocol}//${host}/check/shared/${props.id}`);
 
 // Functions
-const copyToClipboard = (e: Event) => {
+const copyToClipboard = async (e: Event) => {
   e?.preventDefault();
   e.stopImmediatePropagation();
-  window.navigator.clipboard.writeText(shareLink.value);
+  try {
+    window.navigator.clipboard.writeText(shareLink.value);
+    showCopySuccess.value = true;
+  } catch (error) {
+    showCopySuccess.value = false;
+    showCopyError.value = true;
+  }
 };
 </script>
 
@@ -60,6 +68,20 @@ const copyToClipboard = (e: Event) => {
             "
           />
         </div>
+        <div
+          class="shared-modal__copy-status shared-modal__copy-status--success"
+          v-if="showCopySuccess"
+        >
+          <p>{{ i18n.t('sharedModal.copySuccess') }}</p>
+          <span class="material-symbols-outlined icon--s">check_circle</span>
+        </div>
+        <div
+          class="shared-modal__copy-status shared-modal__copy-status--error"
+          v-if="showCopyError"
+        >
+          <p>{{ i18n.t('sharedModal.copyError') }}</p>
+          <span class="material-symbols-outlined icon--s">cancel</span>
+        </div>
       </div>
     </template>
   </Modal>
@@ -78,6 +100,20 @@ const copyToClipboard = (e: Event) => {
     align-items: center;
     overflow: hidden;
     border-radius: $border-radius;
+  }
+
+  &__copy-status {
+    display: flex;
+    gap: $xxs / 2;
+    align-items: center;
+
+    &--success {
+      color: $success;
+    }
+
+    &--error {
+      color: $error;
+    }
   }
 }
 </style>

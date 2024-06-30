@@ -66,7 +66,9 @@
   "sharedModal":{
     "title": "Prozess geteilt",
     "success": "Dein Prozess wurde erfolgreich geteilt. Du kannst den Link kopieren und teilen.",
-    "hintReshare": "Wenn du etwas an deinem Prozess änderst, musst du ihn erneut teilen, da ein neuer Link erstellt wird."
+    "hintReshare": "Wenn du etwas an deinem Prozess änderst, musst du ihn erneut teilen, da ein neuer Link erstellt wird.",
+    "copySuccess": "Link wurde kopiert",
+    "copyError": "Link konnte nicht kopiert werden"
   },
   "detailModal": {
     "title": "Eigenschaften",

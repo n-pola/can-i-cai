@@ -73,8 +73,7 @@ const i18n = useI18n();
     }
 
     @media screen and (width <= $bp-mobile) {
-      grid-column: 2 / 5;
-      align-self: baseline;
+      display: none;
     }
   }
 
