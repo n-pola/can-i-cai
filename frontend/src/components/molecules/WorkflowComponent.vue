@@ -105,7 +105,27 @@ defineExpose({
   background-color: $lighter;
   border-radius: $border-radius;
 
-  &:hover,
+  @media (hover: hover) {
+    &:hover {
+      cursor: pointer;
+      background-color: $light;
+
+      #{$self}__delete {
+        opacity: 1;
+      }
+
+      #{$self}__info {
+        color: $lightest;
+        background-color: $dark;
+      }
+
+      #{$self}__category--neutral {
+        color: $lightest;
+        background-color: $dark;
+      }
+    }
+  }
+
   &:focus {
     cursor: pointer;
     background-color: $light;

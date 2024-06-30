@@ -39,12 +39,14 @@ const { locale } = useI18n();
   background-color: $lighter;
   border-radius: $border-radius;
 
-  &:hover {
-    background-color: $light;
+  @media (hover: hover) {
+    &:hover {
+      background-color: $light;
 
-    #{$self}__icon {
-      color: $lightest;
-      background-color: $dark;
+      #{$self}__icon {
+        color: $lightest;
+        background-color: $dark;
+      }
     }
   }
 
@@ -52,11 +54,13 @@ const { locale } = useI18n();
     color: $light;
     cursor: not-allowed;
 
-    &:hover {
-      background-color: $lighter;
-      #{$self}__icon {
-        color: $lighter;
-        background-color: $light;
+    @media (hover: hover) {
+      &:hover {
+        background-color: $lighter;
+        #{$self}__icon {
+          color: $lighter;
+          background-color: $light;
+        }
       }
     }
 
