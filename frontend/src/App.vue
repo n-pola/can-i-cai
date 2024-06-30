@@ -49,7 +49,7 @@ onUnmounted(() => {
   display: flex;
   flex-flow: column;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
 }
 </style>
 
@@ -89,7 +89,7 @@ footer {
   align-items: center;
   justify-content: center;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   background-color: $darkest-50;
 }
 </style>
