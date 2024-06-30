@@ -41,9 +41,11 @@ const componentName = computed(() =>
   background-color: $lightest;
   border-radius: $border-radius;
 
-  &:hover {
-    cursor: pointer;
-    background-color: $light;
+  @media (hover: hover) {
+    &:hover {
+      cursor: pointer;
+      background-color: $light;
+    }
   }
 
   &__category {

@@ -59,6 +59,10 @@ const { name: workflowName } = toRefs(useWorkflowStore());
   padding: $s $l;
   border-bottom: 1px solid $lighter;
 
+  @media screen and (width <= $bp-mobile) {
+    padding: $s;
+  }
+
   &__home-link {
     display: flex;
   }
