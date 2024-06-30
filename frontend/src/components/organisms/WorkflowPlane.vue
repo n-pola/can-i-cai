@@ -7,9 +7,9 @@ import SvgAddButton from '@/components/atoms/SvgAddButton.vue';
 import { NodeHelper } from '@/helpers/nodeHelper';
 import type { PlaneMode } from '@/types/checkerPlane';
 import { i18n } from '@/utils/i18n';
+import { useGlobalStore } from '@/stores/global';
 
-const workflow = useWorkflowStore();
-
+// Component setup
 const props = defineProps<{
   mode: PlaneMode;
 }>();
@@ -21,6 +21,10 @@ const emit = defineEmits<{
   addComponentRequestedEdge: [id: string];
 }>();
 
+// Hooks
+const workflow = useWorkflowStore();
+const globalStore = useGlobalStore();
+
 // Data
 const editorRef = ref<SVGSVGElement | null>(null);
 const componentRefs = ref<InstanceType<typeof WorkflowForeignObject>[]>([]);
@@ -31,6 +35,7 @@ const viewPort = ref({
   height: 0,
 });
 
+const pointerId = ref<number | null>(null);
 const isDragging = ref(false);
 const dragStart = ref<DOMPoint | null>(null);
 
@@ -95,15 +100,28 @@ const handleScroll = (event: WheelEvent) => {
   };
 };
 
-const handleMouseDown = (event: MouseEvent) => {
-  if (props.mode !== 'move' || event.target !== editorRef.value) return;
+const handleMouseDown = (event: PointerEvent) => {
+  if (
+    (props.mode !== 'move' && event.pointerType !== 'touch') ||
+    event.target !== editorRef.value ||
+    isDragging.value
+  ) {
+    return;
+  }
 
   isDragging.value = true;
   dragStart.value = new DOMPoint(event.offsetX, event.offsetY);
+  pointerId.value = event.pointerId;
 };
 
-const handleMouseMove = (event: MouseEvent) => {
-  if (props.mode !== 'move' || event.target !== editorRef.value) return;
+const handleMouseMove = (event: PointerEvent) => {
+  if (
+    (props.mode !== 'move' && event.pointerType !== 'touch') ||
+    event.target !== editorRef.value ||
+    !(pointerId.value === event.pointerId)
+  ) {
+    return;
+  }
 
   if (!isDragging.value || !dragStart.value) return;
 
@@ -121,9 +139,12 @@ const handleMouseMove = (event: MouseEvent) => {
   dragStart.value = new DOMPoint(offsetX, offsetY);
 };
 
-const handleMouseUp = () => {
+const handleMouseUp = (event: PointerEvent) => {
+  if (pointerId.value !== event.pointerId) return;
+
   isDragging.value = false;
   dragStart.value = null;
+  pointerId.value = null;
 };
 
 const centerPlane = () => {
@@ -163,9 +184,26 @@ const centerPlane = () => {
     y += maxNodeY / 2;
   }
 
+  const firstNodeCanHaveInput = workflow.firstNodes.some((node) => {
+    const nodeData = workflow.nodes.get(node);
+    return nodeData && !(nodeData.type.length === 1 && nodeData.type.includes('output'));
+  });
+
+  let maxYOffset = -cssVariables.size.s;
+
+  if (globalStore.isMobile) {
+    // Account for toolbar that is now on top on mobile
+    maxYOffset = -(cssVariables.size.s * 3 + cssVariables.size.xxs * 2);
+  }
+
+  if (firstNodeCanHaveInput) {
+    // Add size of add button and its padding
+    maxYOffset -= cssVariables.size.l * 2 - cssVariables.size.m;
+  }
+
   viewPort.value = {
     x,
-    y: y > -20 ? -20 : y,
+    y: y > maxYOffset ? maxYOffset : y,
     width: editorRef.value.clientWidth || 0,
     height: editorRef.value.clientHeight || 0,
   };
@@ -194,9 +232,9 @@ defineExpose({
     @wheel="handleScroll"
     class="workflow-plane"
     :style="{ cursor }"
-    @mousedown="handleMouseDown"
-    @mousemove="handleMouseMove"
-    @mouseup="handleMouseUp"
+    @pointerdown="handleMouseDown"
+    @pointermove="handleMouseMove"
+    @pointerup="handleMouseUp"
   >
     <g
       v-if="workflow.nodes.size === 0"
@@ -261,6 +299,8 @@ defineExpose({
 .workflow-plane {
   $self: &;
 
+  touch-action: none;
+
   & g {
     transition: $animation;
   }
@@ -283,16 +323,20 @@ defineExpose({
   }
 
   &__add-button {
-    opacity: 0;
+    @media (hover: hover) {
+      opacity: 0;
+    }
   }
 
   &__edge-wrap {
     padding: 0 $m;
     pointer-events: bounding-box;
 
-    &:hover {
-      & #{$self}__add-button {
-        opacity: 1;
+    @media (hover: hover) {
+      &:hover {
+        & #{$self}__add-button {
+          opacity: 1;
+        }
       }
     }
   }

@@ -4,6 +4,11 @@
     &.top-right {
       right: $grid-margin;
       padding: 0;
+
+      @media screen and (width <= $bp-mobile) {
+        right: 0;
+        padding: $s;
+      }
     }
   }
 
@@ -13,6 +18,10 @@
     min-height: auto;
     padding: $xxs;
     border-radius: $border-radius;
+
+    @media screen and (width <= $bp-mobile) {
+      width: 100%;
+    }
 
     &--error {
       background-color: $error;

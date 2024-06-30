@@ -11,7 +11,8 @@
       {
         "ignorePseudoClasses": ["global", "deep"]
       }
-    ]
+    ],
+    "media-query-no-invalid": null
   },
   "ignoreFiles": [
     "src/assets/styles/_normalize.scss"

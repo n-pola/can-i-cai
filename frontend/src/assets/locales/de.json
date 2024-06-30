@@ -12,7 +12,8 @@
     "incompatibleComponents": "Inkompatible Bestandteile",
     "componentCountHint": "{compatibleCount}/{totalCount} Bestandteil ist kompatibel | {compatibleCount}/{totalCount} Bestandteilen sind kompatibel",
     "information": "Information",
-    "addComponentsHint": "Bitte fügen Sie Bestandteile zu Ihrem Workflow hinzu"
+    "addComponentsHint": "Bitte fügen Sie Bestandteile zu Ihrem Workflow hinzu",
+    "addComponentsShort": "Füge Bestandteile hinzu"
   },
   "workflowChecker": {
     "toasts": {
@@ -31,7 +32,9 @@
       "recenter": "Zentrieren",
       "clearWorkflow": "Prozess löschen",
       "select": "Auswählen",
-      "move": "Verschieben"
+      "move": "Verschieben",
+      "delete": "Bestandteile löschen",
+      "showLegend": "Legende anzeigen"
     },
     "clearWorkflowPrompt": {
       "title": "Prozess löschen",
@@ -125,5 +128,6 @@
     "incompatible": "Inkompatibel",
     "partial": "Teilweise kompatibel",
     "partialExplanation": "Die Verbindung selber ist kompatibel, jedoch ist ein vorheriger Bestandteil inkompatibel und unterbricht so die Kette von CAI-kompatiblen Metadaten."
-  }
+  },
+  "legend": "Legende"
 }

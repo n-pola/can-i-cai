@@ -17,6 +17,14 @@ $f-m: $f-base * 2.5;
 $f-l: $f-base * 4;
 $f-xl: $f-base * 5;
 
+// Mobile font sizes
+$fm-xxs: $f-base * 1.2;
+$fm-xs: $f-base * 1.6;
+$fm-s: $f-base * 2;
+$fm-m: $f-base * 2.5;
+$fm-l: $f-base * 3.15;
+$fm-xl: $f-base * 4;
+
 // Font weights
 $fw-regular: 400;
 $fw-semibold: 500;
@@ -45,10 +53,34 @@ $darker: #262626;
 $darkest: #121212;
 $darkest-50: rgba($darkest, .5);
 
+// Breakpoints
+$bp-mobile: 768px;
+$bp-tablet: 1200px;
+
 // Grid
-$grid-columns: 10;
-$grid-gap: $s;
-$grid-margin: $l;
+:root {
+  --grid-columns: 10;
+  --grid-gap: #{$s};
+  --grid-margin: #{$l};
+}
+
+@media screen and (width <= $bp-tablet){
+  :root {
+    --grid-columns: 7;
+  }
+}
+
+@media screen and (width <= $bp-mobile) {
+  :root {
+    --grid-columns: 5;
+    --grid-gap: #{$xxs};
+    --grid-margin: #{$s};
+  }
+}
+
+$grid-columns: var(--grid-columns);
+$grid-gap: var(--grid-gap);
+$grid-margin: var(--grid-margin);
 $grid-column-width: calc((100vw - 2 * $grid-margin - $grid-gap * ($grid-columns - 1)) / $grid-columns);
 
 // Misc.
@@ -57,4 +89,5 @@ $modal-width: 40 * $base;
 $modal-content-max-height: 50 * $base;
 $animation: .3s ease;
 $shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+$shadow-top: 0 -3px 6px rgb(0 0 0 / 16%), 0 -3px 6px rgb(0 0 0 / 23%);
 

@@ -1,1 +1,1 @@
-export type PlaneMode = 'move' | 'select';
+export type PlaneMode = 'move' | 'select' | 'delete';

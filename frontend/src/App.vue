@@ -1,12 +1,27 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useGlobalStore } from '@/stores/global';
 import HeaderComponent from '@/components/organisms/HeaderComponent.vue';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner.vue';
+import { onMounted, onUnmounted } from 'vue';
 
 const i18n = useI18n();
 const globalStore = useGlobalStore();
+const route = useRoute();
+
+const handleResize = () => {
+  globalStore.windowWidth = window.innerWidth;
+};
+
+// Lifecycle hooks
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <template>
@@ -16,7 +31,7 @@ const globalStore = useGlobalStore();
     <RouterView />
   </main>
 
-  <footer>
+  <footer v-if="!(globalStore.isMobile && route.path === '/check')">
     <div class="footer-links">
       <RouterLink to="/imprint" class="footer-legal">{{ i18n.t('imprint') }}</RouterLink>
       <span> | </span>

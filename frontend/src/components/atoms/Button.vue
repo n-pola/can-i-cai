@@ -104,8 +104,10 @@ const addOptionalClass = (condition: boolean, className: string) => (condition ?
     color: $lightest;
     background-color: $primary;
 
-    &:hover {
-      background-color: $primary-light;
+    @media (hover: hover) {
+      &:hover {
+        background-color: $primary-light;
+      }
     }
   }
 
@@ -113,8 +115,10 @@ const addOptionalClass = (condition: boolean, className: string) => (condition ?
     color: $lightest;
     background-color: $secondary;
 
-    &:hover {
-      background-color: $secondary-light;
+    @media (hover: hover) {
+      &:hover {
+        background-color: $secondary-light;
+      }
     }
   }
 
@@ -122,16 +126,20 @@ const addOptionalClass = (condition: boolean, className: string) => (condition ?
     color: $lightest;
     background-color: $error;
 
-    &:hover {
-      background-color: $error-light;
+    @media (hover: hover) {
+      &:hover {
+        background-color: $error-light;
+      }
     }
   }
 
   &--lighter {
     background-color: $lighter;
 
-    &:hover {
-      background-color: $light;
+    @media (hover: hover) {
+      &:hover {
+        background-color: $light;
+      }
     }
   }
 }

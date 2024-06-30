@@ -2,6 +2,7 @@
 import { defineProps, computed, ref } from 'vue';
 import { type PopulatedComponent, type PopulatedCustomComponent } from 'cic-shared';
 import { useI18n } from 'vue-i18n';
+import { useGlobalStore } from '@/stores/global';
 
 // Component setup
 const props = withDefaults(
@@ -24,6 +25,7 @@ const emit = defineEmits<{
 
 // Hooks
 const i18n = useI18n();
+const globalStore = useGlobalStore();
 
 // Data
 const componentRef = ref<HTMLElement | null>(null);
@@ -74,9 +76,11 @@ defineExpose({
         @click="handleDeleteClick"
         type="button"
         :title="i18n.t('workflowChecker.actions.deleteComponent')"
+        v-if="!globalStore.isMobile"
       >
         <span class="material-symbols-outlined icon--xxs">close</span>
       </button>
+      <span v-else />
 
       <button
         type="button"
