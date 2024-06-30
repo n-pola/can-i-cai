@@ -5,30 +5,50 @@ h1, .is-h1 {
   font-size: $f-xl;
   font-weight: $fw-bold;
   line-height: $lh-heading;
+
+  @media (max-width: $bp-mobile) {
+    font-size: $fm-xl;
+  }
 }
 
 h2, .is-h2 {
   margin: 0;
   font-size: $f-l;
   font-weight: $fw-semibold;
+
+  @media (max-width: $bp-mobile) {
+    font-size: $fm-l;
+  }
 }
 
 h3, .is-h3 {
   margin: 0;
   font-size: $f-m;
   font-weight: $fw-semibold;
+
+  @media (max-width: $bp-mobile) {
+    font-size: $fm-m;
+  }
 }
 
 h4, .title, .is-h4 {
   margin: 0;
   font-size: $f-s;
   font-weight: $fw-semibold;
+
+  @media (max-width: $bp-mobile) {
+    font-size: $fm-s;
+  }
 }
 
 h5, .subtitle, .is-h5 {
   margin: 0;
   font-size: $f-s;
   font-weight: $fw-regular;
+
+  @media (max-width: $bp-mobile) {
+    font-size: $fm-s;
+  }
 }
 
 body,
@@ -40,6 +60,10 @@ p,
   font-weight: $fw-regular;
   line-height: $lh-base;
   color: inherit;
+
+  @media (max-width: $bp-mobile) {
+    font-size: $fm-xs;
+  }
 }
 
 span {

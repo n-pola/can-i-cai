@@ -17,6 +17,14 @@ $f-m: $f-base * 2.5;
 $f-l: $f-base * 4;
 $f-xl: $f-base * 5;
 
+// Mobile font sizes
+$fm-xxs: $f-base * 1;
+$fm-xs: $f-base * 1.2;
+$fm-s: $f-base * 1.6;
+$fm-m: $f-base * 2;
+$fm-l: $f-base * 3.15;
+$fm-xl: $f-base * 4;
+
 // Font weights
 $fw-regular: 400;
 $fw-semibold: 500;
@@ -69,7 +77,6 @@ $bp-tablet: 1200px;
     --grid-margin: #{$s};
   }
 }
-
 
 $grid-columns: var(--grid-columns);
 $grid-gap: var(--grid-gap);
