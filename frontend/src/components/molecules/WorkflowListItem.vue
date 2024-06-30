@@ -100,6 +100,10 @@ const handleDeleteClick = (e: MouseEvent) => {
     &:hover {
       cursor: pointer;
     }
+
+    @media (hover: none) {
+      display: block;
+    }
   }
 }
 </style>

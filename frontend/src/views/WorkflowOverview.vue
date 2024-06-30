@@ -108,6 +108,14 @@ const handleDelete = (id: string) => {
     flex-flow: column;
     grid-column: 4 / span 4;
     gap: $l;
+
+    @media screen and (max-width: $bp-tablet) {
+      grid-column: 2 / span 5;
+    }
+
+    @media screen and (max-width: $bp-mobile) {
+      grid-column: 1 / -1;
+    }
   }
 }
 </style>
