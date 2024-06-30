@@ -4,7 +4,7 @@ import germanLocales from '@/assets/locales/de.json';
 
 export const i18nInstance = createI18n({
   legacy: false,
-  locale: 'en',
+  locale: navigator.language.split('-')[0],
   fallbackLocale: 'en',
   messages: {
     en: englishLocales,
