@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import { useCategoryStore } from '@/stores/category';
 import { useToast } from 'vue-toastification';
 import { useI18n } from 'vue-i18n';
@@ -67,6 +67,17 @@ const additionalCategories: AdditionalCategory[] = [
     types: ['input', 'output', 'input-output'],
   },
 ];
+
+// Computed values
+const sortedAndFilteredSelectedComponents = computed(() => {
+  if (!selectedCategory.value) {
+    return null;
+  }
+
+  return selectedCategory.value?.components
+    .filter((c) => c.type.some((t) => props.type?.includes(t)))
+    .sort((a, b) => a.name.localeCompare(b.name));
+});
 
 // Functions
 
@@ -264,9 +275,7 @@ onMounted(async () => {
           <template v-else-if="selectedCategory">
             <h4>{{ selectedCategory.name[locale as 'de' | 'en'] }}</h4>
             <WorkflowComponent
-              v-for="component in selectedCategory.components.filter((c) =>
-                c.type.some((t) => type?.includes(t)),
-              )"
+              v-for="component in sortedAndFilteredSelectedComponents"
               :key="component.id"
               @click="handleAddComponent(component.id)"
               :component="component"
