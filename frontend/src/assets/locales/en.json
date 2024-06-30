@@ -18,7 +18,9 @@
     "toasts": {
       "missingTitle": "Workflow could not be {action}. Please assign a name at the top of your screen.",
       "success": "Workflow \"{name}\" {action} successfully.",
-      "error": "Workflow could not be {action}. Please try again."
+      "error": "Workflow could not be {action}. Please try again.",
+      "loadComponentsError": "Could not load components. Please try again.",
+      "replaceSuccess": "Component was replaced successfully."
     },
     "actions": {
       "deleteComponent": "Delete component",
@@ -40,6 +42,10 @@
       "message": "You are working on an already saved workflow. Do you want to overwrite it or save it as a new one?",
       "saveAsNew": "Save as new",
       "overwrite": "Overwrite"
+    },
+    "addAlternative": {
+      "title": "Add alternative",
+      "message": "Are you sure you want to replace \"{oldComponent}\" with \"{newComponent}\"?"
     }
   },
   "addComponentModal": {

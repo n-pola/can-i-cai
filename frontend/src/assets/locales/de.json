@@ -18,7 +18,9 @@
     "toasts": {
       "missingTitle": "Prozess konnte nicht {action} werden. Bitte vergebe einen Namen am oberen Rand des Bildschirms.",
       "success": "Prozess \"{name}\" wurde erfolgreich {action}.",
-      "error": "Prozess konnte nicht {action} werden. Bitte versuche es erneut."
+      "error": "Prozess konnte nicht {action} werden. Bitte versuche es erneut.",
+      "loadComponentsError": "Bestandteile konnten nicht geladen werden. Bitte versuche es erneut.",
+      "replaceSuccess": "Bestandteil wurde erfolgreich ersetzt."
     },
     "actions": {
       "deleteComponent": "Bestandteil löschen",
@@ -40,6 +42,10 @@
       "message": "Du arbeitest an einem bereits gespeicherten Prozess. Möchtest du ihn überschreiben oder als neuen Prozess speichern?",
       "saveAsNew": "Als neuen speichern",
       "overwrite": "Überschreiben"
+    },
+    "addAlternative": {
+      "title": "Alternative hinzufügen",
+      "message": "Bist du sicher, dass du \"{oldComponent}\" durch \"{newComponent}\" ersetzen möchtest?"
     }
   },
   "addComponentModal": {

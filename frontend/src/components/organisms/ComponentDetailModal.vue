@@ -16,6 +16,9 @@ const props = defineProps<{
   nodeId: string;
 }>();
 const isOpen = defineModel<boolean>();
+const emit = defineEmits<{
+  alternativeClicked: [nodeId: string, componentId: string];
+}>();
 
 // Hooks
 const workflowStore = useWorkflowStore();
@@ -134,8 +137,9 @@ onMounted(() => {
           v-for="alternative in alternatives.slice(0, 3)"
           :key="alternative.id"
           :component="alternative"
-          :show-compatibility="false"
           :show-delete="false"
+          :compatible="true"
+          @click="emit('alternativeClicked', nodeId, alternative.id)"
         />
       </div>
     </div>
@@ -231,10 +235,6 @@ onMounted(() => {
     display: flex;
     flex-flow: column;
     gap: $xxs;
-
-    & > div {
-      pointer-events: none;
-    }
   }
 }
 </style>
