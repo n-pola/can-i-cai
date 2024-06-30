@@ -58,6 +58,13 @@ const {
   abortAction: abortSaveWorkflow,
   isOpen: saveWorkflowModalIsOpen,
 } = useModalInterception();
+const {
+  interceptAction: interceptAddAlternative,
+  confirmAction: confirmAddAlternative,
+  abortAction: abortAddAlternative,
+  isOpen: addAlternativeModalIsOpen,
+  tmpData: addAlternativeData,
+} = useModalInterception();
 
 // Data
 const workflowPlane = ref<InstanceType<typeof WorkflowPlane> | null>(null);
@@ -284,6 +291,30 @@ const handleShare = async () => {
   }
 };
 
+/** Ask user if he wants to replace the current component with the clicked one */
+const handleAlternativeClicked = async (nodeId: string, componentId: string) => {
+  const newComponent = await componentsStore.getComponent(componentId);
+  const oldComponent = workflowStore.nodes.get(nodeId);
+  if (!newComponent || !oldComponent) {
+    detailModalIsOpen.value = false;
+    toast.error(i18n.t('workflowChecker.toasts.loadComponentsError'));
+    return;
+  }
+
+  interceptAddAlternative(
+    () => {
+      workflowStore.updateNodeData(nodeId, newComponent);
+      detailModalIsOpen.value = false;
+      toast.success(i18n.t('workflowChecker.toasts.replaceSuccess'));
+    },
+    () => {},
+    {
+      oldName: oldComponent.name,
+      newName: newComponent.name,
+    },
+  );
+};
+
 /**
  * set the mode to move
  * Own function so the keyboard event listener can be removed
@@ -376,6 +407,7 @@ onUnmounted(() => {
       v-model="detailModalIsOpen"
       :component="selectedNode"
       :node-id="selectedNodeId"
+      @alternative-clicked="handleAlternativeClicked"
     />
     <AddComponentModal
       v-model="addComponentModalIsOpen"
@@ -425,6 +457,21 @@ onUnmounted(() => {
       confirm-color="primary"
       :confirm-text="i18n.t('workflowChecker.saveInterception.overwrite')"
       :abort-text="i18n.t('workflowChecker.saveInterception.saveAsNew')"
+    />
+    <ConfirmModal
+      v-model="addAlternativeModalIsOpen"
+      :title="i18n.t('workflowChecker.addAlternative.title')"
+      :message="
+        i18n.t('workflowChecker.addAlternative.message', {
+          oldComponent: addAlternativeData.oldName,
+          newComponent: addAlternativeData.newName,
+        })
+      "
+      @confirm="confirmAddAlternative"
+      @abort="abortAddAlternative"
+      confirm-color="primary"
+      :confirm-text="i18n.t('yes')"
+      :abort-text="i18n.t('no')"
     />
   </div>
 </template>
