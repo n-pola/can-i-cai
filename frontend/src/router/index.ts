@@ -89,6 +89,16 @@ const router = createRouter({
       name: 'Workflow overview',
       component: () => import('@/views/WorkflowOverview.vue'),
     },
+    {
+      path: '/privacy',
+      name: 'Privacy policy',
+      component: () => import('@/views/PrivacyPolicy.vue'),
+    },
+    {
+      path: '/imprint',
+      name: 'Imprint',
+      component: () => import('@/views/ImprintView.vue'),
+    },
   ],
 });
 
