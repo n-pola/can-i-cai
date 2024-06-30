@@ -68,14 +68,23 @@ defineExpose({
       <h4 :title="componentName" class="component__title">{{ componentName }}</h4>
       <p class="component__manufacturer">{{ manufacturer || '&nbsp;' }}</p>
     </div>
-    <div class="component__action" v-if="showDelete">
+    <div class="component__actions" v-if="showDelete">
       <button
-        class="component__delete"
+        class="component__delete component__action"
         @click="handleDeleteClick"
         type="button"
         :title="i18n.t('workflowChecker.actions.deleteComponent')"
       >
         <span class="material-symbols-outlined icon--xxs">close</span>
+      </button>
+
+      <button
+        type="button"
+        disabled
+        class="component__info component__action"
+        v-if="component.additionalInfo"
+      >
+        <span class="material-symbols-outlined icon--xxs">info_i</span>
       </button>
     </div>
   </div>
@@ -92,12 +101,18 @@ defineExpose({
   background-color: $lighter;
   border-radius: $border-radius;
 
-  &:hover {
+  &:hover,
+  &:focus {
     cursor: pointer;
     background-color: $light;
 
     #{$self}__delete {
-      display: block;
+      opacity: 1;
+    }
+
+    #{$self}__info {
+      color: $lightest;
+      background-color: $dark;
     }
 
     #{$self}__category--neutral {
@@ -139,15 +154,32 @@ defineExpose({
     }
   }
 
+  &__actions {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+  }
+
+  &__action {
+    display: flex;
+    padding: $xxs / 2;
+  }
+
   &__delete {
-    display: none;
     color: $lightest;
     background-color: $error;
     border-bottom-left-radius: $border-radius;
+    opacity: 0;
 
     &:hover {
       cursor: pointer;
     }
+  }
+
+  &__info {
+    color: $darkest;
+    background-color: $light;
+    border-top-left-radius: $border-radius;
   }
 }
 </style>
