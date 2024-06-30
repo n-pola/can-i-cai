@@ -31,7 +31,7 @@ onUnmounted(() => {
     <RouterView />
   </main>
 
-  <footer v-if="!(globalStore.isMobile && route.path === '/check')">
+  <footer v-if="!(globalStore.isMobile && route.path.includes('/check'))">
     <div class="footer-links">
       <RouterLink to="/imprint" class="footer-legal">{{ i18n.t('imprint') }}</RouterLink>
       <span> | </span>
