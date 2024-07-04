@@ -18,6 +18,7 @@ const emit = defineEmits<{
   delete: [];
   requestAddAfter: [];
   requestAddBefore: [];
+  requestAddBeside: [];
   click: [];
   recenterPlane: [];
 }>();
@@ -87,6 +88,14 @@ onMounted(() => {
       @click="emit('requestAddAfter')"
       title="Add component after this one"
       v-if="workflowStore.isLastNode(props.id) && !component.type.includes('input')"
+    />
+    <SvgAddButton
+      v-if="!workflowStore.nodeHasMultipleEdges(props.id)"
+      :x="width + cssVariables.size.s + cssVariables.size.m / 2"
+      :y="height / 2"
+      :size="cssVariables.size.m"
+      @click="emit('requestAddBeside')"
+      title="Add component beside this one"
     />
   </g>
 </template>

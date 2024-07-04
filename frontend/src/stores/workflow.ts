@@ -140,6 +140,63 @@ export const useWorkflowStore = defineStore('workflow', {
 
       return positionedEdges;
     },
+    /** Determine if a Node has more than one ingoing/outgoing edges */
+    nodeHasMultipleEdges:
+      (state) =>
+      (id: string): boolean => {
+        const adjacency = state.adjacencies.get(id);
+        if (!adjacency) {
+          return false;
+        }
+
+        return adjacency.in.length > 1 || adjacency.out.length > 1;
+      },
+
+    findNodesWithSameSourceAndTarget:
+      (state) =>
+      (source: string, target: string): string[] => {
+        const edgeArray = Array.from(state.edges.values());
+        const sourceEdges = edgeArray.filter((edge) => edge.source === source);
+
+        const possibleNodes = sourceEdges.map((edge) => edge.target);
+
+        const targetEdges = edgeArray.filter(
+          (edge) => edge.target === target && possibleNodes.includes(edge.source),
+        );
+
+        return targetEdges.map((edge) => edge.source);
+      },
+
+    /** Get parallel nodes to given node (ones with same nodes connected) */
+    parallelNodes(state): (id: string) => string[] {
+      return (id: string): string[] => {
+        const adjacency = state.adjacencies.get(id);
+        if (!adjacency) {
+          return [];
+        }
+
+        const sourceNodes = adjacency.in
+          .map((edgeId) => state.edges.get(edgeId)?.source)
+          .filter((node) => node) as string[];
+
+        const targetNodes = adjacency.out
+          .map((edgeId) => state.edges.get(edgeId)?.target)
+          .filter((node) => node) as string[];
+
+        const parallelNodes = new Set<string>();
+
+        sourceNodes.forEach((sourceNode) => {
+          targetNodes.forEach((targetNode) => {
+            const nodes = this.findNodesWithSameSourceAndTarget(sourceNode, targetNode);
+            nodes.forEach((node) => parallelNodes.add(node));
+          });
+        });
+
+        parallelNodes.delete(id);
+
+        return Array.from(parallelNodes);
+      };
+    },
   },
   actions: {
     clearWorkflow(): void {
@@ -175,11 +232,11 @@ export const useWorkflowStore = defineStore('workflow', {
       });
 
       if (previousEdges.length) {
-        const previousEdgesCompatibility = previousEdges.some(
-          (compatibility) => !(compatibility !== 'yes'),
+        const previousEdgesNotCompatible = previousEdges.some(
+          (compatibility) => compatibility !== 'yes',
         );
 
-        if (!previousEdgesCompatibility && edgeCompatible === 'yes') {
+        if (previousEdgesNotCompatible && edgeCompatible === 'yes') {
           edgeCompatible = 'partial';
         }
       }
@@ -307,6 +364,28 @@ export const useWorkflowStore = defineStore('workflow', {
       this.addEdge(source, id);
       this.addEdge(id, target);
     },
+    addNodeBeside(
+      node: PopulatedComponent | PopulatedCustomComponent,
+      nodeId: string,
+      satisfiesMinimalVersion?: boolean,
+      type?: FrontendNode['dataType'],
+    ) {
+      const adjacency = this.adjacencies.get(nodeId);
+      if (!adjacency) {
+        return;
+      }
+
+      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
+      const { in: inEdges, out: outEdges } = adjacency;
+
+      inEdges.forEach((edgeId) => {
+        this.addEdge(this.edges.get(edgeId)?.source || '', id);
+      });
+
+      outEdges.forEach((edgeId) => {
+        this.addEdge(id, this.edges.get(edgeId)?.target || '');
+      });
+    },
     removeNode(id: string): void {
       const adjacency = this.adjacencies.get(id);
       if (!adjacency) {
@@ -371,6 +450,22 @@ export const useWorkflowStore = defineStore('workflow', {
         .map((edge) => this.nodes.get(edge.source))
         .filter((iterationNode) => iterationNode) as FrontendNode[];
 
+      const parallelNodes = this.parallelNodes(id)
+        .map((nodeId) => this.nodes.get(nodeId))
+        .filter((iterationNode) => iterationNode) as FrontendNode[];
+
+      let { x } = node.boundingBox;
+
+      if (parallelNodes.length > 0) {
+        const maxPreviousNodeX = Math.max(
+          ...parallelNodes.map(
+            (iterationNode) => iterationNode.boundingBox.x + iterationNode.boundingBox.width,
+          ),
+        );
+
+        x = maxPreviousNodeX + cssVariables.size.xl;
+      }
+
       const maxPreviousNodeY = Math.max(
         ...previousNodes.map(
           (iterationNode) => iterationNode.boundingBox.y + iterationNode.boundingBox.height,
@@ -378,7 +473,7 @@ export const useWorkflowStore = defineStore('workflow', {
       );
 
       const newPosition: BoundingBox = {
-        x: node.boundingBox.x,
+        x,
         y: inEdges.length ? maxPreviousNodeY + cssVariables.size.xl : 0,
         width: node.boundingBox.width,
         height: node.boundingBox.height,

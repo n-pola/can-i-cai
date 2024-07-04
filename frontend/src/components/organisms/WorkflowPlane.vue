@@ -8,6 +8,7 @@ import { NodeHelper } from '@/helpers/nodeHelper';
 import type { PlaneMode } from '@/types/checkerPlane';
 import { i18n } from '@/utils/i18n';
 import { useGlobalStore } from '@/stores/global';
+import type { EdgeCoordinates } from '@/types/workflow';
 
 // Component setup
 const props = defineProps<{
@@ -17,7 +18,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   nodeClicked: [id: string];
   deleteNode: [id: string];
-  addComponentRequested: [id?: string, place?: 'before' | 'after'];
+  addComponentRequested: [id?: string, place?: 'before' | 'after' | 'beside'];
   addComponentRequestedEdge: [id: string];
 }>();
 
@@ -244,6 +245,30 @@ const centerPlane = () => {
   };
 };
 
+const getBezierPath = (line: EdgeCoordinates) => {
+  const yDelta = line.end.y - line.start.y;
+  const xDelta = line.end.x - line.start.x;
+
+  if (xDelta === 0) {
+    return `M ${line.start.x} ${line.start.y} L ${line.end.x} ${line.end.y}`;
+  }
+
+  const halfYDelta = yDelta;
+
+  const controlPointStart = {
+    x: line.start.x,
+    y: line.start.y + halfYDelta,
+  };
+
+  const controlPointEnd = {
+    x: line.end.x,
+    y: line.end.y - halfYDelta,
+  };
+
+  return `M ${line.start.x} ${line.start.y} C ${controlPointStart.x} ${controlPointStart.y}, ${controlPointEnd.x} ${controlPointEnd.y}, ${line.end.x} ${line.end.y}`;
+};
+
+// Watchers
 watch(workflow.nodes, (value) => {
   if (value.size === 0) {
     centerPlane();
@@ -288,11 +313,8 @@ defineExpose({
       </text>
     </g>
     <g class="workflow-plane__edge-wrap" v-for="line in workflow.positionedEdges" :key="line.id">
-      <line
-        :x1="line.coordinates.start.x"
-        :y1="line.coordinates.start.y"
-        :x2="line.coordinates.end.x"
-        :y2="line.coordinates.end.y"
+      <path
+        :d="getBezierPath(line.coordinates)"
         class="workflow-plane__edge"
         :class="{
           'workflow-plane__edge--compatible': line.compatible === 'yes',
@@ -300,6 +322,7 @@ defineExpose({
         }"
         :key="line.id"
       />
+
       <SvgAddButton
         :x="(line.coordinates.start.x + line.coordinates.end.x) / 2"
         :y="(line.coordinates.start.y + line.coordinates.end.y) / 2"
@@ -323,6 +346,7 @@ defineExpose({
       @keypress.enter="emit('nodeClicked', node[0])"
       @requestAddAfter="emit('addComponentRequested', node[0], 'after')"
       @requestAddBefore="emit('addComponentRequested', node[0], 'before')"
+      @request-add-beside="emit('addComponentRequested', node[0], 'beside')"
       @recenter-plane="centerPlane"
       ref="componentRefs"
       tabindex="0"
@@ -345,6 +369,7 @@ defineExpose({
   }
 
   &__edge {
+    fill: none;
     stroke: $error;
     stroke-width: 4;
 

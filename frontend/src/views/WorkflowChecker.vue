@@ -82,7 +82,7 @@ const addComponentModalIsOpen = ref(false);
 const addCustomComponentModalIsOpen = ref(false);
 const addComponentType = ref<ComponentFunctionType[] | null>(null);
 const tmpId = ref<string | null>(null);
-const addType = ref<'after' | 'between' | 'before'>('after');
+const addType = ref<'after' | 'between' | 'before' | 'beside'>('after');
 const editCustomComponent = ref<PopulatedCustomComponent | null>(null);
 
 const sharedModalIsOpen = ref(false);
@@ -130,6 +130,9 @@ const addComponent = async (
         break;
       case 'between':
         workflowStore.addNodeBetween(component, tmpId.value, satisfiesMinimalVersion, type);
+        break;
+      case 'beside':
+        workflowStore.addNodeBeside(component, tmpId.value, satisfiesMinimalVersion, type);
         break;
       default:
         throw new Error('Invalid add type');
@@ -205,7 +208,7 @@ const handleAddComponentOnEdgeRequest = async (id: string) => {
 };
 
 /** Prepare state to add new component after a previous one and open modal */
-const handleAddComponentRequested = (id?: string, place?: 'before' | 'after') => {
+const handleAddComponentRequested = (id?: string, place?: 'before' | 'after' | 'beside') => {
   addComponentModalIsOpen.value = true;
   tmpId.value = id || null;
   addComponentType.value = ['output'];
