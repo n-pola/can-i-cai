@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { cssVariables } from '@/utils/cssVariables';
 
 interface GlobalStore {
   spinnerVisible: boolean;
@@ -11,6 +12,6 @@ export const useGlobalStore = defineStore('global', {
     windowWidth: window.innerWidth,
   }),
   getters: {
-    isMobile: (state) => state.windowWidth < 768,
+    isMobile: (state) => state.windowWidth <= cssVariables.breakPoints.mobile,
   },
 });

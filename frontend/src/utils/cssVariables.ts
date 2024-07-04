@@ -22,4 +22,8 @@ export const cssVariables = {
     l: getNumberFromCssVariable('--font-l'),
     xl: getNumberFromCssVariable('--font-xl'),
   },
+  breakPoints: {
+    tablet: getNumberFromCssVariable('--bp-tablet'),
+    mobile: getNumberFromCssVariable('--bp-mobile'),
+  },
 };

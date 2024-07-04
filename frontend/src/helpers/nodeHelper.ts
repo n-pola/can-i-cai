@@ -1,4 +1,4 @@
-import type { FrontendNode } from '../types/workflow';
+import type { FrontendNode } from '@/types/workflow';
 
 export class NodeHelper {
   /** Determine if a node is compatible in the current frontend stage */
