@@ -517,6 +517,10 @@ onUnmounted(() => {
     z-index: 1;
     grid-column: 9 / span 2;
 
+    @media screen and (width <= $bp-tablet) {
+      grid-column: 6 / span 2;
+    }
+
     @media screen and (width <= $bp-mobile) {
       position: absolute;
       bottom: 0;

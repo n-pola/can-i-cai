@@ -128,5 +128,9 @@ const title = computed(() => {
     padding: $s $xs;
     padding-top: 0;
   }
+
+  &__content {
+    padding: $s $xs;
+  }
 }
 </style>
