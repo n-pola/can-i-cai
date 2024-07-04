@@ -12,9 +12,11 @@ const { name: workflowName } = toRefs(useWorkflowStore());
 
 <template>
   <header class="header">
-    <RouterLink to="/" :title="i18n.t('homepage')" class="header__home-link">
-      <img alt="Can I CAI? Logo" class="header__logo" src="@/assets/logo.svg" />
-    </RouterLink>
+    <div>
+      <RouterLink to="/" :title="i18n.t('homepage')" class="header__home-link">
+        <img alt="Can I CAI? Logo" class="header__logo" src="@/assets/logo.svg" />
+      </RouterLink>
+    </div>
 
     <div class="header__workflow-name-wrap">
       <div v-if="route.path.includes('check')" class="header__workflow-name">
@@ -65,7 +67,7 @@ const { name: workflowName } = toRefs(useWorkflowStore());
   }
 
   &__home-link {
-    display: flex;
+    display: inline-flex;
   }
 
   &__logo {
