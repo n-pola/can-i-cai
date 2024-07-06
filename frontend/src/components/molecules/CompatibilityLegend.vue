@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 // Component setup
 withDefaults(
   defineProps<{
-    useTooltip: boolean;
+    useTooltip?: boolean;
   }>(),
   {
     useTooltip: true,
