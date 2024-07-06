@@ -22,6 +22,7 @@ export const useWorkflowStore = defineStore('workflow', {
     adjacencies: new Map(),
     nodes: new Map(),
     edges: new Map(),
+    groups: new Map(),
   }),
   getters: {
     /** Array of nodes without an incoming edge */
@@ -106,12 +107,16 @@ export const useWorkflowStore = defineStore('workflow', {
         const sourceNode = state.nodes.get(edge.source);
         const targetNode = state.nodes.get(edge.target);
 
-        if (!sourceNode || !targetNode) {
+        if (!sourceNode) {
           return null;
         }
 
         const sourceBB = sourceNode.boundingBox;
-        const targetBB = targetNode.boundingBox;
+        let targetBB = sourceNode.boundingBox;
+
+        if (targetNode) {
+          targetBB = targetNode.boundingBox;
+        }
 
         const coordinates = {
           start: {
@@ -305,6 +310,7 @@ export const useWorkflowStore = defineStore('workflow', {
       loadedId?: string,
       satisfiesMinimalVersion?: boolean,
       type?: FrontendNode['dataType'],
+      group?: string,
     ): string {
       const id = loadedId || uuid();
       this.nodes.set(id, {
@@ -312,17 +318,22 @@ export const useWorkflowStore = defineStore('workflow', {
         satisfiesMinimalVersion,
         boundingBox: boundingBox ?? { x: 0, y: 0, width: 0, height: 0 },
         ...(type ? { dataType: type } : {}),
+        ...(group ? { group } : {}),
       });
       this.adjacencies.set(id, { in: [], out: [] });
       return id;
     },
-    updateNodeData(id: string, node: PopulatedComponent | PopulatedCustomComponent): void {
+    updateNodeData(
+      id: string,
+      node: PopulatedComponent | PopulatedCustomComponent,
+      group?: string,
+    ): void {
       const currentData = this.nodes.get(id);
       if (!currentData) {
         return;
       }
 
-      const updatedNode = { ...currentData, ...node };
+      const updatedNode = { ...currentData, ...node, ...(group ? { group } : {}) };
 
       this.nodes.set(id, updatedNode);
       this.determineEdgeCompatibilityFromNode(id);
@@ -371,12 +382,30 @@ export const useWorkflowStore = defineStore('workflow', {
       type?: FrontendNode['dataType'],
     ) {
       const adjacency = this.adjacencies.get(nodeId);
-      if (!adjacency) {
+      const siblingNode = this.nodes.get(nodeId);
+      if (!adjacency || !siblingNode) {
         return;
       }
 
-      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
+      let groupId = siblingNode.group;
+
+      if (!groupId) {
+        groupId = uuid();
+        this.groups.set(groupId, [nodeId]);
+        this.updateNodeData(nodeId, siblingNode, groupId);
+      }
+
+      const group = this.groups.get(groupId);
+
+      if (!group) {
+        return;
+      }
+
+      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type, groupId);
       const { in: inEdges, out: outEdges } = adjacency;
+
+      const siblingIndex = group.indexOf(nodeId);
+      group.splice(siblingIndex + 1, 0, id);
 
       inEdges.forEach((edgeId) => {
         this.addEdge(this.edges.get(edgeId)?.source || '', id);
@@ -387,8 +416,9 @@ export const useWorkflowStore = defineStore('workflow', {
       });
     },
     removeNode(id: string): void {
+      const node = this.nodes.get(id);
       const adjacency = this.adjacencies.get(id);
-      if (!adjacency) {
+      if (!adjacency || !node) {
         return;
       }
 
@@ -396,6 +426,17 @@ export const useWorkflowStore = defineStore('workflow', {
       adjacency.out.forEach((edgeId) => this.removeEdge(edgeId));
       this.adjacencies.delete(id);
       this.nodes.delete(id);
+
+      const { group } = node;
+
+      if (group) {
+        const groupNodes = this.groups.get(group);
+        if (groupNodes) {
+          const nodeIndex = groupNodes.indexOf(id);
+          groupNodes.splice(nodeIndex, 1);
+        }
+        this.recalculateGroupNodePositions(group);
+      }
     },
     removeNodeAndCloseGaps(id: string): void {
       const adjacency = this.adjacencies.get(id);
@@ -450,20 +491,28 @@ export const useWorkflowStore = defineStore('workflow', {
         .map((edge) => this.nodes.get(edge.source))
         .filter((iterationNode) => iterationNode) as FrontendNode[];
 
-      const parallelNodes = this.parallelNodes(id)
-        .map((nodeId) => this.nodes.get(nodeId))
-        .filter((iterationNode) => iterationNode) as FrontendNode[];
+      const parallelNodes = this.groups.get(node.group || '') || [];
 
       let { x } = node.boundingBox;
 
       if (parallelNodes.length > 0) {
+        const previousGroupNodeId = parallelNodes[parallelNodes.indexOf(id) - 1];
+        const previousGroupNode = this.nodes.get(previousGroupNodeId);
+
+        if (previousGroupNode) {
+          x =
+            previousGroupNode.boundingBox.x +
+            previousGroupNode.boundingBox.width +
+            cssVariables.size.xl;
+        } else {
+          x = 0;
+        }
+      } else {
         const maxPreviousNodeX = Math.max(
-          ...parallelNodes.map(
-            (iterationNode) => iterationNode.boundingBox.x + iterationNode.boundingBox.width,
-          ),
+          ...previousNodes.map((iterationNode) => iterationNode.boundingBox.x),
         );
 
-        x = maxPreviousNodeX + cssVariables.size.xl;
+        x = Math.max(maxPreviousNodeX, 0);
       }
 
       const maxPreviousNodeY = Math.max(
@@ -480,6 +529,52 @@ export const useWorkflowStore = defineStore('workflow', {
       };
 
       this.updateNodePosition(id, newPosition);
+    },
+    recalculateGroupNodePositions(group: string): void {
+      const groupNodes = this.groups.get(group);
+      if (!groupNodes) {
+        return;
+      }
+
+      groupNodes.forEach((nodeId) => {
+        this.recalculateNodePosition(nodeId);
+      });
+
+      this.centerGroup(group);
+    },
+    centerGroup(group: string): void {
+      const groupNodes = this.groups.get(group);
+      if (!groupNodes) {
+        return;
+      }
+
+      const firstNode = this.nodes.get(groupNodes[0]);
+      const lastNode = this.nodes.get(groupNodes[groupNodes.length - 1]);
+
+      if (!firstNode || !lastNode) {
+        return;
+      }
+
+      const groupWidth =
+        firstNode.boundingBox.x + lastNode.boundingBox.x + lastNode.boundingBox.width;
+
+      const groupCenter = groupWidth / 2 - firstNode.boundingBox.width / 2;
+
+      groupNodes.forEach((nodeId) => {
+        const node = this.nodes.get(nodeId);
+        if (!node) {
+          return;
+        }
+
+        const updatedPosition = {
+          x: node.boundingBox.x - groupCenter,
+          y: node.boundingBox.y,
+          width: node.boundingBox.width,
+          height: node.boundingBox.height,
+        };
+
+        this.updateNodePosition(nodeId, updatedPosition);
+      });
     },
     recalculateNodePositionsFrom(id: string): void {
       this.recalculateNodePosition(id);
@@ -498,6 +593,13 @@ export const useWorkflowStore = defineStore('workflow', {
         this.determineEdgeCompatibility(edgeId);
         this.recalculateNodePositionsFrom(edge.target);
       });
+
+      const node = this.nodes.get(id);
+      if (!node || !node.group) {
+        return;
+      }
+
+      this.recalculateGroupNodePositions(node.group);
     },
     generateSavedWorkflow(): SavedWorkflow {
       const workflowId = this.id || uuid();

@@ -372,6 +372,7 @@ defineExpose({
     fill: none;
     stroke: $error;
     stroke-width: 4;
+    transition: $animation;
 
     &--compatible {
       stroke: $success;

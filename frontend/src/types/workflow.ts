@@ -13,6 +13,7 @@ export interface BoundingBox {
 export type FrontendNode = Node & {
   boundingBox: BoundingBox;
   satisfiesMinimalVersion?: boolean;
+  group?: string;
 };
 
 export type FrontendEdge = Edge & {
@@ -34,6 +35,7 @@ export interface WorkflowStore extends Omit<Workflow, 'nodes' | 'edges'> {
   id: string;
   nodes: Map<string, FrontendNode>;
   edges: Map<string, FrontendEdge>;
+  groups: Map<string, string[]>;
 }
 
 /** Item in the list of workflows in the local storage that reference full workflows by id */
