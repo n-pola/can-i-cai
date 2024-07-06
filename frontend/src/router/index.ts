@@ -6,6 +6,7 @@ import { useToast } from 'vue-toastification';
 import { i18n } from '@/utils/i18n';
 import { getSharedWorkflow } from '@/api/workflow';
 import { useGlobalStore } from '@/stores/global';
+import { config } from '@/config';
 
 const toast = useToast();
 
@@ -41,6 +42,7 @@ const router = createRouter({
           try {
             globalStore.spinnerVisible = true;
             await workflowStore.loadFromLocalStorage(currentWorkflow);
+            document.title = `${config.documentTitleBase} | ${workflowStore.name}`;
           } catch (error) {
             toast.error(i18n.t('workflowNotFound'));
             WorkflowStorageHelper.clearCurrentWorkflow();
@@ -103,8 +105,8 @@ const router = createRouter({
 });
 
 // attach route name to document title on route change
-router.afterEach((to) => {
-  document.title = `Can I CAI? | ${to.name?.toString()}`;
+router.beforeEach((to) => {
+  document.title = `${config.documentTitleBase} | ${to.name?.toString()}`;
 });
 
 export default router;
