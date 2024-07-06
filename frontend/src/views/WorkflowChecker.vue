@@ -333,7 +333,7 @@ const handleAlternativeClicked = async (nodeId: string, componentId: string) => 
  * Own function so the keyboard event listener can be removed
  */
 const enableMoveMode = (e: KeyboardEvent) => {
-  if (e.code !== 'Space') return;
+  if (e.code !== 'Space' || e.target !== document.body) return;
   mode.value = 'move';
 };
 
@@ -342,7 +342,7 @@ const enableMoveMode = (e: KeyboardEvent) => {
  * Own function so the keyboard event listener can be removed
  */
 const disableMoveMode = (e: KeyboardEvent) => {
-  if (e.code !== 'Space') return;
+  if (e.code !== 'Space' || e.target !== document.body) return;
   mode.value = 'select';
 };
 
