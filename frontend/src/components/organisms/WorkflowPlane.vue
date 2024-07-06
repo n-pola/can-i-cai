@@ -407,7 +407,8 @@ defineExpose({
     pointer-events: bounding-box;
 
     @media (hover: hover) {
-      &:hover {
+      &:hover,
+      &:focus-within {
         & #{$self}__add-button {
           opacity: 1;
         }
