@@ -34,7 +34,10 @@
       "select": "Select",
       "move": "Move",
       "delete": "Delete components",
-      "showLegend": "Show legend"
+      "showLegend": "Show legend",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "currentZoom": "Current zoom"
     },
     "clearWorkflowPrompt": {
       "title": "Clear workflow",

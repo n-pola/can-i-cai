@@ -3,10 +3,12 @@ import { useI18n } from 'vue-i18n';
 import Button from '@/components/atoms/Button.vue';
 import type { PlaneMode } from '@/types/checkerPlane';
 import { useGlobalStore } from '@/stores/global';
+import { computed } from 'vue';
 
 // Component setup
-defineProps<{
+const props = defineProps<{
   mode: PlaneMode;
+  zoomFactor: number;
 }>();
 
 const emit = defineEmits<{
@@ -16,7 +18,12 @@ const emit = defineEmits<{
   showLegend: [];
   share: [];
   save: [];
+  zoomIn: [];
+  zoomOut: [];
 }>();
+
+// Computed values
+const zoomFactorPercentage = computed(() => `${(props.zoomFactor * 100).toFixed(0)}%`);
 
 // Hooks
 const i18n = useI18n();
@@ -98,6 +105,29 @@ const globalStore = useGlobalStore();
         v-if="globalStore.isMobile"
       />
     </div>
+    <div class="checker-tool__group" v-if="!globalStore.isMobile">
+      <Button
+        class="checker-tool__button"
+        @click="emit('zoomIn')"
+        :title="i18n.t('workflowChecker.tools.zoomIn')"
+        icon="add"
+        :rounded="false"
+        size="xs"
+        icon-size="s"
+      />
+      <div class="checker-tool__zoom-factor">
+        <span :title="i18n.t('workflowChecker.tools.currentZoom')">{{ zoomFactorPercentage }}</span>
+      </div>
+      <Button
+        class="checker-tool__button"
+        @click="emit('zoomOut')"
+        :title="i18n.t('workflowChecker.tools.zoomOut')"
+        icon="remove"
+        :rounded="false"
+        size="xs"
+        icon-size="s"
+      />
+    </div>
     <div class="checker-tool__group" v-if="globalStore.isMobile">
       <Button
         class="checker-tool__button"
@@ -158,6 +188,23 @@ const globalStore = useGlobalStore();
         color: $lightest;
         background-color: $secondary;
       }
+    }
+  }
+
+  &__zoom-factor {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $s + $xxs * 2; // width of a button
+    padding: $xxs / 2;
+    font-size: $f-xxs;
+    color: $darkest;
+    background-color: $lighter;
+
+    & > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }

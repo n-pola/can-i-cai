@@ -90,6 +90,8 @@ const sharedWorkflowId = ref<string | null>(null);
 
 const legendModalIsOpen = ref(false);
 
+const planeZoom = ref(1);
+
 // Functions
 
 /** Handle node click event and open detail modal */
@@ -383,9 +385,11 @@ onUnmounted(() => {
       @delete-node="workflowStore.removeNodeAndCloseGaps"
       :mode="mode"
       ref="workflowPlane"
+      @update:zoom="planeZoom = $event"
     />
     <aside class="workflow-checker__tools">
       <CheckerTools
+        :zoom-factor="planeZoom"
         :mode="mode"
         @recenter="workflowPlane?.centerPlane"
         @clear-plane="
@@ -401,6 +405,8 @@ onUnmounted(() => {
         @save="handleSaveRequested"
         @share="handleShare"
         @show-legend="legendModalIsOpen = true"
+        @zoom-in="workflowPlane?.zoomPlaneAbsoluteValue((planeZoom += 0.1))"
+        @zoom-out="workflowPlane?.zoomPlaneAbsoluteValue((planeZoom -= 0.1))"
       />
     </aside>
     <aside class="workflow-checker__summary">
