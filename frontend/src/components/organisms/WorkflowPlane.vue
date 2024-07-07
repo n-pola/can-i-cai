@@ -27,9 +27,16 @@ const workflow = useWorkflowStore();
 const globalStore = useGlobalStore();
 
 // Data
+const zoom = defineModel<number>('zoom', { default: 1 });
 const editorRef = ref<SVGSVGElement | null>(null);
 const componentRefs = ref<InstanceType<typeof WorkflowForeignObject>[]>([]);
 const viewPort = ref({
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+});
+const initialViewPort = ref({
   x: 0,
   y: 0,
   width: 0,
@@ -56,6 +63,8 @@ const cursor = computed(() => {
 
   return props.mode === 'move' ? 'grab' : 'default';
 });
+
+// Functions
 
 /** Zoom the plane around a given point in client space */
 const zoomPlane = (clientX: number, clientY: number, deltaY: number) => {
@@ -85,9 +94,34 @@ const zoomPlane = (clientX: number, clientY: number, deltaY: number) => {
     width: viewPort.value.width + changeWidth,
     height: viewPort.value.height + changeHeight,
   };
+
+  zoom.value = initialViewPort.value.width / viewPort.value.width;
 };
 
-// Functions
+/** Zoom the plane to an absolute zoom value in the center */
+const zoomPlaneAbsoluteValue = (zoomFactor: number) => {
+  const newWidth = initialViewPort.value.width / zoomFactor;
+  const newHeight = initialViewPort.value.height / zoomFactor;
+
+  const changeWidth = newWidth - viewPort.value.width;
+  const changeHeight = newHeight - viewPort.value.height;
+
+  const weightX = 0.5;
+  const weightY = 0.5;
+
+  const changeX = changeWidth * weightX;
+  const changeY = changeHeight * weightY;
+
+  viewPort.value = {
+    x: viewPort.value.x - changeX,
+    y: viewPort.value.y - changeY,
+    width: newWidth,
+    height: newHeight,
+  };
+
+  zoom.value = initialViewPort.value.width / viewPort.value.width;
+};
+
 const handleScroll = (event: WheelEvent) => {
   event.preventDefault();
 
@@ -243,6 +277,9 @@ const centerPlane = () => {
     width: editorRef.value.clientWidth || 0,
     height: editorRef.value.clientHeight || 0,
   };
+
+  initialViewPort.value = viewPort.value;
+  zoom.value = 1;
 };
 
 const getBezierPath = (line: EdgeCoordinates) => {
@@ -282,6 +319,7 @@ onMounted(() => {
 
 defineExpose({
   centerPlane,
+  zoomPlaneAbsoluteValue,
 });
 </script>
 
@@ -394,7 +432,8 @@ defineExpose({
     pointer-events: bounding-box;
 
     @media (hover: hover) {
-      &:hover {
+      &:hover,
+      &:focus-within {
         & #{$self}__add-button {
           opacity: 1;
         }

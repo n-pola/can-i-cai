@@ -69,7 +69,7 @@ const height = computed(() => {
         'workflow-summary__header--incompatible': !workflowCompatible,
       }"
       @click="isOpen = !isOpen"
-      @keydown="isOpen = !isOpen"
+      @keypress.enter="isOpen = !isOpen"
     >
       <h3 class="workflow-summary__title">{{ title }}</h3>
       <span class="material-symbols-outlined icon--m">{{ icon }}</span>

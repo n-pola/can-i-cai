@@ -25,7 +25,7 @@ export const getSearch: RequestHandler<
       );
     }
 
-    const searchWords = query.split(' ');
+    const searchWords = query.trim().split(' ');
 
     const searchQuery = { $or: [] } as FilterQuery<Component | Manufacturer>;
 

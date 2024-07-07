@@ -34,7 +34,10 @@
       "select": "Auswählen",
       "move": "Verschieben",
       "delete": "Bestandteile löschen",
-      "showLegend": "Legende anzeigen"
+      "showLegend": "Legende anzeigen",
+      "zoomIn": "Vergrößern",
+      "zoomOut": "Verkleinern",
+      "currentZoom": "Aktueller Zoom"
     },
     "clearWorkflowPrompt": {
       "title": "Prozess löschen",

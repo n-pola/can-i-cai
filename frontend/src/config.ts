@@ -7,4 +7,5 @@ export const config = {
   localStorage: {
     prefix: 'cic',
   },
+  documentTitleBase: 'Can I CAI?',
 };

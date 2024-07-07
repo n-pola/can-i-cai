@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { toRefs } from 'vue';
+import { toRefs, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import TextInput from '@/components/atoms/TextInput.vue';
 import { useWorkflowStore } from '@/stores/workflow';
+import { config } from '@/config';
 
 const i18n = useI18n();
 const route = useRoute();
 const { name: workflowName } = toRefs(useWorkflowStore());
+
+watchEffect(() => {
+  document.title = workflowName?.value
+    ? `${config.documentTitleBase} | ${workflowName?.value}`
+    : `${config.documentTitleBase} | ${String(route.name)}`;
+});
 </script>
 
 <template>

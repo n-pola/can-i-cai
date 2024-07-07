@@ -198,6 +198,10 @@ defineExpose({
     &:hover {
       cursor: pointer;
     }
+
+    &:focus-within {
+      opacity: 1;
+    }
   }
 
   &__info {
