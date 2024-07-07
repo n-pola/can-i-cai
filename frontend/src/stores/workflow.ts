@@ -22,6 +22,10 @@ export const useWorkflowStore = defineStore('workflow', {
     adjacencies: new Map(),
     nodes: new Map(),
     edges: new Map(),
+    stateHash: {
+      initial: null,
+      current: null,
+    },
   }),
   getters: {
     /** Array of nodes without an incoming edge */
@@ -148,6 +152,8 @@ export const useWorkflowStore = defineStore('workflow', {
       this.adjacencies.clear();
       this.nodes.clear();
       this.edges.clear();
+      this.stateHash.initial = null;
+      this.stateHash.current = null;
     },
     /** Determine the compatibility of an edge based on its source node and
      * previous edges compatibility */
@@ -444,6 +450,7 @@ export const useWorkflowStore = defineStore('workflow', {
       const workflow = this.generateSavedWorkflow();
       WorkflowStorageHelper.saveWorkflow(workflow);
       WorkflowStorageHelper.setCurrentWorkflow(workflow.id);
+      this.stateHash.initial = this.stateHash.current;
     },
     async loadFromLocalStorage(workflowId: string): Promise<void> {
       const workflow = WorkflowStorageHelper.getWorkflow(workflowId);
@@ -497,6 +504,25 @@ export const useWorkflowStore = defineStore('workflow', {
       });
 
       this.firstNodes.forEach((id) => this.recalculateNodePositionsFrom(id));
+
+      this.stateHash.initial = await this.calcStateHash();
+    },
+    async calcStateHash(): Promise<string> {
+      const encoder = new TextEncoder();
+
+      let stateString = '';
+      const nodeKeys = Array.from(this.nodes.keys());
+      const edgeKeys = Array.from(this.edges.keys());
+
+      stateString += nodeKeys.join('');
+      stateString += edgeKeys.join('');
+
+      const hash = await crypto.subtle.digest('SHA-256', encoder.encode(stateString));
+      const hexString = Array.from(new Uint8Array(hash))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+
+      return hexString;
     },
   },
 });

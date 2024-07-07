@@ -16,6 +16,7 @@ import type { FrontendNode } from '@/types/workflow';
 import { useModalInterception } from '@/hooks/useModalInterception';
 import { externalImageCategory } from '@/constants/externalImageCategory';
 import type { PlaneMode } from '@/types/checkerPlane';
+import { onBeforeRouteLeave } from 'vue-router';
 
 import WorkflowPlane from '@/components/organisms/WorkflowPlane.vue';
 import ComponentDetailModal from '@/components/organisms/ComponentDetailModal.vue';
@@ -68,6 +69,12 @@ const {
   abortAction: abortAddAlternative,
   isOpen: addAlternativeModalIsOpen,
   tmpData: addAlternativeData,
+} = useModalInterception();
+const {
+  interceptAction: interceptUnsavedPageLeave,
+  confirmAction: confirmUnsavedPageLeave,
+  abortAction: abortUnsavedPageLeave,
+  isOpen: unsavedPageLeaveModalIsOpen,
 } = useModalInterception();
 
 // Data
@@ -346,7 +353,33 @@ const disableMoveMode = (e: KeyboardEvent) => {
   mode.value = 'select';
 };
 
+/** Before unload handler as recommended by mdn */
+const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
+  // Recommended
+  event.preventDefault();
+
+  // Included for legacy support, e.g. Chrome/Edge < 119
+  // eslint-disable-next-line no-param-reassign
+  event.returnValue = true;
+};
+
 // Watchers
+
+// Calc the current state hash on state change and add event listener to prevent
+// accidental page leave/reload accordingly
+workflowStore.$subscribe(async () => {
+  if (workflowStore.nodes.size === 0 && workflowStore.edges.size === 0) {
+    workflowStore.stateHash.current = null;
+  } else {
+    workflowStore.stateHash.current = await workflowStore.calcStateHash();
+  }
+
+  if (workflowStore.stateHash.current !== workflowStore.stateHash.initial) {
+    window.addEventListener('beforeunload', beforeUnloadHandler, true);
+  } else {
+    window.removeEventListener('beforeunload', beforeUnloadHandler, true);
+  }
+});
 
 // Clear custom component to edit when modal is closed
 watch(addCustomComponentModalIsOpen, (isOpen) => {
@@ -372,6 +405,27 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('keydown', enableMoveMode);
   window.removeEventListener('keyup', disableMoveMode);
+  window.removeEventListener('beforeunload', beforeUnloadHandler, true);
+});
+
+// Intercept internal route change/navigation on unsaved changes
+onBeforeRouteLeave((to, from, next) => {
+  if (to.redirectedFrom !== undefined) {
+    next();
+  }
+
+  if (workflowStore.stateHash.current !== workflowStore.stateHash.initial) {
+    interceptUnsavedPageLeave(
+      () => {
+        next();
+      },
+      () => {
+        next(false);
+      },
+    );
+  } else {
+    next();
+  }
 });
 </script>
 
@@ -500,6 +554,17 @@ onUnmounted(() => {
       @confirm="confirmAddAlternative"
       @abort="abortAddAlternative"
       confirm-color="primary"
+      :confirm-text="i18n.t('yes')"
+      :abort-text="i18n.t('no')"
+    />
+    <ConfirmModal
+      v-model="unsavedPageLeaveModalIsOpen"
+      :title="i18n.t('workflowChecker.unsavedPageLeave.title')"
+      :message="i18n.t('workflowChecker.unsavedPageLeave.message')"
+      @confirm="confirmUnsavedPageLeave"
+      @abort="abortUnsavedPageLeave"
+      color="error"
+      confirm-color="error"
       :confirm-text="i18n.t('yes')"
       :abort-text="i18n.t('no')"
     />

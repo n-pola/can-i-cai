@@ -52,6 +52,10 @@
     "addAlternative": {
       "title": "Alternative hinzufügen",
       "message": "Bist du sicher, dass du \"{oldComponent}\" durch \"{newComponent}\" ersetzen möchtest?"
+    },
+    "unsavedPageLeave": {
+      "title": "Ungesicherte Änderungen",
+      "message": "Du hast Änderungen an deinem Prozess vorgenommen, die noch nicht gespeichert wurden. Bist du sicher, dass du die Seite verlassen möchtest?"
     }
   },
   "addComponentModal": {
