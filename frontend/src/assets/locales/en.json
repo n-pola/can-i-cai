@@ -52,6 +52,9 @@
     "addAlternative": {
       "title": "Add alternative",
       "message": "Are you sure you want to replace \"{oldComponent}\" with \"{newComponent}\"?"
+    },
+    "deleteComponent": {
+      "error": "The component can't be deleted as it has multiple incoming and outgoing connections that can't be properly resolved. Please reduce either the incoming or outgoing side to a singular component."
     }
   },
   "addComponentModal": {
@@ -134,5 +137,6 @@
     "partial": "Partial compatibility",
     "partialExplanation": "The connection itself is compatibility, but a previous component is not compatible and thus breaks the chain of CAI-compatible metadata."
   },
-  "legend": "Legend"
+  "legend": "Legend",
+  "error": "Error"
 }

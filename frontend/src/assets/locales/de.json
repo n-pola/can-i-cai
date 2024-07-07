@@ -52,6 +52,9 @@
     "addAlternative": {
       "title": "Alternative hinzufügen",
       "message": "Bist du sicher, dass du \"{oldComponent}\" durch \"{newComponent}\" ersetzen möchtest?"
+    },
+    "deleteComponent": {
+      "error": "Der Bestandteil kann nicht gelöscht werden, da er mehrere eingehende und ausgehende Verbindungen hat, die nicht korrekt aufgelöst werden können. Bitte reduziere entweder die eingehende oder ausgehende Seite auf einen einzelnen Bestandteil."
     }
   },
   "addComponentModal": {
@@ -134,5 +137,6 @@
     "partial": "Teilweise kompatibel",
     "partialExplanation": "Die Verbindung selber ist kompatibel, jedoch ist ein vorheriger Bestandteil inkompatibel und unterbricht so die Kette von CAI-kompatiblen Metadaten."
   },
-  "legend": "Legende"
+  "legend": "Legende",
+  "error": "Fehler"
 }

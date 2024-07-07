@@ -345,6 +345,21 @@ export const useWorkflowStore = defineStore('workflow', {
       type?: FrontendNode['dataType'],
     ): void {
       const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
+      const previousNode = this.nodes.get(before);
+      if (!previousNode) {
+        return;
+      }
+
+      if (previousNode.group) {
+        const group = this.groups.get(previousNode.group);
+        if (!group) {
+          return;
+        }
+
+        group.forEach((nodeId) => {
+          this.addEdge(id, nodeId);
+        });
+      }
       this.addEdge(id, before);
     },
     addNodeAfter(
@@ -354,6 +369,21 @@ export const useWorkflowStore = defineStore('workflow', {
       type?: FrontendNode['dataType'],
     ): void {
       const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
+      const previousNode = this.nodes.get(after);
+      if (!previousNode) {
+        return;
+      }
+
+      if (previousNode.group) {
+        const group = this.groups.get(previousNode.group);
+        if (!group) {
+          return;
+        }
+
+        group.forEach((nodeId) => {
+          this.addEdge(nodeId, id);
+        });
+      }
       this.addEdge(after, id);
     },
     addNodeBetween(
@@ -414,6 +444,8 @@ export const useWorkflowStore = defineStore('workflow', {
       outEdges.forEach((edgeId) => {
         this.addEdge(id, this.edges.get(edgeId)?.target || '');
       });
+
+      // this.recalculateGroupNodePositions(groupId);
     },
     removeNode(id: string): void {
       const node = this.nodes.get(id);
@@ -436,35 +468,46 @@ export const useWorkflowStore = defineStore('workflow', {
           groupNodes.splice(nodeIndex, 1);
         }
         this.recalculateGroupNodePositions(group);
+        if (groupNodes?.length === 0) {
+          this.groups.delete(group);
+        }
       }
     },
     removeNodeAndCloseGaps(id: string): void {
       const adjacency = this.adjacencies.get(id);
-      if (!adjacency) {
+      const node = this.nodes.get(id);
+      if (!adjacency || !node) {
         return;
       }
 
-      const inEdges = adjacency.in;
-      const outEdges = adjacency.out;
-      const outNodes = outEdges
-        .map((edgeId) => this.edges.get(edgeId)?.target)
-        .filter((node) => node) as string[];
+      const inEdgeIds = adjacency.in;
+      const outEdgeIds = adjacency.out;
+      const groupId = node.group;
+      const group = this.groups.get(groupId || '');
 
-      if (inEdges.length === 1 && outEdges.length === 1) {
-        const inEdge = this.edges.get(inEdges[0]);
-        const outEdge = this.edges.get(outEdges[0]);
+      const inEdges = inEdgeIds
+        .map((edgeId) => this.edges.get(edgeId))
+        .filter((edge) => edge) as Edge[];
+      const outEdges = outEdgeIds
+        .map((edgeId) => this.edges.get(edgeId))
+        .filter((edge) => edge) as Edge[];
 
-        if (inEdge && outEdge) {
-          this.addEdge(inEdge.source, outEdge.target);
-          this.removeNode(id);
-          this.recalculateNodePositionsFrom(outEdge.target);
-        }
-      } else {
-        this.removeNode(id);
-        outNodes.forEach((nodeId) => {
-          this.determineEdgeCompatibilityFromNode(nodeId);
+      if (!group || group.length === 1) {
+        inEdges.forEach((edge) => {
+          outEdges.forEach((outEdge) => {
+            this.addEdge(edge.source, outEdge.target);
+          });
         });
       }
+
+      this.removeNode(id);
+      outEdges.forEach((edge) => {
+        this.recalculateNodePositionsFrom(edge.target);
+      });
+
+      // outNodes.forEach((nodeId) => {
+      //   this.determineEdgeCompatibilityFromNode(nodeId);
+      // });
     },
     updateNodePosition(id: string, boundingBox: BoundingBox): void {
       const node = this.nodes.get(id);
@@ -494,25 +537,35 @@ export const useWorkflowStore = defineStore('workflow', {
       const parallelNodes = this.groups.get(node.group || '') || [];
 
       let { x } = node.boundingBox;
+      let previousMinX = 0;
 
-      if (parallelNodes.length > 0) {
-        const previousGroupNodeId = parallelNodes[parallelNodes.indexOf(id) - 1];
-        const previousGroupNode = this.nodes.get(previousGroupNodeId);
-
-        if (previousGroupNode) {
-          x =
-            previousGroupNode.boundingBox.x +
-            previousGroupNode.boundingBox.width +
-            cssVariables.size.xl;
-        } else {
-          x = 0;
-        }
-      } else {
-        const maxPreviousNodeX = Math.max(
+      if (previousNodes.length) {
+        previousMinX = Math.min(
           ...previousNodes.map((iterationNode) => iterationNode.boundingBox.x),
         );
+      }
 
-        x = Math.max(maxPreviousNodeX, 0);
+      if (parallelNodes.length > 0) {
+        const previousNodeInGroupId = parallelNodes[parallelNodes.indexOf(id) - 1];
+        const previousNodeInGroup = this.nodes.get(previousNodeInGroupId);
+
+        if (previousNodeInGroup) {
+          x =
+            previousNodeInGroup.boundingBox.x +
+            previousNodeInGroup.boundingBox.width +
+            cssVariables.size.xl;
+        } else {
+          x = previousMinX;
+        }
+      } else if (previousNodes.length) {
+        const previousMaxX = Math.max(
+          ...previousNodes.map(
+            (iterationNode) => iterationNode.boundingBox.x + iterationNode.boundingBox.width,
+          ),
+        );
+
+        const previousWidth = previousMaxX - previousMinX;
+        x = previousMinX + (previousWidth / 2 - node.boundingBox.width / 2);
       }
 
       const maxPreviousNodeY = Math.max(
@@ -540,7 +593,7 @@ export const useWorkflowStore = defineStore('workflow', {
         this.recalculateNodePosition(nodeId);
       });
 
-      this.centerGroup(group);
+      // this.centerGroup(group);
     },
     centerGroup(group: string): void {
       const groupNodes = this.groups.get(group);
@@ -584,6 +637,11 @@ export const useWorkflowStore = defineStore('workflow', {
         return;
       }
 
+      const node = this.nodes.get(id);
+      if (node?.group) {
+        this.recalculateGroupNodePositions(node.group);
+      }
+
       adjacency.out.forEach((edgeId) => {
         const edge = this.edges.get(edgeId);
         if (!edge) {
@@ -593,13 +651,6 @@ export const useWorkflowStore = defineStore('workflow', {
         this.determineEdgeCompatibility(edgeId);
         this.recalculateNodePositionsFrom(edge.target);
       });
-
-      const node = this.nodes.get(id);
-      if (!node || !node.group) {
-        return;
-      }
-
-      this.recalculateGroupNodePositions(node.group);
     },
     generateSavedWorkflow(): SavedWorkflow {
       const workflowId = this.id || uuid();
@@ -695,5 +746,81 @@ export const useWorkflowStore = defineStore('workflow', {
 
       this.firstNodes.forEach((id) => this.recalculateNodePositionsFrom(id));
     },
+    determineCompatiblePathsFromNode(id: string): string[][] | null {
+      const node = this.nodes.get(id);
+      const adjacency = this.adjacencies.get(id);
+      if (!node || !adjacency) {
+        return null;
+      }
+
+      if (!node.compatible) {
+        return null;
+      }
+
+      const outEdges = adjacency.out
+        .map((edgeId) => this.edges.get(edgeId))
+        .filter((edge) => edge) as Edge[];
+
+      if (outEdges.length === 0) {
+        return [[node.name]];
+      }
+
+      const allSubPaths: string[][] = [];
+
+      outEdges.forEach((edge) => {
+        const subPaths = this.determineCompatiblePathsFromNode(edge.target);
+        if (!subPaths) return;
+        allSubPaths.push(...subPaths.map((path) => [node.name, ...path]));
+      });
+
+      return allSubPaths;
+    },
+    //   determineCompatiblePathsFromNode(id: string, pathInput: string[][] = []): string[][] | null {
+    //     const path = [...pathInput];
+    //     const node = this.nodes.get(id);
+    //     const adjacency = this.adjacencies.get(id);
+    //     console.log(node.name);
+    //     if (!node || !adjacency) {
+    //       return null;
+    //     }
+
+    //     if (!node.compatible) {
+    //       return null;
+    //     }
+
+    //     const outEdges = adjacency.out
+    //       .map((edgeId) => this.edges.get(edgeId))
+    //       .filter((edge) => edge) as Edge[];
+
+    //     if (outEdges.length === 0) {
+    //       path.forEach((p) => p.push(node.name));
+    //       return path;
+    //     }
+
+    //     if (node.compatible) {
+    //       path.forEach((p) => p.push(node.name));
+    //     }
+
+    //     if (path.length === 0) {
+    //       path.push([node.name]);
+    //     }
+
+    //     const allSubPaths: string[][] = [];
+
+    //     if (outEdges.length > 1) {
+    //       console.log(outEdges);
+    //     }
+
+    //     outEdges.forEach((edge) => {
+    //       const subPaths = this.determineCompatiblePathsFromNode(edge.target, path);
+    //       // console.log(subPaths);
+    //       if (!subPaths) return;
+    //       allSubPaths.push(subPaths.flat());
+    //     });
+
+    //     return allSubPaths;
+
+    //     return path;
+    //   },
   },
 });

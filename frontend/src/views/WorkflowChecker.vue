@@ -30,6 +30,7 @@ import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
 import CompatibilityLegend from '@/components/molecules/CompatibilityLegend.vue';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 import LegendModal from '@/components/organisms/LegendModal.vue';
+import Modal from '@/components/atoms/Modal.vue';
 
 // Hooks
 const toast = useToast();
@@ -91,6 +92,8 @@ const sharedWorkflowId = ref<string | null>(null);
 const legendModalIsOpen = ref(false);
 
 const planeZoom = ref(1);
+
+const deleteErrorModalIsOpen = ref(false);
 
 // Functions
 
@@ -219,6 +222,13 @@ const handleAddComponentRequested = (id?: string, place?: 'before' | 'after' | '
     addType.value = place ?? 'after';
     addComponentType.value =
       addType.value === 'after' ? ['input', 'input-output'] : ['output', 'input-output'];
+
+    if (addType.value === 'beside') {
+      const node = workflowStore.nodes.get(id);
+      if (!node) return;
+
+      addComponentType.value = node.type;
+    }
   }
 };
 
@@ -331,6 +341,19 @@ const handleAlternativeClicked = async (nodeId: string, componentId: string) => 
   );
 };
 
+/** Either delete a node or communicate why it can't be deleted */
+const handleNodeRemove = (nodeId: string) => {
+  const adjacency = workflowStore.adjacencies.get(nodeId);
+  if (!adjacency) return;
+
+  if (adjacency.in.length > 1 && adjacency.out.length > 1) {
+    deleteErrorModalIsOpen.value = true;
+    return;
+  }
+
+  workflowStore.removeNodeAndCloseGaps(nodeId);
+};
+
 /**
  * set the mode to move
  * Own function so the keyboard event listener can be removed
@@ -366,6 +389,12 @@ watch(detailModalIsOpen, (isOpen) => {
   }
 });
 
+watch(workflowStore.nodes, () => {
+  workflowStore.firstNodes.forEach((node) => {
+    console.log(workflowStore.determineCompatiblePathsFromNode(node));
+  });
+});
+
 // Lifecycle hooks
 onMounted(() => {
   window.addEventListener('keydown', enableMoveMode);
@@ -385,7 +414,7 @@ onUnmounted(() => {
       @nodeClicked="handleNodeClick"
       @add-component-requested="handleAddComponentRequested"
       @add-component-requested-edge="handleAddComponentOnEdgeRequest"
-      @delete-node="workflowStore.removeNodeAndCloseGaps"
+      @delete-node="handleNodeRemove"
       :mode="mode"
       ref="workflowPlane"
       @update:zoom="planeZoom = $event"
@@ -507,6 +536,14 @@ onUnmounted(() => {
       :abort-text="i18n.t('no')"
     />
     <LegendModal v-model="legendModalIsOpen" />
+    <Modal color="error" v-model="deleteErrorModalIsOpen">
+      <template #header>
+        <h3>{{ i18n.t('error') }}</h3>
+      </template>
+      <div class="workflow-checker__delete-component-body">
+        {{ i18n.t('workflowChecker.deleteComponent.error') }}
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -558,6 +595,10 @@ onUnmounted(() => {
     position: absolute;
     bottom: $s;
     z-index: 1;
+  }
+
+  &__delete-component-body {
+    padding: $s;
   }
 }
 </style>
