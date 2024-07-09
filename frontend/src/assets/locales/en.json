@@ -52,6 +52,10 @@
     "addAlternative": {
       "title": "Add alternative",
       "message": "Are you sure you want to replace \"{oldComponent}\" with \"{newComponent}\"?"
+    },
+    "unsavedPageLeave": {
+      "title": "Unsaved changes",
+      "message": "You changed your workflow in a way that has not been saved yet. Are you sure you want to leave the page?"
     }
   },
   "addComponentModal": {

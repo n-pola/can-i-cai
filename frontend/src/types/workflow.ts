@@ -32,6 +32,10 @@ export interface PositionedFrontendEdge extends FrontendEdge {
 
 export interface WorkflowStore extends Omit<Workflow, 'nodes' | 'edges'> {
   id: string;
+  stateHash: {
+    initial: string | null;
+    current: string | null;
+  };
   nodes: Map<string, FrontendNode>;
   edges: Map<string, FrontendEdge>;
 }
