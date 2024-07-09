@@ -14,6 +14,7 @@ import { useCategoryStore } from '@/stores/category';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
 import { NodeHelper } from '@/helpers/nodeHelper';
 import { externalImageCategory } from '@/constants/externalImageCategory';
+import { hashString } from '@/utils/hashString';
 
 export const useWorkflowStore = defineStore('workflow', {
   state: (): WorkflowStore => ({
@@ -146,6 +147,7 @@ export const useWorkflowStore = defineStore('workflow', {
     },
   },
   actions: {
+    /** Reset all data of the workflow */
     clearWorkflow(): void {
       this.id = '';
       this.name = '';
@@ -155,6 +157,7 @@ export const useWorkflowStore = defineStore('workflow', {
       this.stateHash.initial = null;
       this.stateHash.current = null;
     },
+
     /** Determine the compatibility of an edge based on its source node and
      * previous edges compatibility */
     determineEdgeCompatibility(id: string): void {
@@ -192,6 +195,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
       this.edges.set(id, { ...edge, compatible: edgeCompatible });
     },
+
     /** Recursively (re)determine compatibility from a given edge onwards */
     determineEdgeCompatibilityFromEdge(id: string): void {
       const edge = this.edges.get(id);
@@ -202,6 +206,7 @@ export const useWorkflowStore = defineStore('workflow', {
       this.determineEdgeCompatibility(id);
       this.determineEdgeCompatibilityFromNode(edge.target);
     },
+
     /** Redetermine compatibility of all outgoing edges of a
      * given node */
     determineEdgeCompatibilityFromNode(id: string): void {
@@ -212,6 +217,13 @@ export const useWorkflowStore = defineStore('workflow', {
 
       adjacency.out.forEach((edgeId) => this.determineEdgeCompatibilityFromEdge(edgeId));
     },
+
+    /**
+     * Add an edge to connect two nodes and include it in their adjacencies
+     * @param source - The id of the source node
+     * @param target - The id of the target node
+     * @param id - Optional an already defined ID for the edge, used for reconstruction of a workflow
+     */
     addEdge(source: string, target: string, id?: string): void {
       const sourceAdjacency = this.adjacencies.get(source);
       const targetAdjacency = this.adjacencies.get(target);
@@ -232,6 +244,11 @@ export const useWorkflowStore = defineStore('workflow', {
       targetAdjacency.in.push(edgeId);
       this.determineEdgeCompatibility(edgeId);
     },
+
+    /**
+     * Remove an edge from the graph and its adjacencies
+     * @param edgeId - The id of the edge to remove
+     */
     removeEdge(edgeId: string): void {
       const edge = this.edges.get(edgeId);
       if (!edge) {
@@ -248,6 +265,49 @@ export const useWorkflowStore = defineStore('workflow', {
       targetAdjacency.in = targetAdjacency.in.filter((id) => id !== edgeId);
       this.edges.delete(edgeId);
     },
+
+    /**
+     * Get the next Nodes of give node
+     * @param id - The id of the current node
+     */
+    nextNodes(id: string): string[] {
+      const adjacency = this.adjacencies.get(id);
+      if (!adjacency) {
+        return [];
+      }
+
+      const outEdges = adjacency.out
+        .map((edgeId) => this.edges.get(edgeId))
+        .filter((edge) => edge) as Edge[];
+
+      return outEdges.map((edge) => edge.target);
+    },
+
+    /**
+     * Get the previous Nodes of give node
+     * @param id - The id of the current node
+     */
+    previousNodes(id: string): string[] {
+      const adjacency = this.adjacencies.get(id);
+      if (!adjacency) {
+        return [];
+      }
+
+      const inEdges = adjacency.in
+        .map((edgeId) => this.edges.get(edgeId))
+        .filter((edge) => edge) as Edge[];
+
+      return inEdges.map((edge) => edge.source);
+    },
+
+    /**
+     * Add a node to the graph and create an adjacency for it
+     * @param node - The data/content of the node (component)
+     * @param boundingBox - Optional the bounding box of the node
+     * @param loadedId - Optional an already defined ID for the node, used for reconstruction of a workflow
+     * @param satisfiesMinimalVersion - Optional if the node satisfies the minimal version to determine compatibility
+     * @param type - Optional the type of the node for custom nodes
+     */
     addNode(
       node: PopulatedComponent | PopulatedCustomComponent,
       boundingBox?: BoundingBox,
@@ -265,6 +325,12 @@ export const useWorkflowStore = defineStore('workflow', {
       this.adjacencies.set(id, { in: [], out: [] });
       return id;
     },
+
+    /**
+     * Update the data of a node by its id
+     * @param id - The id of the node to update
+     * @param node - The new data/content of the node
+     */
     updateNodeData(id: string, node: PopulatedComponent | PopulatedCustomComponent): void {
       const currentData = this.nodes.get(id);
       if (!currentData) {
@@ -276,6 +342,14 @@ export const useWorkflowStore = defineStore('workflow', {
       this.nodes.set(id, updatedNode);
       this.determineEdgeCompatibilityFromNode(id);
     },
+
+    /**
+     * Add a new node before a given node
+     * @param node - The data/content of the node (component)
+     * @param before - ID of the node to prepend the new node
+     * @param satisfiesMinimalVersion - Optional, if the new node satisfies the minimal version to determine compatibility
+     * @param type - Optional the type of the node for custom nodes
+     */
     addNodeBefore(
       node: PopulatedComponent | PopulatedCustomComponent,
       before: string,
@@ -285,6 +359,14 @@ export const useWorkflowStore = defineStore('workflow', {
       const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
       this.addEdge(id, before);
     },
+
+    /**
+     * Add a new node before a given node
+     * @param node - The data/content of the node (component)
+     * @param before - ID of the node to append the new node
+     * @param satisfiesMinimalVersion - Optional, if the new node satisfies the minimal version to determine compatibility
+     * @param type - Optional the type of the node for custom nodes
+     */
     addNodeAfter(
       node: PopulatedComponent | PopulatedCustomComponent,
       after: string,
@@ -294,6 +376,14 @@ export const useWorkflowStore = defineStore('workflow', {
       const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
       this.addEdge(after, id);
     },
+
+    /**
+     * Add a new node on an edge and thus between two existing nodes
+     * @param node - The data/content of the node (component)
+     * @param edgeId - The edge to place the new node on
+     * @param satisfiesMinimalVersion - Optional, if the new node satisfies the minimal version to determine compatibility
+     * @param type - Optional the type of the node for custom nodes
+     */
     addNodeBetween(
       node: PopulatedComponent | PopulatedCustomComponent,
       edgeId: string,
@@ -313,6 +403,12 @@ export const useWorkflowStore = defineStore('workflow', {
       this.addEdge(source, id);
       this.addEdge(id, target);
     },
+
+    /**
+     * Remove a node from the graph. \
+     * Remove all edges connected to the node and the adjacency of the node
+     * @param id - The id of the node to remove
+     */
     removeNode(id: string): void {
       const adjacency = this.adjacencies.get(id);
       if (!adjacency) {
@@ -324,6 +420,12 @@ export const useWorkflowStore = defineStore('workflow', {
       this.adjacencies.delete(id);
       this.nodes.delete(id);
     },
+
+    /**
+     * Remove a node from the graph and close gaps in the graph by connecting
+     * the previous and next nodes of the removed node
+     * @param id - The id of the node to remove
+     */
     removeNodeAndCloseGaps(id: string): void {
       const adjacency = this.adjacencies.get(id);
       if (!adjacency) {
@@ -352,6 +454,12 @@ export const useWorkflowStore = defineStore('workflow', {
         });
       }
     },
+
+    /**
+     * Update the position of a node
+     * @param id - The id of the node to update
+     * @param boundingBox - The new bounding box of the node
+     */
     updateNodePosition(id: string, boundingBox: BoundingBox): void {
       const node = this.nodes.get(id);
       if (!node) {
@@ -362,6 +470,11 @@ export const useWorkflowStore = defineStore('workflow', {
 
       this.nodes.set(id, updatedNode);
     },
+
+    /**
+     * Recalculate the position of a node based on its previous nodes
+     * @param id - The id of the node to recalculate the position of
+     */
     recalculateNodePosition(id: string): void {
       const node = this.nodes.get(id);
       const adjacency = this.adjacencies.get(id);
@@ -369,12 +482,10 @@ export const useWorkflowStore = defineStore('workflow', {
         return;
       }
 
-      const inEdges = adjacency.in
-        .map((edgeId) => this.edges.get(edgeId))
-        .filter((edge) => edge) as Edge[];
+      const previousNodeIds = this.previousNodes(id);
 
-      const previousNodes = inEdges
-        .map((edge) => this.nodes.get(edge.source))
+      const previousNodes = previousNodeIds
+        .map((prevNode) => this.nodes.get(prevNode))
         .filter((iterationNode) => iterationNode) as FrontendNode[];
 
       const maxPreviousNodeY = Math.max(
@@ -385,13 +496,18 @@ export const useWorkflowStore = defineStore('workflow', {
 
       const newPosition: BoundingBox = {
         x: node.boundingBox.x,
-        y: inEdges.length ? maxPreviousNodeY + cssVariables.size.xl : 0,
+        y: previousNodes.length ? maxPreviousNodeY + cssVariables.size.xl : 0,
         width: node.boundingBox.width,
         height: node.boundingBox.height,
       };
 
       this.updateNodePosition(id, newPosition);
     },
+
+    /**
+     * Recalculate the positions from given node onwards by traversing the graph
+     * @param id - node id to start the recalculation from
+     */
     recalculateNodePositionsFrom(id: string): void {
       this.recalculateNodePosition(id);
 
@@ -410,6 +526,10 @@ export const useWorkflowStore = defineStore('workflow', {
         this.recalculateNodePositionsFrom(edge.target);
       });
     },
+
+    /**
+     * Parse the active workflow into desired format for saving
+     */
     generateSavedWorkflow(): SavedWorkflow {
       const workflowId = this.id || uuid();
       this.id = workflowId;
@@ -446,12 +566,21 @@ export const useWorkflowStore = defineStore('workflow', {
 
       return workflow;
     },
+
+    /**
+     * Save the current workflow to local storage
+     */
     saveToLocalStorage(): void {
       const workflow = this.generateSavedWorkflow();
       WorkflowStorageHelper.saveWorkflow(workflow);
       WorkflowStorageHelper.setCurrentWorkflow(workflow.id);
       this.stateHash.initial = this.stateHash.current;
     },
+
+    /**
+     * Load a workflow from local storage
+     * @param workflowId - The id of the workflow to load
+     */
     async loadFromLocalStorage(workflowId: string): Promise<void> {
       const workflow = WorkflowStorageHelper.getWorkflow(workflowId);
       if (!workflow) {
@@ -460,6 +589,11 @@ export const useWorkflowStore = defineStore('workflow', {
 
       await this.reconstructWorkflow(workflow);
     },
+
+    /**
+     * Reconstruct a saved workflow to an active one (from saved or shared workflows)
+     * @param workflow - Passive workflow object to reconstruct
+     */
     async reconstructWorkflow(workflow: SavedWorkflow): Promise<void> {
       this.clearWorkflow();
       const componentsStore = useComponentsStore();
@@ -507,22 +641,71 @@ export const useWorkflowStore = defineStore('workflow', {
 
       this.stateHash.initial = await this.calcStateHash();
     },
+
+    /**
+     * Create a string to represent the current state of a custom node
+     * @param node - Full custom node object
+     * @returns String representation
+     */
+    calcCustomNodeString(node: FrontendNode): string {
+      const nodeString =
+        node.name +
+        node.type.toString() +
+        node.category.id +
+        node.manufacturer +
+        (node.compatible ? '1' : '0');
+
+      return nodeString;
+    },
+
+    /* eslint-disable no-param-reassign */
+    /**
+     * Calculate a string representing the current graph by its nodes and their order
+     */
+    calcGraphString(id?: string): string {
+      const startNodes = id ? [id] : this.firstNodes;
+
+      const nodes = startNodes
+        .map((nodeId) => this.nodes.get(nodeId))
+        .filter((node) => node) as FrontendNode[];
+
+      const graphString = nodes.reduce((acc, node) => {
+        if (node.dataType === 'custom') {
+          acc += this.calcCustomNodeString(node);
+          return acc;
+        }
+
+        acc += node.id;
+
+        if (node.satisfiesMinimalVersion !== undefined) {
+          acc += node.satisfiesMinimalVersion ? '1' : '0';
+        }
+
+        return acc;
+      }, '');
+
+      const subString = startNodes.reduce((acc, node) => {
+        const nextNodes = this.nextNodes(node);
+        nextNodes.forEach((nextNode) => {
+          // eslint-disable-next-line no-param-reassign
+          acc += this.calcGraphString(nextNode);
+        });
+        return acc;
+      }, '');
+
+      return graphString + subString;
+    },
+    /* eslint-enable no-param-reassign */
+
+    /**
+     * Calculate a hash of the current state of the workflow to allow navigation
+     * interceptions
+     * @returns String representing the hash of the current state
+     */
     async calcStateHash(): Promise<string> {
-      const encoder = new TextEncoder();
+      const stateString = this.calcGraphString();
 
-      let stateString = '';
-      const nodeKeys = Array.from(this.nodes.keys());
-      const edgeKeys = Array.from(this.edges.keys());
-
-      stateString += nodeKeys.join('');
-      stateString += edgeKeys.join('');
-
-      const hash = await crypto.subtle.digest('SHA-256', encoder.encode(stateString));
-      const hexString = Array.from(new Uint8Array(hash))
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('');
-
-      return hexString;
+      return hashString(stateString);
     },
   },
 });
