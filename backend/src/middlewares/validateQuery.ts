@@ -12,7 +12,6 @@ import HttpError from '@/types/httpError';
 export const validateQuery =
   (schema: Joi.Schema, abortEarly = true): RequestHandler =>
   (req, res, next) => {
-    console.log(req.query);
     const { error, value } = schema.validate(req.query, { abortEarly });
 
     if (error) {
