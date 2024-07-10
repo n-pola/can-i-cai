@@ -13,4 +13,6 @@ export interface MarkdownComponent {
   compatible: boolean;
   minimalRequiredVersion?: string;
   _id?: string;
+  source?: string;
+  tested?: boolean;
 }

@@ -42,7 +42,13 @@ const ComponentSchema = new Schema<Component>({
   source: {
     type: String,
     required() {
-      return this.compatible;
+      return this.compatible && this.tested === undefined;
+    },
+  },
+  tested: {
+    type: Boolean,
+    required() {
+      return this.compatible && !this.source;
     },
   },
 });

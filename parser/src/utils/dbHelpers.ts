@@ -42,6 +42,8 @@ export const createComponent = async (
     compatible: component.compatible,
     minimalRequiredVersion: component.minimalRequiredVersion,
     additionalInfo,
+    source: component.source,
+    tested: component.tested,
   });
 
 export const createManufacturer = async (manufacturer: string) => {
