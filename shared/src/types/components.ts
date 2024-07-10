@@ -20,6 +20,7 @@ export interface Component extends ComponentBase {
   id: string; // assigned by db
   manufacturer: ObjectId;
   category: ObjectId;
+  source?: string;
 }
 
 /** Component after being populated with manufacturer and category from mongoose */

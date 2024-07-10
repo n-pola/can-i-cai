@@ -39,6 +39,12 @@ const ComponentSchema = new Schema<Component>({
     ref: categoryConfig.name,
     index: true,
   },
+  source: {
+    type: String,
+    required() {
+      return this.compatible;
+    },
+  },
 });
 
 /** Custom component schema for saving user created components in shared

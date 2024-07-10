@@ -27,7 +27,21 @@
     "_id": {
       "description": "Unique identifier supplied by the database",
       "type": "string"
+    },
+    "source": {
+      "description": "Source for the claim of compatibility",
+      "type": "string"
     }
   },
-  "required": ["name", "type", "compatible", "_id"]
+  "required": ["name", "type", "compatible", "_id"],
+  "if": {
+    "properties": {
+      "compatible": {
+        "const": true
+      }
+    }
+  },
+  "then": {
+    "required": ["source"]
+  }
 }
