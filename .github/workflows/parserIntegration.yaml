@@ -6,12 +6,14 @@ on:
       - master
     paths:
       - 'parser/**'
+      - 'shared/**'
   pull_request:
     branches:
       - main
       - master
     paths:
       - 'parser/**'
+      - 'shared/**'
 
 jobs:
   lintParser:

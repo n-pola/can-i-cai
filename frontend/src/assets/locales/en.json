@@ -89,7 +89,9 @@
     "additionalInfo": "Additional information",
     "contactMaintainer": "Contact maintainer",
     "viewGithub": "View on GitHub",
-    "compatibleAlternatives": "Compatible alternatives"
+    "compatibleAlternatives": "Compatible alternatives",
+    "source": "Source",
+    "verifiedByMaintainers": "Verified by maintainers"
   },
   "customComponentModal": {
     "titleAdd": "Add custom component",
