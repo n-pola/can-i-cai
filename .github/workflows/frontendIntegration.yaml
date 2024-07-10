@@ -7,12 +7,14 @@ on:
       - master
     paths:
       - 'frontend/**'
+      - 'shared/**'
   pull_request:
     branches:
       - main
       - master
     paths:
       - 'frontend/**'
+      - 'shared/**'
 
 jobs:
   lintFrontend:
