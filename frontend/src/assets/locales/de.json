@@ -89,7 +89,9 @@
     "additionalInfo": "Zusätzliche Informationen",
     "contactMaintainer": "Fehler melden",
     "viewGithub": "Auf GitHub ansehen",
-    "compatibleAlternatives": "Kompatible Alternativen"
+    "compatibleAlternatives": "Kompatible Alternativen",
+    "source": "Quelle",
+    "verifiedByMaintainers": "Von Maintainern bestätigt"
   },
   "customComponentModal": {
     "titleAdd": "Eigener Bestandteil",

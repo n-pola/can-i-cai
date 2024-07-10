@@ -75,6 +75,8 @@ const content = computed(() => {
       customClass: props.component.compatible
         ? 'component-details__icon--success'
         : 'component-details__icon--error',
+      source: 'source' in props.component && props.component.source,
+      isTested: 'tested' in props.component && props.component.tested,
     },
     {
       value:
@@ -111,7 +113,25 @@ onMounted(() => {
         :key="index"
         class="component-details__detail"
       >
-        <h4>{{ item.title }}</h4>
+        <div class="component-details__detail-title">
+          <h4>{{ item.title }}</h4>
+          <a
+            v-if="item.source"
+            :href="item.source"
+            target="_blank"
+            rel="noopener noreferrer"
+            :title="i18n.t('detailModal.source')"
+            class="component-details__detail-icon"
+          >
+            <span class="material-symbols-outlined icon--s" v-if="item.source">link</span>
+          </a>
+          <span
+            v-else-if="item.isTested"
+            class="material-symbols-outlined icon--s component-details__detail-icon component-details__detail-icon--verified"
+            :title="i18n.t('detailModal.verifiedByMaintainers')"
+            >verified</span
+          >
+        </div>
         <span
           v-if="item.isIcon"
           class="material-symbols-outlined icon--m icon--fill"
@@ -183,6 +203,22 @@ onMounted(() => {
   &__detail {
     display: flex;
     justify-content: space-between;
+  }
+
+  &__detail-title {
+    display: flex;
+    gap: $xxs / 2;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__detail-icon {
+    display: flex;
+    color: $primary;
+
+    &--verified {
+      color: $secondary;
+    }
   }
 
   &__icon {
