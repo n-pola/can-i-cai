@@ -55,8 +55,11 @@ data
 
 If you want to contribute or update data, please create or change the respective markdown files in the data directory. See [general contribution infos above](#general) for more information on how to contribute.
 
+> [!CAUTION]
+> If you create or update a component and claim it is compatible with the c2pa specifications you must either provide the source in the data or set `tested` to `true` and provide your test results in the PR description.
+
 > [!IMPORTANT]
-> If you create new data, you need to run the Parser locally at least once so that i can populate the newly created files with a persistend ID.
+> If you create new data, you need to run the Parser locally at least once so that i can populate the newly created files with a persistent ID.
 
 Changed data will be validated against predefined schemas to assure their correctness on pull requests. If your PR gets merged the data will be populated into the live db on the next deployment.
 
@@ -82,6 +85,8 @@ type:
 (Array of strings, defines the components abilities. Can be output, input-output, input)
 compatible: boolean
 minimalRequiredVersion: string (Optional, set the version after which the component is compatible with CAI)
+source: string (Optional, link to the source where the compatibility is stated)
+tested: boolean (Optional, set to true if you tested the compatibility with the c2pa specifications)
 _id: string (automatically populated by the parser, do not change manually)
 ---
 Additional information defined in standard markdown. Will be displayed in the components details
