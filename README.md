@@ -116,4 +116,7 @@ The types are used to define what a component can do with an image.
     ```
 7. Open the frontend in your browser at [http://localhost:8080](http://localhost:8080)
 
+> [!TIP]
+> If you change any of the types or schemas in the `shared` directory, run `npm install` in any of the consuming projects once to build the package and propagate the changes to all parts using it.
+
 Use the `insomnia-request-collection.json` in the root of this repository to explore the API of the backend.
