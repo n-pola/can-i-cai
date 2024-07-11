@@ -84,9 +84,9 @@ defineExpose({
 
       <button
         type="button"
-        disabled
         class="component__info component__action"
         v-if="component.additionalInfo"
+        :title="i18n.t('detailModal.additionalInfo')"
       >
         <span class="material-symbols-outlined icon--xxs">info_i</span>
       </button>
@@ -206,6 +206,7 @@ defineExpose({
 
   &__info {
     color: $darkest;
+    cursor: pointer;
     background-color: $light;
     border-top-left-radius: $border-radius;
   }
