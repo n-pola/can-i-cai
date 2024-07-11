@@ -71,7 +71,7 @@ footer {
 .footer-links {
   display: flex;
   gap: $xxs;
-  padding: $s $l;
+  padding: $s $grid-margin;
   background-color: $lightest;
 }
 

@@ -411,11 +411,11 @@ onUnmounted(() => {
 // Intercept internal route change/navigation on unsaved changes
 onBeforeRouteLeave((to, from, next) => {
   if (to.redirectedFrom !== undefined) {
-    next();
+    return next();
   }
 
   if (workflowStore.stateHash.current !== workflowStore.stateHash.initial) {
-    interceptUnsavedPageLeave(
+    return interceptUnsavedPageLeave(
       () => {
         next();
       },
@@ -423,9 +423,9 @@ onBeforeRouteLeave((to, from, next) => {
         next(false);
       },
     );
-  } else {
-    next();
   }
+
+  return next();
 });
 </script>
 
@@ -544,6 +544,7 @@ onBeforeRouteLeave((to, from, next) => {
     />
     <ConfirmModal
       v-model="addAlternativeModalIsOpen"
+      :level="1"
       :title="i18n.t('workflowChecker.addAlternative.title')"
       :message="
         i18n.t('workflowChecker.addAlternative.message', {

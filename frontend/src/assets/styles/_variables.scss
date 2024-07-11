@@ -62,6 +62,7 @@ $bp-tablet: 1200px;
   --grid-columns: 10;
   --grid-gap: #{$s};
   --grid-margin: #{$l};
+  --grid-column-width: calc((100vw - 2 * var(--grid-margin) - var(--grid-gap) * (var(--grid-columns) - 1)) / var(--grid-columns));
 }
 
 @media screen and (width <= $bp-tablet){
@@ -81,7 +82,7 @@ $bp-tablet: 1200px;
 $grid-columns: var(--grid-columns);
 $grid-gap: var(--grid-gap);
 $grid-margin: var(--grid-margin);
-$grid-column-width: calc((100vw - 2 * $grid-margin - $grid-gap * ($grid-columns - 1)) / $grid-columns);
+$grid-column-width: var(--grid-column-width);
 
 // Misc.
 $border-radius: 4px;

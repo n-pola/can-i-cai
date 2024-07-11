@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LegalContainer from '@/components/organisms/LegalContainer.vue';
+import LegalContainer from '@/components/atoms/LegalContainer.vue';
 </script>
 
 <template>

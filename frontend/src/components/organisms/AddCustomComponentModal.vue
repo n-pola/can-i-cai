@@ -6,11 +6,18 @@ import BooleanInputPill from '@/components/molecules/BooleanInputPill.vue';
 import SelectPill from '@/components/molecules/SelectPill.vue';
 import SelectInput from '@/components/atoms/SelectInput.vue';
 import { useCategoryStore } from '@/stores/category';
-import { ref, watch } from 'vue';
+import { ref, watch, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SupportedLanguage } from '@/types/language';
 import type { PopulatedCustomComponent, ComponentType, ComponentFunctionType } from 'cic-shared';
 import { v4 as uuid } from 'uuid';
+import ToolTip from '@/components/molecules/ToolTip.vue';
+import { i18n } from '@/utils/i18n';
+import TypeExplanationModal from '@/components/molecules/TypeExplanationModal.vue';
+import { useWorkflowStore } from '@/stores/workflow';
+import { hashString } from '@/utils/hashString';
+import { useModalInterception } from '@/hooks/useModalInterception';
+import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
 
 // Component definition
 const props = defineProps<{
@@ -27,6 +34,13 @@ const emit = defineEmits<{
 // Hooks
 const categoryStore = useCategoryStore();
 const { locale, t: translate } = useI18n();
+const workflowStore = useWorkflowStore();
+const {
+  interceptAction: interceptModalClose,
+  confirmAction: confirmModalClose,
+  abortAction: abortModalClose,
+  isOpen: modalCloseModalIsOpen,
+} = useModalInterception();
 
 // Data
 const name = ref('');
@@ -35,37 +49,69 @@ const category = ref('');
 const type = ref<ComponentFunctionType>('input-output');
 const compatible = ref(false);
 const modalContentElement = ref<HTMLDivElement | null>(null);
+const showTypeExplanationModal = ref(false);
+const initialHash = ref<string | null>(null);
 
 // Functions
 
+/** Create a custom component object from current form data */
+const createActiveComponent = (): PopulatedCustomComponent => {
+  return {
+    id: uuid(),
+    name: name.value,
+    manufacturer: manufacturer.value,
+    category: categoryStore.categories.get(category.value)!,
+    type: [type.value],
+    compatible: compatible.value,
+  };
+};
+
 /** Reset the form to its original state */
-const resetForm = () => {
+const resetForm = async () => {
   name.value = '';
   manufacturer.value = '';
   category.value = '';
   type.value = 'input-output';
   compatible.value = false;
 
+  const nodeString = workflowStore.calcCustomNodeString(createActiveComponent());
+  initialHash.value = await hashString(nodeString);
+
   modalContentElement.value?.scrollTo(0, 0);
+};
+
+/**
+ * Check if there are unsaved changes in the modal and intercept modal closing
+ * accordingly
+ */
+const handleModalClose = async (value: boolean) => {
+  if (initialHash.value && value === false) {
+    const currentComponentString = workflowStore.calcCustomNodeString(createActiveComponent());
+    const currentHash = await hashString(currentComponentString);
+
+    // Show modal interception if user changed values and wants to close the
+    // modal without saving
+    if (initialHash.value !== currentHash) {
+      return interceptModalClose(
+        () => {
+          isOpen.value = value;
+        },
+        () => {
+          isOpen.value = true;
+        },
+      );
+    }
+  }
+
+  isOpen.value = value;
+  return undefined;
 };
 
 /** Bring values in correct form, emit event and reset form for next usage */
 const handleSubmit = (e: SubmitEvent) => {
   e.preventDefault();
-  const fullCategory = categoryStore.categories.get(category.value);
 
-  if (!fullCategory) {
-    return;
-  }
-
-  const component: PopulatedCustomComponent = {
-    id: uuid(),
-    name: name.value,
-    manufacturer: manufacturer.value,
-    category: fullCategory,
-    type: [type.value],
-    compatible: compatible.value,
-  };
+  const component = createActiveComponent();
 
   if (props.initialData) {
     emit('updateCustomComponent', component, 'custom');
@@ -80,8 +126,8 @@ const handleSubmit = (e: SubmitEvent) => {
 // Watchers
 
 // Reset form when modal is closed
-watch(isOpen, (value) => {
-  if (!value) {
+watchEffect(() => {
+  if (!isOpen.value) {
     resetForm();
   }
 });
@@ -89,20 +135,28 @@ watch(isOpen, (value) => {
 // Set value to initial data when it changes
 watch(
   () => props.initialData,
-  (value) => {
+  async (value) => {
     if (value) {
       name.value = value.name;
       manufacturer.value = value.manufacturer;
       category.value = value.category.id;
       [type.value] = value.type;
       compatible.value = value.compatible;
+
+      const nodeString = workflowStore.calcCustomNodeString(createActiveComponent());
+      initialHash.value = await hashString(nodeString);
     }
   },
 );
 </script>
 
 <template>
-  <Modal v-model="isOpen" is-form @submit="handleSubmit">
+  <Modal
+    :model-value="isOpen"
+    @update:model-value="handleModalClose"
+    is-form
+    @submit="handleSubmit"
+  >
     <template #header>
       <h3>
         {{
@@ -152,7 +206,18 @@ watch(
         </div>
 
         <div class="custom-component-modal__group">
-          <label for="type" class="is-h4">{{ translate('detailModal.type') }}</label>
+          <label for="type" class="is-h4 custom-component-modal__label">
+            {{ translate('detailModal.type') }}
+            <ToolTip :content="i18n.t('helpTooltip')" :tool-tip-id="`tooltip-type-help`">
+              <span
+                class="material-symbols-outlined icon--s"
+                @click="showTypeExplanationModal = !showTypeExplanationModal"
+                @keypress.enter="showTypeExplanationModal = !showTypeExplanationModal"
+                :aria-describedby="`tooltip-type-help`"
+                >help</span
+              >
+            </ToolTip>
+          </label>
           <SelectPill
             :options="[
               { id: 'input', name: 'Input' },
@@ -179,6 +244,21 @@ watch(
       </div>
     </template>
   </Modal>
+
+  <TypeExplanationModal v-model="showTypeExplanationModal" />
+
+  <ConfirmModal
+    v-model="modalCloseModalIsOpen"
+    :level="1"
+    :title="i18n.t('customComponentModal.closeInterception.title')"
+    :message="i18n.t('customComponentModal.closeInterception.message')"
+    @confirm="confirmModalClose"
+    @abort="abortModalClose"
+    color="error"
+    confirm-color="error"
+    :confirm-text="i18n.t('yes')"
+    :abort-text="i18n.t('no')"
+  />
 </template>
 
 <style scoped lang="scss">
@@ -220,6 +300,12 @@ watch(
       outline: 0;
       box-shadow: none;
     }
+  }
+
+  &__label {
+    display: flex;
+    gap: $xxs;
+    align-items: center;
   }
 }
 </style>

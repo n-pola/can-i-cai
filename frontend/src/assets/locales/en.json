@@ -95,7 +95,11 @@
   },
   "customComponentModal": {
     "titleAdd": "Add custom component",
-    "titleEdit": "Edit custom component"
+    "titleEdit": "Edit custom component",
+    "closeInterception": {
+      "title": "Unsaved changes",
+      "message": "You made changes to your custom component that have not been updated yet. Are you sure you want to discard these changes?"
+    }
   },
   "share": "Share",
   "save": "Save",
@@ -140,5 +144,12 @@
     "partial": "Partial compatibility",
     "partialExplanation": "The connection itself is compatibility, but a previous component is not compatible and thus breaks the chain of CAI-compatible metadata."
   },
-  "legend": "Legend"
+  "legend": "Legend",
+  "typeExplanation": {
+    "title": "Type explanation",
+    "input": "A component that can produce an image from scratch. For example a camera or generative AI model.",
+    "input-output": "A component that needs an input image and produces a changed version of that image as an output. For example image manipulation software like Photoshop or a tool to resize and compress images.",
+    "output": "A component that needs an input image and produces a changed version of that image as an output. For example image manipulation software like Photoshop or a tool to resize and compress images."
+  },
+  "helpTooltip": "Click for help"
 }

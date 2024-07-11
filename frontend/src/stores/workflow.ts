@@ -647,11 +647,11 @@ export const useWorkflowStore = defineStore('workflow', {
      * @param node - Full custom node object
      * @returns String representation
      */
-    calcCustomNodeString(node: FrontendNode): string {
+    calcCustomNodeString(node: FrontendNode | PopulatedCustomComponent): string {
       const nodeString =
         node.name +
         node.type.toString() +
-        node.category.id +
+        (node.category?.id ?? '') +
         node.manufacturer +
         (node.compatible ? '1' : '0');
 
@@ -705,7 +705,7 @@ export const useWorkflowStore = defineStore('workflow', {
     async calcStateHash(): Promise<string> {
       const stateString = this.calcGraphString();
 
-      return hashString(stateString);
+      return hashString(stateString + this.name);
     },
   },
 });

@@ -95,7 +95,11 @@
   },
   "customComponentModal": {
     "titleAdd": "Eigener Bestandteil",
-    "titleEdit": "Bestandteil bearbeiten"
+    "titleEdit": "Bestandteil bearbeiten",
+    "closeInterception": {
+      "title": "Ungesicherte Änderungen",
+      "message": "Du hast Änderungen an deinem benutzerdefinierten Bestandteil vorgenommen, welche noch nicht gespeichert wurden. Bist du sicher, dass du die Änderungen verwerfen möchtest?"
+    }
   },
   "share": "Teilen",
   "save": "Speichern",
@@ -140,5 +144,12 @@
     "partial": "Teilweise kompatibel",
     "partialExplanation": "Die Verbindung selber ist kompatibel, jedoch ist ein vorheriger Bestandteil inkompatibel und unterbricht so die Kette von CAI-kompatiblen Metadaten."
   },
-  "legend": "Legende"
+  "legend": "Legende",
+  "typeExplanation": {
+    "title": "Typenerklärung",
+    "input": "Ein Bestandteil, der ein Bild erzeugen kann. Zum Beispiel eine Kamera oder eine generative KI.",
+    "input-output": "Ein Bestandteil, welcher ein Eingabebild benötigt und eine veränderte Version dieses Bildes als Ausgabe erzeugt. Zum Beispiel Photoshop oder ein Tool zum Skalieren oder Komprimieren von Bildern.",
+    "output": "Ein Bestandteil, der nur ein Eingabebild annimmt, aber kein weiter nutzbares Bild als Ausgabe erzeugt. Zum Beispiel eine Social-Media-Plattform wie Instagram."
+  },
+  "helpTooltip": "Klicken für Hilfe"
 }

@@ -7,10 +7,12 @@ withDefaults(
   defineProps<{
     color?: 'secondary' | 'primary' | 'error';
     isForm?: boolean;
+    level?: number;
   }>(),
   {
     color: 'secondary',
     isForm: false,
+    level: 0,
   },
 );
 
@@ -56,6 +58,9 @@ const handleClick = (event: Event) => {
     @close="handleClose"
     @click="handleClick"
     @keypress.esc="handleClick"
+    :style="{
+      width: `calc(var(--modal-width) * (1 - ${level / 10}))`,
+    }"
   >
     <header class="modal__header" :class="`modal__header--${color}`">
       <slot name="header">
@@ -99,10 +104,12 @@ const handleClick = (event: Event) => {
 <style lang="scss" scoped>
 .modal {
   width: $modal-width;
+  max-width: calc(100vw - $grid-margin * 2);
   max-height: calc(100vh - $s);
   padding: 0;
   margin: auto;
   overflow: hidden;
+  background-color: transparent;
   border: 0;
   border-radius: $border-radius;
 
@@ -149,6 +156,11 @@ const handleClick = (event: Event) => {
     display: flex;
     max-height: $modal-content-max-height;
     overflow: hidden;
+    background-color: $lightest;
+  }
+
+  &__footer {
+    background-color: $lightest;
   }
 }
 </style>

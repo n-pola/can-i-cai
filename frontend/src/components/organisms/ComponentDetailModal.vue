@@ -10,6 +10,7 @@ import { getCategoryWithCompatibility } from '@/api/categories';
 import WorkflowComponent from '@/components/molecules/WorkflowComponent.vue';
 import { useWorkflowStore } from '@/stores/workflow';
 import ToolTip from '@/components/molecules/ToolTip.vue';
+import TypeExplanationModal from '@/components/molecules/TypeExplanationModal.vue';
 
 // Component setup
 const props = defineProps<{
@@ -29,6 +30,7 @@ const i18n = useI18n();
 const showMissingInfo = ref(false);
 const satisfiesMinimalVersion = toRef(props.component, 'satisfiesMinimalVersion');
 const alternatives = ref<PopulatedComponent[]>([]);
+const showTypeExplanationModal = ref(false);
 
 // Watchers
 watchEffect(() => {
@@ -68,6 +70,7 @@ const content = computed(() => {
     {
       value: props.component.type.map((type) => i18n.t(`types.${type}`)).join(', '),
       title: i18n.t('detailModal.type'),
+      showHelpProp: showTypeExplanationModal,
     },
     {
       value: props.component.compatible ? 'check_circle' : 'cancel',
@@ -116,6 +119,19 @@ onMounted(() => {
       >
         <div class="component-details__detail-title">
           <h4>{{ item.title }}</h4>
+          <ToolTip
+            v-if="item.showHelpProp"
+            :content="i18n.t('helpTooltip')"
+            :tool-tip-id="`tooltip-${item.title}-help`"
+          >
+            <span
+              class="material-symbols-outlined icon--s"
+              @click="showTypeExplanationModal = !showTypeExplanationModal"
+              @keypress.enter="showTypeExplanationModal = !showTypeExplanationModal"
+              :aria-describedby="`tooltip-${item.title}-help`"
+              >help</span
+            >
+          </ToolTip>
           <ToolTip
             v-if="item.source"
             :content="i18n.t('detailModal.source')"
@@ -200,6 +216,8 @@ onMounted(() => {
       </div>
     </template>
   </Modal>
+
+  <TypeExplanationModal v-model="showTypeExplanationModal" />
 </template>
 
 <style lang="scss" scoped>
