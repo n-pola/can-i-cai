@@ -26,4 +26,7 @@ export const cssVariables = {
     tablet: getNumberFromCssVariable('--bp-tablet'),
     mobile: getNumberFromCssVariable('--bp-mobile'),
   },
+  modals: {
+    width: getNumberFromCssVariable('--modal-width'),
+  },
 };
