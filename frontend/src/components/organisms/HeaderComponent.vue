@@ -19,7 +19,7 @@ watchEffect(() => {
 
 <template>
   <header class="header">
-    <div>
+    <div class="header__link-wrap">
       <RouterLink to="/" :title="i18n.t('homepage')" class="header__home-link">
         <img alt="Can I CAI? Logo" class="header__logo" src="@/assets/logo.svg" />
       </RouterLink>
@@ -75,6 +75,10 @@ watchEffect(() => {
 
   &__home-link {
     display: inline-flex;
+  }
+
+  &__link-wrap {
+    display: flex;
   }
 
   &__logo {
