@@ -43,7 +43,7 @@ const initialViewPort = ref({
 });
 
 const pointers: Map<number, DOMPoint> = new Map();
-let previousDistance: number = 0;
+let previousDistance: number | null = null;
 const isDragging = ref(false);
 
 // Computed values
@@ -66,8 +66,8 @@ const cursor = computed(() => {
 // Functions
 
 /** Zoom the plane around a given point in client space */
-const zoomPlane = (clientX: number, clientY: number, deltaY: number) => {
-  if (!editorRef.value) return;
+const zoomPlane = (clientX: number, clientY: number, deltaY: number, zoomMultiplier = 0.02) => {
+  if (!editorRef.value || deltaY === 0) return;
   const svgWidth = editorRef.value.clientWidth;
   const svgHeight = editorRef.value.clientHeight;
   const svgBoundingRect = editorRef.value.getBoundingClientRect();
@@ -75,8 +75,8 @@ const zoomPlane = (clientX: number, clientY: number, deltaY: number) => {
   const offsetY = clientY - svgBoundingRect.top;
 
   // Determine the change in width and height (zooming in or out)
-  const changeWidth = viewPort.value.width * Math.sign(deltaY) * 0.05;
-  const changeHeight = viewPort.value.height * Math.sign(deltaY) * 0.05;
+  const changeWidth = viewPort.value.width * deltaY * zoomMultiplier;
+  const changeHeight = viewPort.value.height * deltaY * zoomMultiplier;
 
   // Determine the weight of the mouse position in the svg
   // (e.g. if the mouse is in the middle of the svg, the weight is 0.5)
@@ -186,9 +186,13 @@ const handleMouseMove = (event: PointerEvent) => {
     );
 
     // Delta between the current and the previous distance to determine zoom
+    if (previousDistance === null) {
+      previousDistance = distance;
+      return;
+    }
     const difference = previousDistance - distance;
 
-    zoomPlane(centerPoint.x, centerPoint.y, difference);
+    zoomPlane(centerPoint.x, centerPoint.y, difference, 0.01);
 
     previousDistance = distance;
     pointers.set(event.pointerId, new DOMPoint(clientX, clientY));
@@ -213,6 +217,7 @@ const handleMouseUp = (event: PointerEvent) => {
     isDragging.value = false;
   }
 
+  previousDistance = null;
   pointers.delete(event.pointerId);
 };
 
