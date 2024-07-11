@@ -544,6 +544,7 @@ onBeforeRouteLeave((to, from, next) => {
     />
     <ConfirmModal
       v-model="addAlternativeModalIsOpen"
+      :level="1"
       :title="i18n.t('workflowChecker.addAlternative.title')"
       :message="
         i18n.t('workflowChecker.addAlternative.message', {
