@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// TODO: intercept unsaved changes
 import Modal from '@/components/atoms/Modal.vue';
 import Button from '@/components/atoms/Button.vue';
 import TextInput from '@/components/atoms/TextInput.vue';
@@ -11,6 +12,9 @@ import { useI18n } from 'vue-i18n';
 import type { SupportedLanguage } from '@/types/language';
 import type { PopulatedCustomComponent, ComponentType, ComponentFunctionType } from 'cic-shared';
 import { v4 as uuid } from 'uuid';
+import ToolTip from '@/components/molecules/ToolTip.vue';
+import { i18n } from '@/utils/i18n';
+import TypeExplanationModal from '@/components/molecules/TypeExplanationModal.vue';
 
 // Component definition
 const props = defineProps<{
@@ -35,6 +39,7 @@ const category = ref('');
 const type = ref<ComponentFunctionType>('input-output');
 const compatible = ref(false);
 const modalContentElement = ref<HTMLDivElement | null>(null);
+const showTypeExplanationModal = ref(false);
 
 // Functions
 
@@ -152,7 +157,18 @@ watch(
         </div>
 
         <div class="custom-component-modal__group">
-          <label for="type" class="is-h4">{{ translate('detailModal.type') }}</label>
+          <label for="type" class="is-h4 custom-component-modal__label">
+            {{ translate('detailModal.type') }}
+            <ToolTip :content="i18n.t('helpTooltip')" :tool-tip-id="`tooltip-type-help`">
+              <span
+                class="material-symbols-outlined icon--s"
+                @click="showTypeExplanationModal = !showTypeExplanationModal"
+                @keypress.enter="showTypeExplanationModal = !showTypeExplanationModal"
+                :aria-describedby="`tooltip-type-help`"
+                >help</span
+              >
+            </ToolTip>
+          </label>
           <SelectPill
             :options="[
               { id: 'input', name: 'Input' },
@@ -179,6 +195,8 @@ watch(
       </div>
     </template>
   </Modal>
+
+  <TypeExplanationModal v-model="showTypeExplanationModal" />
 </template>
 
 <style scoped lang="scss">
@@ -220,6 +238,12 @@ watch(
       outline: 0;
       box-shadow: none;
     }
+  }
+
+  &__label {
+    display: flex;
+    gap: $xxs;
+    align-items: center;
   }
 }
 </style>
