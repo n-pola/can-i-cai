@@ -95,7 +95,11 @@
   },
   "customComponentModal": {
     "titleAdd": "Eigener Bestandteil",
-    "titleEdit": "Bestandteil bearbeiten"
+    "titleEdit": "Bestandteil bearbeiten",
+    "closeInterception": {
+      "title": "Ungesicherte Änderungen",
+      "message": "Du hast Änderungen an deinem benutzerdefinierten Bestandteil vorgenommen, welche noch nicht gespeichert wurden. Bist du sicher, dass du die Änderungen verwerfen möchtest?"
+    }
   },
   "share": "Teilen",
   "save": "Speichern",

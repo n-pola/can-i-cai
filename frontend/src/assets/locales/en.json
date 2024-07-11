@@ -95,7 +95,11 @@
   },
   "customComponentModal": {
     "titleAdd": "Add custom component",
-    "titleEdit": "Edit custom component"
+    "titleEdit": "Edit custom component",
+    "closeInterception": {
+      "title": "Unsaved changes",
+      "message": "You made changes to your custom component that have not been updated yet. Are you sure you want to discard these changes?"
+    }
   },
   "share": "Share",
   "save": "Save",
