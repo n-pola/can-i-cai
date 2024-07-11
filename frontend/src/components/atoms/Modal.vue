@@ -104,6 +104,7 @@ const handleClick = (event: Event) => {
 <style lang="scss" scoped>
 .modal {
   width: $modal-width;
+  max-width: calc(100vw - $grid-margin * 2);
   max-height: calc(100vh - $s);
   padding: 0;
   margin: auto;
