@@ -705,7 +705,7 @@ export const useWorkflowStore = defineStore('workflow', {
     async calcStateHash(): Promise<string> {
       const stateString = this.calcGraphString();
 
-      return hashString(stateString);
+      return hashString(stateString + this.name);
     },
   },
 });
