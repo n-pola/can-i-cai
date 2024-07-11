@@ -13,12 +13,14 @@ withDefaults(
     confirmText?: string;
     confirmColor?: 'secondary' | 'primary' | 'error';
     abortText?: string;
+    level?: number;
   }>(),
   {
     color: 'secondary',
     confirmColor: 'primary',
     confirmText: '',
     abortText: '',
+    level: 0,
   },
 );
 
@@ -31,7 +33,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <Modal :color="color" v-model="isOpen">
+  <Modal :color="color" v-model="isOpen" :level="level">
     <template #header>
       <h3>{{ title }}</h3>
     </template>
