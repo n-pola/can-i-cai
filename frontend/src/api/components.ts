@@ -2,6 +2,7 @@ import type { ComponentResponse, BatchComponentsResponse } from 'cic-shared';
 import { config } from '@/config';
 import HttpError from '@/types/httpError';
 
+/** Get a single component by its id */
 export const getComponent = async (id: string): Promise<ComponentResponse> =>
   fetch(`${config.api.url}/components/${id}`).then((response) => {
     if (!response.ok) {
@@ -11,6 +12,7 @@ export const getComponent = async (id: string): Promise<ComponentResponse> =>
     return response.json();
   });
 
+/** Request multiple components in a batch */
 export const getBatchComponents = async (ids: string[]): Promise<BatchComponentsResponse> => {
   const idString = ids.join(',');
 
