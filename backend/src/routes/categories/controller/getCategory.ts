@@ -21,6 +21,7 @@ export const getCategory: RequestHandler<
 
     const categoryPromise = CategoryModel.findById(id);
 
+    // Query all components that belong to the category
     const componentsPromise = ComponentModel.find({
       category: id,
       ...(compatible !== undefined && { compatible }),

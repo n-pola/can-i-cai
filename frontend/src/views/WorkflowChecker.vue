@@ -150,6 +150,7 @@ const addComponent = async (
   workflowStore.addNode(component, undefined, undefined, satisfiesMinimalVersion, type);
 };
 
+/** Add the custom node/component "external-image" to the workflow */
 const addExternalImage = (compatible: boolean) => {
   addComponent(
     {
@@ -167,7 +168,7 @@ const addExternalImage = (compatible: boolean) => {
 };
 
 /**
- * Intercept component adding to check if the component has a minimal required version.
+ * Intercept component adding to check if the component has a minimal required version.\
  * If it has, open a modal to ask the user if their version satisfies the minimal version.
  * @param id - The id of the component to add
  */
@@ -226,6 +227,7 @@ const handleAddComponentRequested = (id?: string, place?: 'before' | 'after') =>
   }
 };
 
+/** Handle the addition of a special component like custom component or external image */
 const handleAddSpecialComponentRequested = (type: ComponentType) => {
   if (type === 'custom') {
     addCustomComponentModalIsOpen.value = true;
@@ -353,7 +355,10 @@ const disableMoveMode = (e: KeyboardEvent) => {
   mode.value = 'select';
 };
 
-/** Before unload handler as recommended by mdn */
+/**
+ * Before unload handler as recommended by mdn\
+ * Gets called when user has unsaved changes and tries to leave the page
+ */
 const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
   // Recommended
   event.preventDefault();
@@ -407,6 +412,8 @@ onUnmounted(() => {
   window.removeEventListener('keyup', disableMoveMode);
   window.removeEventListener('beforeunload', beforeUnloadHandler, true);
 });
+
+// Navigation guards
 
 // Intercept internal route change/navigation on unsaved changes
 onBeforeRouteLeave((to, from, next) => {

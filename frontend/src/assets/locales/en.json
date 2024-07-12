@@ -63,6 +63,8 @@
     "searchComponents": "Search components",
     "clearSearch": "Clear search",
     "versionInterception": "Is your Version of {component} equal to or greater than {version}?",
+    "searchResult": "Search results",
+    "noResults": "No matching components found, but you can add a custom one as an alternative.",
     "errors": {
       "noResults": "No matching components found",
       "minCharacters": "Please enter at least {minCharacters} characters",

@@ -28,6 +28,7 @@ const router = createRouter({
         return next();
       },
     },
+
     {
       path: '/check',
       name: 'Workflow Checker',
@@ -53,37 +54,36 @@ const router = createRouter({
 
         return next();
       },
-      children: [
-        {
-          path: 'new',
-          name: 'New Workflow',
-          component: () => import('@/views/WorkflowChecker.vue'),
-          beforeEnter: (to, from, next) => {
-            WorkflowStorageHelper.clearCurrentWorkflow();
-            next('/check');
-          },
-        },
-        {
-          path: 'shared/:id',
-          name: 'Shared Workflow',
-          component: () => import('@/views/WorkflowChecker.vue'),
-          beforeEnter: async (to, from, next) => {
-            const workflowStore = useWorkflowStore();
-            const globalStore = useGlobalStore();
-            try {
-              globalStore.spinnerVisible = true;
-              const workflow = await getSharedWorkflow(to.params.id as string);
-              await workflowStore.reconstructWorkflow(workflow);
-              return next();
-            } catch (error) {
-              toast.error(i18n.t('workflowNotFound'));
-              return next('/');
-            } finally {
-              globalStore.spinnerVisible = false;
-            }
-          },
-        },
-      ],
+    },
+
+    {
+      path: '/check/new',
+      name: 'New Workflow',
+      redirect: () => {
+        WorkflowStorageHelper.clearCurrentWorkflow();
+        return '/check';
+      },
+    },
+
+    {
+      path: '/check/shared/:id',
+      name: 'Shared Workflow',
+      component: () => import('@/views/WorkflowChecker.vue'),
+      beforeEnter: async (to, from, next) => {
+        const workflowStore = useWorkflowStore();
+        const globalStore = useGlobalStore();
+        try {
+          globalStore.spinnerVisible = true;
+          const workflow = await getSharedWorkflow(to.params.id as string);
+          await workflowStore.reconstructWorkflow(workflow);
+          return next();
+        } catch (error) {
+          toast.error(i18n.t('workflowNotFound'));
+          return next('/');
+        } finally {
+          globalStore.spinnerVisible = false;
+        }
+      },
     },
 
     {

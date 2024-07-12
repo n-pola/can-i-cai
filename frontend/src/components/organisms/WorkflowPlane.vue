@@ -47,6 +47,8 @@ let previousDistance: number | null = null;
 const isDragging = ref(false);
 
 // Computed values
+
+/** Current viewbox as string to be used on the svg element */
 const viewBox = computed(() => {
   return `${viewPort.value.x} ${viewPort.value.y} ${viewPort.value.width} ${viewPort.value.height}`;
 });
@@ -57,6 +59,7 @@ const scale = computed(() => {
   return viewPort.value.width / editorRef.value.width.baseVal.value;
 });
 
+/** Current cursor based on plane mode */
 const cursor = computed(() => {
   if (isDragging.value) return 'grabbing';
 
@@ -121,6 +124,11 @@ const zoomPlaneAbsoluteValue = (zoomFactor: number) => {
   zoom.value = initialViewPort.value.width / viewPort.value.width;
 };
 
+/**
+ * Handle wheel events.\
+ * Pan in X and Y direction if no modifier key is pressed.\
+ * Zoom in and out if the ctrl key is pressed.
+ */
 const handleScroll = (event: WheelEvent) => {
   event.preventDefault();
 
@@ -138,6 +146,7 @@ const handleScroll = (event: WheelEvent) => {
   };
 };
 
+/** Save a pointer to the pointers map, if certain conditions are met */
 const handleMouseDown = (event: PointerEvent) => {
   if (
     event.pointerType === 'mouse' &&
@@ -153,6 +162,10 @@ const handleMouseDown = (event: PointerEvent) => {
   pointers.set(event.pointerId, new DOMPoint(event.clientX, event.clientY));
 };
 
+/**
+ * Handle plane moving with mouse or touch events.\
+ * Handle pinch zooming if two pointers are present.
+ */
 const handleMouseMove = (event: PointerEvent) => {
   if (pointers.size > 2) {
     return;
@@ -185,11 +198,12 @@ const handleMouseMove = (event: PointerEvent) => {
       (pointerArray[0].y + pointerArray[1].y) / 2,
     );
 
-    // Delta between the current and the previous distance to determine zoom
     if (previousDistance === null) {
       previousDistance = distance;
       return;
     }
+
+    // Delta between the current and the previous distance to determine zoom
     const difference = previousDistance - distance;
 
     zoomPlane(centerPoint.x, centerPoint.y, difference, 0.01);
@@ -212,6 +226,7 @@ const handleMouseMove = (event: PointerEvent) => {
   pointers.set(event.pointerId, new DOMPoint(clientX, clientY));
 };
 
+/** Remove pointer from pointer map and reset states */
 const handleMouseUp = (event: PointerEvent) => {
   if (event.pointerType === 'mouse') {
     isDragging.value = false;
@@ -221,6 +236,10 @@ const handleMouseUp = (event: PointerEvent) => {
   pointers.delete(event.pointerId);
 };
 
+/**
+ * Move the svg plane so that nodes are displayed in the center of the screen.\
+ * If the node would overflow at the top, attach nodes to the top of the screen.\
+ */
 const centerPlane = () => {
   if (!editorRef.value) return;
 

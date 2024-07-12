@@ -6,6 +6,7 @@ import { cssVariables } from '@/utils/cssVariables';
 import { useWorkflowStore } from '@/stores/workflow';
 import SvgAddButton from '@/components/atoms/SvgAddButton.vue';
 
+// Component setup
 const props = defineProps<{
   component: PopulatedComponent | PopulatedCustomComponent;
   compatible: boolean;
@@ -22,15 +23,24 @@ const emit = defineEmits<{
   recenterPlane: [];
 }>();
 
+// Hooks
 const workflowStore = useWorkflowStore();
 
+// Daata
 const componentRef = ref<{ componentRef: HTMLElement } | null>(null);
 const objectRef = ref<SVGForeignObjectElement | null>(null);
 
+// Computed values
 const height = computed(() => componentRef.value?.componentRef.scrollHeight || 0);
 
 const width = cssVariables.size.xxs * 24;
 
+// Functions
+
+/**
+ * update the displayed nodes bounding box in the workflow store with a
+ * dispatched height an recalculate all node positions from here on
+ */
 const updateMyPosition = () => {
   if (componentRef.value?.componentRef) {
     workflowStore.updateNodePosition(props.id, {
@@ -48,6 +58,7 @@ defineExpose({
   updateMyPosition,
 });
 
+// Lifecycle hooks
 onMounted(() => {
   if (componentRef.value?.componentRef) {
     updateMyPosition();

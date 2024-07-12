@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+// Component setup
 const props = defineProps<{
   x: number;
   y: number;
   size: number;
 }>();
 
+// Computed values
 const iconStyle = computed(() => {
   return {
     fontSize: `${props.size}px`,

@@ -14,10 +14,10 @@ import { v4 as uuid } from 'uuid';
 import ToolTip from '@/components/molecules/ToolTip.vue';
 import { i18n } from '@/utils/i18n';
 import TypeExplanationModal from '@/components/molecules/TypeExplanationModal.vue';
-import { useWorkflowStore } from '@/stores/workflow';
 import { hashString } from '@/utils/hashString';
 import { useModalInterception } from '@/hooks/useModalInterception';
 import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
+import { NodeHelper } from '@/helpers/nodeHelper';
 
 // Component definition
 const props = defineProps<{
@@ -34,7 +34,6 @@ const emit = defineEmits<{
 // Hooks
 const categoryStore = useCategoryStore();
 const { locale, t: translate } = useI18n();
-const workflowStore = useWorkflowStore();
 const {
   interceptAction: interceptModalClose,
   confirmAction: confirmModalClose,
@@ -74,7 +73,7 @@ const resetForm = async () => {
   type.value = 'input-output';
   compatible.value = false;
 
-  const nodeString = workflowStore.calcCustomNodeString(createActiveComponent());
+  const nodeString = NodeHelper.calcCustomNodeString(createActiveComponent());
   initialHash.value = await hashString(nodeString);
 
   modalContentElement.value?.scrollTo(0, 0);
@@ -86,7 +85,7 @@ const resetForm = async () => {
  */
 const handleModalClose = async (value: boolean) => {
   if (initialHash.value && value === false) {
-    const currentComponentString = workflowStore.calcCustomNodeString(createActiveComponent());
+    const currentComponentString = NodeHelper.calcCustomNodeString(createActiveComponent());
     const currentHash = await hashString(currentComponentString);
 
     // Show modal interception if user changed values and wants to close the
@@ -143,7 +142,7 @@ watch(
       [type.value] = value.type;
       compatible.value = value.compatible;
 
-      const nodeString = workflowStore.calcCustomNodeString(createActiveComponent());
+      const nodeString = NodeHelper.calcCustomNodeString(createActiveComponent());
       initialHash.value = await hashString(nodeString);
     }
   },

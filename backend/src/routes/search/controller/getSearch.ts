@@ -29,6 +29,7 @@ export const getSearch: RequestHandler<
 
     const searchQuery = { $or: [] } as FilterQuery<Component | Manufacturer>;
 
+    // Create a query for each word in the search string
     searchWords.forEach((word) => {
       // clear the give string from characters that could break regex
       const cleanWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -47,6 +48,8 @@ export const getSearch: RequestHandler<
 
     const componentSearchQuery = { $and: [] } as FilterQuery<Component>;
 
+    // Add query to search for components that match found manufacturers or the
+    // search query
     componentSearchQuery.$and?.push({
       $or: [{ manufacturer: { $in: possibleManufacturersIds } }, searchQuery],
     });

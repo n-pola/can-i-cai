@@ -4,6 +4,7 @@ import Button from '@/components/atoms/Button.vue';
 import { useI18n } from 'vue-i18n';
 import ComponentDummy from '@/components/organisms/ComponentsDummy.vue';
 
+// Hooks
 const i18n = useI18n();
 </script>
 

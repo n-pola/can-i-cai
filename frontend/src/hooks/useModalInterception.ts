@@ -23,9 +23,11 @@ export const useModalInterception = () => {
     isOpen.value = true;
   };
 
+  /** Clear the hooks data after an action */
   const clearData = () => {
     confirmFn.value = null;
     abortFn.value = null;
+    tmpData.value = {};
   };
 
   /** Calls the previously saved confirm action */

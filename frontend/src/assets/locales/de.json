@@ -63,6 +63,8 @@
     "searchComponents": "Bestandteil suchen",
     "clearSearch": "Suche löschen",
     "versionInterception": "Ist deine Version von {component} größer oder gleich {version}?",
+    "searchResult": "Suchergebnisse",
+    "noResults": "Keine passenden Bestandteile gefunden, aber du kannst alternativ einen eigenen Bestandteil hinzufügen.",
     "errors": {
       "noResults": "Keine passenden Bestandteile gefunden",
       "minCharacters": "Bitte gib mindestens {minCharacters} Zeichen ein",

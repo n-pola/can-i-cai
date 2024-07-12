@@ -3,6 +3,7 @@ import type { SelectOption } from '@/types/inputs';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+// Component setup
 defineProps<{
   options: SelectOption[];
   id: string;
@@ -12,8 +13,10 @@ defineProps<{
 
 const selectedValue = defineModel<string>();
 
+// Hooks
 const i18n = useI18n();
 
+// Data
 const selectElement = ref<HTMLSelectElement | null>(null);
 
 // watch selected value and set select to default value if empty
