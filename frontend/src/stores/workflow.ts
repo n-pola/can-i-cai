@@ -648,22 +648,6 @@ export const useWorkflowStore = defineStore('workflow', {
       this.stateHash.initial = await this.calcStateHash();
     },
 
-    /**
-     * Create a string to represent the current state of a custom node
-     * @param node - Full custom node object
-     * @returns String representation
-     */
-    calcCustomNodeString(node: FrontendNode | PopulatedCustomComponent): string {
-      const nodeString =
-        node.name +
-        node.type.toString() +
-        (node.category?.id ?? '') +
-        node.manufacturer +
-        (node.compatible ? '1' : '0');
-
-      return nodeString;
-    },
-
     /* eslint-disable no-param-reassign */
     /**
      * Calculate a string representing the current graph by its nodes and their order
@@ -677,7 +661,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
       const graphString = nodes.reduce((acc, node) => {
         if (node.dataType === 'custom') {
-          acc += this.calcCustomNodeString(node);
+          acc += NodeHelper.calcCustomNodeString(node);
           return acc;
         }
 
