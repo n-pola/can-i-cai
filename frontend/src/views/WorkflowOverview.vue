@@ -38,10 +38,12 @@ const deleteAllWorkflows = () => {
   workflows.value = WorkflowStorageHelper.getWorkflowStorage();
 };
 
+/** Handle the delete all click and ask user for his confirmation */
 const handleDeleteAll = () => {
   interceptDeleteAll(deleteAllWorkflows, () => {});
 };
 
+/** Handle delete of one workflow and ask user for its confirmation */
 const handleDelete = (id: string) => {
   const workflow = workflows.value?.find((w) => w.id === id);
 
