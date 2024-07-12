@@ -237,7 +237,7 @@ onMounted(async () => {
             <LoadingSpinner />
           </div>
           <template v-if="searchResult">
-            <h4>Search Result</h4>
+            <h4>{{ translate('addComponentModal.searchResult') }}</h4>
             <template v-if="searchResult.length">
               <WorkflowComponent
                 v-for="component in searchResult"
@@ -250,7 +250,18 @@ onMounted(async () => {
                 tabindex="0"
               />
             </template>
-            <p v-else>No components found</p>
+            <template v-else>
+              <p>{{ translate('addComponentModal.noResults') }}</p>
+              <CategoryItem
+                :key="additionalCategories[1].name[locale as 'de' | 'en']"
+                :category="additionalCategories[1]"
+                @click="handleAddSpecialComponent(additionalCategories[1].type)"
+                @keypress.enter="handleAddSpecialComponent(additionalCategories[1].type)"
+                tabindex="0"
+                :disabled="!additionalCategories[1].types.some((t) => type?.includes(t))"
+                :disabled-title="translate('addComponentModal.errors.categoryNotCorrectType')"
+              />
+            </template>
           </template>
           <template v-else-if="categoryStore.categories.size > 0 && selectedCategoryId === null">
             <h4>{{ translate('category', 2) }}</h4>
