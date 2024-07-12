@@ -1,6 +1,9 @@
 import { ErrorRequestHandler } from 'express';
 import type HttpError from '@/types/httpError';
 
+/**
+ * Middleware to handle custom http errors
+ */
 const errorHandler: ErrorRequestHandler = (
   error: Error | HttpError,
   req,
