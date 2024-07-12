@@ -6,10 +6,14 @@ import TextInput from '@/components/atoms/TextInput.vue';
 import { useWorkflowStore } from '@/stores/workflow';
 import { config } from '@/config';
 
+// Hooks
 const i18n = useI18n();
 const route = useRoute();
+
+// Data
 const { name: workflowName } = toRefs(useWorkflowStore());
 
+// Watchers
 watchEffect(() => {
   document.title = workflowName?.value
     ? `${config.documentTitleBase} | ${workflowName?.value}`

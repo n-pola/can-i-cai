@@ -18,10 +18,6 @@ withDefaults(
 
 const isOpen = defineModel<boolean>();
 
-// const emit = defineEmits<{
-//   submit: [];
-// }>();
-
 // Data
 const dialog = ref<HTMLDialogElement | null>(null);
 
@@ -44,11 +40,6 @@ const handleClick = (event: Event) => {
     handleClose();
   }
 };
-
-// const handleSubmit = (event: Event) => {
-//   event.preventDefault();
-//   emit('submit');
-// };
 </script>
 
 <template>

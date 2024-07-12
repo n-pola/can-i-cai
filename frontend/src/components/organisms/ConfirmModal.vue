@@ -3,8 +3,7 @@ import Modal from '@/components/atoms/Modal.vue';
 import Button from '@/components/atoms/Button.vue';
 import { useI18n } from 'vue-i18n';
 
-const i18n = useI18n();
-
+// Component setup
 withDefaults(
   defineProps<{
     color?: 'secondary' | 'primary' | 'error';
@@ -30,6 +29,9 @@ const emit = defineEmits<{
   confirm: [];
   abort: [];
 }>();
+
+// Hooks
+const i18n = useI18n();
 </script>
 
 <template>

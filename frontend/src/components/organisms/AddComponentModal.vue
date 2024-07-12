@@ -101,9 +101,11 @@ const handleCategoryClick = (categoryId: string) => {
     return;
   }
 
+  // Try to prevent a flash of the loading spinner by only showing it after a certain time
   const timeout = setTimeout(() => {
     categoryLoading.value = true;
   }, 50);
+
   categoryStore
     .getCategory(categoryId)
     .then((category) => {
