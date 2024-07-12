@@ -40,6 +40,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
       return Array.from(nodesWithoutIncomingEdges);
     },
+
     /** Determine if a node is at the end of a workflow */
     isLastNode:
       (state) =>
@@ -51,6 +52,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
         return adjacency.out.length === 0;
       },
+
     /** Determine if a node is at the start of a workflow */
     isFirstNode:
       (state) =>
@@ -62,6 +64,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
         return adjacency.in.length === 0;
       },
+
     /** Determine if the whole workflow is compatible or not */
     compatible: (state): boolean => {
       if (state.nodes.size === 0) {
@@ -72,6 +75,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
       return !nodesArray.some((node) => !NodeHelper.isCompatible(node));
     },
+
     /** Get the compatibility of a single node by its id */
     nodeCompatible:
       (state) =>
@@ -83,6 +87,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
         return NodeHelper.isCompatible(node);
       },
+
     /** Get all nodes that are not compatible */
     incompatibleNodes: (state): WorkflowStore['nodes'] => {
       const nodes = new Map(state.nodes);
@@ -95,8 +100,9 @@ export const useWorkflowStore = defineStore('workflow', {
 
       return nodes;
     },
+
     /**
-     * Get the position of a single edge and reactive compatibility
+     * Get the position of a single edge
      * @param edgeId - The id of the edge
      */
     positionedEdge:
@@ -131,8 +137,8 @@ export const useWorkflowStore = defineStore('workflow', {
 
         return { ...edge, coordinates, id: edgeId };
       },
-    /** Get all edges with the respective coordinates in context of current node
-     * positions */
+
+    /** Get all edges with their respective coordinates in context of current node positions */
     positionedEdges(state): PositionedFrontendEdge[] {
       const positionedEdges: PositionedFrontendEdge[] = [];
 
@@ -184,11 +190,11 @@ export const useWorkflowStore = defineStore('workflow', {
       });
 
       if (previousEdges.length) {
-        const previousEdgesCompatibility = previousEdges.some(
-          (compatibility) => !(compatibility !== 'yes'),
+        const previousEdgesNotCompatible = previousEdges.some(
+          (compatibility) => compatibility !== 'yes',
         );
 
-        if (!previousEdgesCompatibility && edgeCompatible === 'yes') {
+        if (previousEdgesNotCompatible && edgeCompatible === 'yes') {
           edgeCompatible = 'partial';
         }
       }

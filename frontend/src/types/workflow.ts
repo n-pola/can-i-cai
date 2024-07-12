@@ -25,11 +25,13 @@ export interface EdgeCoordinates {
   end: { x: number; y: number };
 }
 
+/** Edge with its coordinates after being positioned */
 export interface PositionedFrontendEdge extends FrontendEdge {
   coordinates: EdgeCoordinates;
   id: string;
 }
 
+/** Active frontend workflow with all required props */
 export interface WorkflowStore extends Omit<Workflow, 'nodes' | 'edges'> {
   id: string;
   stateHash: {
