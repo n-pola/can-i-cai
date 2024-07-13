@@ -87,7 +87,12 @@ const title = computed(() => {
 .workflow-summary {
   display: flex;
   flex-flow: column;
-  max-height: calc(100vh - $l - $s * 4);
+  max-height: calc(
+    100dvh - $l - $s * 4 - ($s * 2 + $f-xs * $lh-base)
+  ); // Height - header - legal area - spacing
+
+  margin-top: $s;
+  margin-bottom: calc($s * 2 + $f-xs * $lh-base);
   overflow: hidden;
   background-color: $lighter;
   border-radius: $border-radius;
@@ -118,7 +123,8 @@ const title = computed(() => {
   &__body {
     display: flex;
     flex-flow: column;
-    overflow: hidden;
+    gap: $s;
+    overflow-y: hidden;
   }
 
   &__footer {

@@ -130,11 +130,13 @@ const height = computed(() => {
   }
 
   &__footer {
+    position: sticky;
+    bottom: 0;
     display: flex;
     gap: $xxs;
     justify-content: flex-end;
     padding: $s $xs;
-    padding-top: 0;
+    background-color: $lighter;
   }
 }
 </style>
