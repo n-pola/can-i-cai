@@ -8,6 +8,7 @@ import { NodeHelper } from '@/helpers/nodeHelper';
 import type { PlaneMode } from '@/types/checkerPlane';
 import { i18n } from '@/utils/i18n';
 import { useGlobalStore } from '@/stores/global';
+import { clampNumber } from '@/utils/clampNumber';
 
 // Component setup
 const props = defineProps<{
@@ -77,9 +78,12 @@ const zoomPlane = (clientX: number, clientY: number, deltaY: number, zoomMultipl
   const offsetX = clientX - svgBoundingRect.left;
   const offsetY = clientY - svgBoundingRect.top;
 
+  // Calc weighted delta and clamp it to prevent out of plane zooming
+  const delta = clampNumber(deltaY * zoomMultiplier, -0.1, 0.1);
+
   // Determine the change in width and height (zooming in or out)
-  const changeWidth = viewPort.value.width * deltaY * zoomMultiplier;
-  const changeHeight = viewPort.value.height * deltaY * zoomMultiplier;
+  const changeWidth = viewPort.value.width * delta;
+  const changeHeight = viewPort.value.height * delta;
 
   // Determine the weight of the mouse position in the svg
   // (e.g. if the mouse is in the middle of the svg, the weight is 0.5)
