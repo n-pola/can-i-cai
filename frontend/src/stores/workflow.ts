@@ -213,6 +213,29 @@ export const useWorkflowStore = defineStore('workflow', {
         return Array.from(parallelNodes);
       };
     },
+
+    groupBoundingBoxes: (state): { id: string; bb: BoundingBox }[] => {
+      const groupBoundingBoxes: { id: string; bb: BoundingBox }[] = [];
+      state.groups.forEach((group, id) => {
+        const nodes = group
+          .map((nodeId) => state.nodes.get(nodeId))
+          .filter((node) => node) as FrontendNode[];
+        const minX = Math.min(...nodes.map((node) => node.boundingBox.x || 0));
+        const minY = Math.min(...nodes.map((node) => node.boundingBox.y || 0));
+        const maxX = Math.max(
+          ...nodes.map((node) => node.boundingBox.x + node.boundingBox.width || 0),
+        );
+        const maxY = Math.max(
+          ...nodes.map((node) => node.boundingBox.y + node.boundingBox.height || 0),
+        );
+        groupBoundingBoxes.push({
+          id,
+          bb: { x: minX, y: minY, width: maxX - minX, height: maxY - minY },
+        });
+      });
+
+      return groupBoundingBoxes;
+    },
   },
   actions: {
     /** Reset all data of the workflow */
@@ -430,11 +453,22 @@ export const useWorkflowStore = defineStore('workflow', {
       satisfiesMinimalVersion?: boolean,
       type?: FrontendNode['dataType'],
     ): void {
-      const id = this.addNode(node, undefined, undefined, satisfiesMinimalVersion, type);
       const previousNode = this.nodes.get(before);
       if (!previousNode) {
         return;
       }
+      const id = this.addNode(
+        node,
+        {
+          x: previousNode.boundingBox.x,
+          y: 0,
+          width: 0,
+          height: 0,
+        },
+        undefined,
+        satisfiesMinimalVersion,
+        type,
+      );
 
       if (previousNode.group) {
         const group = this.groups.get(previousNode.group);
