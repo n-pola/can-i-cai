@@ -3,8 +3,7 @@ import Modal from '@/components/atoms/Modal.vue';
 import Button from '@/components/atoms/Button.vue';
 import { useI18n } from 'vue-i18n';
 
-const i18n = useI18n();
-
+// Component setup
 withDefaults(
   defineProps<{
     color?: 'secondary' | 'primary' | 'error';
@@ -13,12 +12,14 @@ withDefaults(
     confirmText?: string;
     confirmColor?: 'secondary' | 'primary' | 'error';
     abortText?: string;
+    level?: number;
   }>(),
   {
     color: 'secondary',
     confirmColor: 'primary',
     confirmText: '',
     abortText: '',
+    level: 0,
   },
 );
 
@@ -28,10 +29,13 @@ const emit = defineEmits<{
   confirm: [];
   abort: [];
 }>();
+
+// Hooks
+const i18n = useI18n();
 </script>
 
 <template>
-  <Modal :color="color" v-model="isOpen">
+  <Modal :color="color" v-model="isOpen" :level="level">
     <template #header>
       <h3>{{ title }}</h3>
     </template>

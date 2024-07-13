@@ -9,6 +9,8 @@ import { type PopulatedComponent } from 'cic-shared';
 import { getCategoryWithCompatibility } from '@/api/categories';
 import WorkflowComponent from '@/components/molecules/WorkflowComponent.vue';
 import { useWorkflowStore } from '@/stores/workflow';
+import ToolTip from '@/components/molecules/ToolTip.vue';
+import TypeExplanationModal from '@/components/molecules/TypeExplanationModal.vue';
 
 // Component setup
 const props = defineProps<{
@@ -28,6 +30,7 @@ const i18n = useI18n();
 const showMissingInfo = ref(false);
 const satisfiesMinimalVersion = toRef(props.component, 'satisfiesMinimalVersion');
 const alternatives = ref<PopulatedComponent[]>([]);
+const showTypeExplanationModal = ref(false);
 
 // Watchers
 watchEffect(() => {
@@ -67,6 +70,7 @@ const content = computed(() => {
     {
       value: props.component.type.map((type) => i18n.t(`types.${type}`)).join(', '),
       title: i18n.t('detailModal.type'),
+      showHelpProp: showTypeExplanationModal,
     },
     {
       value: props.component.compatible ? 'check_circle' : 'cancel',
@@ -75,6 +79,8 @@ const content = computed(() => {
       customClass: props.component.compatible
         ? 'component-details__icon--success'
         : 'component-details__icon--error',
+      source: 'source' in props.component && props.component.source,
+      isTested: 'tested' in props.component && props.component.tested,
     },
     {
       value:
@@ -111,7 +117,48 @@ onMounted(() => {
         :key="index"
         class="component-details__detail"
       >
-        <h4>{{ item.title }}</h4>
+        <div class="component-details__detail-title">
+          <h4>{{ item.title }}</h4>
+          <ToolTip
+            v-if="item.showHelpProp"
+            :content="i18n.t('helpTooltip')"
+            :tool-tip-id="`tooltip-${item.title}-help`"
+          >
+            <span
+              class="material-symbols-outlined icon--s"
+              @click="showTypeExplanationModal = !showTypeExplanationModal"
+              @keypress.enter="showTypeExplanationModal = !showTypeExplanationModal"
+              :aria-describedby="`tooltip-${item.title}-help`"
+              >help</span
+            >
+          </ToolTip>
+          <ToolTip
+            v-if="item.source"
+            :content="i18n.t('detailModal.source')"
+            tool-tip-id="tooltip-verified"
+          >
+            <a
+              :href="item.source"
+              target="_blank"
+              rel="noopener noreferrer"
+              :title="i18n.t('detailModal.source')"
+              class="component-details__detail-icon"
+            >
+              <span class="material-symbols-outlined icon--s" v-if="item.source">link</span>
+            </a>
+          </ToolTip>
+          <ToolTip
+            v-else-if="item.isTested"
+            :content="i18n.t('detailModal.verifiedByMaintainers')"
+            tool-tip-id="tooltip-verified"
+          >
+            <span
+              class="material-symbols-outlined icon--s component-details__detail-icon component-details__detail-icon--verified"
+              aria-describedby="tooltip-verified"
+              >verified</span
+            >
+          </ToolTip>
+        </div>
         <span
           v-if="item.isIcon"
           class="material-symbols-outlined icon--m icon--fill"
@@ -169,6 +216,8 @@ onMounted(() => {
       </div>
     </template>
   </Modal>
+
+  <TypeExplanationModal v-model="showTypeExplanationModal" />
 </template>
 
 <style lang="scss" scoped>
@@ -183,6 +232,22 @@ onMounted(() => {
   &__detail {
     display: flex;
     justify-content: space-between;
+  }
+
+  &__detail-title {
+    display: flex;
+    gap: $xxs / 2;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__detail-icon {
+    display: flex;
+    color: $primary;
+
+    &--verified {
+      color: $secondary;
+    }
   }
 
   &__icon {

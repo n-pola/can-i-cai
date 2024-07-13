@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import ToolTip from '@/components/molecules/ToolTip.vue';
 
 // Component setup
 withDefaults(
@@ -27,41 +28,28 @@ const i18n = useI18n();
     </div>
     <div class="legend__item">
       <div class="legend__icon legend__icon--partial"></div>
-      <span v-if="useTooltip" class="legend__text">{{
-        i18n.t('compatibilityLegend.partial')
-      }}</span>
+      <span v-if="useTooltip" class="legend__text"
+        >{{ i18n.t('compatibilityLegend.partial') }}
+        <ToolTip
+          :content="i18n.t('compatibilityLegend.partialExplanation')"
+          tool-tip-id="tooltip-partial-compatibility"
+          class="legend__info"
+        >
+          <span
+            class="material-symbols-outlined icon--xs"
+            aria-describedby="tooltip-partial-compatibility"
+            >info</span
+          >
+        </ToolTip>
+      </span>
       <div v-else class="legend__text">
         {{ i18n.t('compatibilityLegend.partial') }}:<br />{{
           i18n.t('compatibilityLegend.partialExplanation')
         }}
       </div>
-      <span
-        v-if="useTooltip"
-        class="material-symbols-outlined icon--xs legend__info"
-        v-tooltip="i18n.t('compatibilityLegend.partialExplanation')"
-        >info</span
-      >
     </div>
   </div>
 </template>
-
-<style lang="scss">
-/* stylelint-disable-next-line selector-class-pattern */
-.v-popper--theme-tooltip {
-  max-width: calc(($grid-column-width) * 2);
-  background-color: $darker;
-  border-radius: $border-radius;
-  opacity: 1;
-
-  /* stylelint-disable-next-line selector-class-pattern */
-  & .v-popper__inner {
-    padding: $xxs;
-    color: $lighter;
-    background-color: $darker;
-    box-shadow: $shadow;
-  }
-}
-</style>
 
 <style scoped lang="scss">
 .legend {
@@ -97,8 +85,13 @@ const i18n = useI18n();
     }
   }
 
+  &__text {
+    display: flex;
+    align-items: center;
+  }
+
   &__info {
-    margin-left: -$xxs / 2;
+    margin-left: $xxs / 2;
     cursor: pointer;
   }
 }

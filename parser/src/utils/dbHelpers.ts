@@ -42,10 +42,16 @@ export const createComponent = async (
     compatible: component.compatible,
     minimalRequiredVersion: component.minimalRequiredVersion,
     additionalInfo,
+    source: component.source,
+    tested: component.tested,
   });
 
+/**
+ * Creates a new manufacturer in the database
+ * @param manufacturer Manufacturer name
+ * @returns Promise of the created manufacturer database ID
+ */
 export const createManufacturer = async (manufacturer: string) => {
-  // Create a new manufacturer in the database
   const newManufacturer = await Manufacturer.create({
     name: manufacturer,
   }).catch((error) => {

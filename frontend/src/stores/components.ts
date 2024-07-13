@@ -11,6 +11,7 @@ export const useComponentsStore = defineStore('components', {
     components: new Map(),
   }),
   actions: {
+    /** Fetch or return a single component by id */
     async getComponent(id: string): Promise<PopulatedComponent> {
       if (this.components.has(id)) {
         return this.components.get(id)!;
@@ -21,6 +22,8 @@ export const useComponentsStore = defineStore('components', {
 
       return component;
     },
+
+    /** Fetch multiple components as batches or return from store if all are present */
     async getComponents(ids: string[]): Promise<PopulatedComponent[]> {
       const missingIds = ids.filter((id) => !this.components.has(id));
       if (missingIds.length === 0) {

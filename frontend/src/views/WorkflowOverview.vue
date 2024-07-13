@@ -38,10 +38,12 @@ const deleteAllWorkflows = () => {
   workflows.value = WorkflowStorageHelper.getWorkflowStorage();
 };
 
+/** Handle the delete all click and ask user for his confirmation */
 const handleDeleteAll = () => {
   interceptDeleteAll(deleteAllWorkflows, () => {});
 };
 
+/** Handle delete of one workflow and ask user for its confirmation */
 const handleDelete = (id: string) => {
   const workflow = workflows.value?.find((w) => w.id === id);
 
@@ -101,13 +103,19 @@ const handleDelete = (id: string) => {
   grid-template-columns: repeat($grid-columns, 1fr);
   gap: $grid-gap;
   height: 100%;
+  height: calc(100vh - ($l + $s * 2 + 1px)); // window height - header
   padding: $grid-margin;
+  overflow-y: auto;
 
   &__content {
     display: flex;
     flex-flow: column;
     grid-column: 4 / span 4;
     gap: $l;
+
+    @media screen and (max-width: $bp-tablet) {
+      padding-bottom: calc($s * 2 + $f-xs * $lh-base - $grid-margin);
+    }
 
     @media screen and (max-width: $bp-tablet) {
       grid-column: 2 / span 5;

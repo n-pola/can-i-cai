@@ -55,6 +55,10 @@
     },
     "deleteComponent": {
       "error": "The component can't be deleted as it has multiple incoming and outgoing connections that can't be properly resolved. Please reduce either the incoming or outgoing side to a singular component."
+    },
+    "unsavedPageLeave": {
+      "title": "Unsaved changes",
+      "message": "You changed your workflow in a way that has not been saved yet. Are you sure you want to leave the page?"
     }
   },
   "addComponentModal": {
@@ -62,6 +66,8 @@
     "searchComponents": "Search components",
     "clearSearch": "Clear search",
     "versionInterception": "Is your Version of {component} equal to or greater than {version}?",
+    "searchResult": "Search results",
+    "noResults": "No matching components found, but you can add a custom one as an alternative.",
     "errors": {
       "noResults": "No matching components found",
       "minCharacters": "Please enter at least {minCharacters} characters",
@@ -88,11 +94,17 @@
     "additionalInfo": "Additional information",
     "contactMaintainer": "Contact maintainer",
     "viewGithub": "View on GitHub",
-    "compatibleAlternatives": "Compatible alternatives"
+    "compatibleAlternatives": "Compatible alternatives",
+    "source": "Source",
+    "verifiedByMaintainers": "Verified by maintainers"
   },
   "customComponentModal": {
     "titleAdd": "Add custom component",
-    "titleEdit": "Edit custom component"
+    "titleEdit": "Edit custom component",
+    "closeInterception": {
+      "title": "Unsaved changes",
+      "message": "You made changes to your custom component that have not been updated yet. Are you sure you want to discard these changes?"
+    }
   },
   "share": "Share",
   "save": "Save",
@@ -138,5 +150,12 @@
     "partialExplanation": "The connection itself is compatibility, but a previous component is not compatible and thus breaks the chain of CAI-compatible metadata."
   },
   "legend": "Legend",
-  "error": "Error"
+  "error": "Error",
+  "typeExplanation": {
+    "title": "Type explanation",
+    "input": "A component that can produce an image from scratch. For example a camera or generative AI model.",
+    "input-output": "A component that needs an input image and produces a changed version of that image as an output. For example image manipulation software like Photoshop or a tool to resize and compress images.",
+    "output": "A component that needs an input image and produces a changed version of that image as an output. For example image manipulation software like Photoshop or a tool to resize and compress images."
+  },
+  "helpTooltip": "Click for help"
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { type ButtonHTMLAttributes } from 'vue';
 
+// Component setup
 const props = withDefaults(
   defineProps<{
     type?: ButtonHTMLAttributes['type'];
@@ -26,6 +27,14 @@ const props = withDefaults(
   },
 );
 
+// Functions
+
+/**
+ * Add a class to the button if a condition is met
+ * @param condition - The condition to check
+ * @param className - The class to add
+ * @returns The class to add or an empty string
+ */
 const addOptionalClass = (condition: boolean, className: string) => (condition ? className : '');
 </script>
 

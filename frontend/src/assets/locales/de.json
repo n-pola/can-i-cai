@@ -55,6 +55,10 @@
     },
     "deleteComponent": {
       "error": "Der Bestandteil kann nicht gelöscht werden, da er mehrere eingehende und ausgehende Verbindungen hat, die nicht korrekt aufgelöst werden können. Bitte reduziere entweder die eingehende oder ausgehende Seite auf einen einzelnen Bestandteil."
+    },
+    "unsavedPageLeave": {
+      "title": "Ungesicherte Änderungen",
+      "message": "Du hast Änderungen an deinem Prozess vorgenommen, die noch nicht gespeichert wurden. Bist du sicher, dass du die Seite verlassen möchtest?"
     }
   },
   "addComponentModal": {
@@ -62,6 +66,8 @@
     "searchComponents": "Bestandteil suchen",
     "clearSearch": "Suche löschen",
     "versionInterception": "Ist deine Version von {component} größer oder gleich {version}?",
+    "searchResult": "Suchergebnisse",
+    "noResults": "Keine passenden Bestandteile gefunden, aber du kannst alternativ einen eigenen Bestandteil hinzufügen.",
     "errors": {
       "noResults": "Keine passenden Bestandteile gefunden",
       "minCharacters": "Bitte gib mindestens {minCharacters} Zeichen ein",
@@ -88,11 +94,17 @@
     "additionalInfo": "Zusätzliche Informationen",
     "contactMaintainer": "Fehler melden",
     "viewGithub": "Auf GitHub ansehen",
-    "compatibleAlternatives": "Kompatible Alternativen"
+    "compatibleAlternatives": "Kompatible Alternativen",
+    "source": "Quelle",
+    "verifiedByMaintainers": "Von Maintainern bestätigt"
   },
   "customComponentModal": {
     "titleAdd": "Eigener Bestandteil",
-    "titleEdit": "Bestandteil bearbeiten"
+    "titleEdit": "Bestandteil bearbeiten",
+    "closeInterception": {
+      "title": "Ungesicherte Änderungen",
+      "message": "Du hast Änderungen an deinem benutzerdefinierten Bestandteil vorgenommen, welche noch nicht gespeichert wurden. Bist du sicher, dass du die Änderungen verwerfen möchtest?"
+    }
   },
   "share": "Teilen",
   "save": "Speichern",
@@ -138,5 +150,12 @@
     "partialExplanation": "Die Verbindung selber ist kompatibel, jedoch ist ein vorheriger Bestandteil inkompatibel und unterbricht so die Kette von CAI-kompatiblen Metadaten."
   },
   "legend": "Legende",
-  "error": "Fehler"
+  "error": "Fehler",
+  "typeExplanation": {
+    "title": "Typenerklärung",
+    "input": "Ein Bestandteil, der ein Bild erzeugen kann. Zum Beispiel eine Kamera oder eine generative KI.",
+    "input-output": "Ein Bestandteil, welcher ein Eingabebild benötigt und eine veränderte Version dieses Bildes als Ausgabe erzeugt. Zum Beispiel Photoshop oder ein Tool zum Skalieren oder Komprimieren von Bildern.",
+    "output": "Ein Bestandteil, der nur ein Eingabebild annimmt, aber kein weiter nutzbares Bild als Ausgabe erzeugt. Zum Beispiel eine Social-Media-Plattform wie Instagram."
+  },
+  "helpTooltip": "Klicken für Hilfe"
 }

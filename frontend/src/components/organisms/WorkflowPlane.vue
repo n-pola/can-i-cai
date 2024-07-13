@@ -9,6 +9,7 @@ import type { PlaneMode } from '@/types/checkerPlane';
 import { i18n } from '@/utils/i18n';
 import { useGlobalStore } from '@/stores/global';
 import type { EdgeCoordinates } from '@/types/workflow';
+import { clampNumber } from '@/utils/clampNumber';
 
 // Component setup
 const props = defineProps<{
@@ -44,10 +45,12 @@ const initialViewPort = ref({
 });
 
 const pointers: Map<number, DOMPoint> = new Map();
-let previousDistance: number = 0;
+let previousDistance: number | null = null;
 const isDragging = ref(false);
 
 // Computed values
+
+/** Current viewbox as string to be used on the svg element */
 const viewBox = computed(() => {
   return `${viewPort.value.x} ${viewPort.value.y} ${viewPort.value.width} ${viewPort.value.height}`;
 });
@@ -58,6 +61,7 @@ const scale = computed(() => {
   return viewPort.value.width / editorRef.value.width.baseVal.value;
 });
 
+/** Current cursor based on plane mode */
 const cursor = computed(() => {
   if (isDragging.value) return 'grabbing';
 
@@ -67,17 +71,20 @@ const cursor = computed(() => {
 // Functions
 
 /** Zoom the plane around a given point in client space */
-const zoomPlane = (clientX: number, clientY: number, deltaY: number) => {
-  if (!editorRef.value) return;
+const zoomPlane = (clientX: number, clientY: number, deltaY: number, zoomMultiplier = 0.02) => {
+  if (!editorRef.value || deltaY === 0) return;
   const svgWidth = editorRef.value.clientWidth;
   const svgHeight = editorRef.value.clientHeight;
   const svgBoundingRect = editorRef.value.getBoundingClientRect();
   const offsetX = clientX - svgBoundingRect.left;
   const offsetY = clientY - svgBoundingRect.top;
 
+  // Calc weighted delta and clamp it to prevent out of plane zooming
+  const delta = clampNumber(deltaY * zoomMultiplier, -0.1, 0.1);
+
   // Determine the change in width and height (zooming in or out)
-  const changeWidth = viewPort.value.width * Math.sign(deltaY) * 0.05;
-  const changeHeight = viewPort.value.height * Math.sign(deltaY) * 0.05;
+  const changeWidth = viewPort.value.width * delta;
+  const changeHeight = viewPort.value.height * delta;
 
   // Determine the weight of the mouse position in the svg
   // (e.g. if the mouse is in the middle of the svg, the weight is 0.5)
@@ -122,6 +129,11 @@ const zoomPlaneAbsoluteValue = (zoomFactor: number) => {
   zoom.value = initialViewPort.value.width / viewPort.value.width;
 };
 
+/**
+ * Handle wheel events.\
+ * Pan in X and Y direction if no modifier key is pressed.\
+ * Zoom in and out if the ctrl key is pressed.
+ */
 const handleScroll = (event: WheelEvent) => {
   event.preventDefault();
 
@@ -139,6 +151,7 @@ const handleScroll = (event: WheelEvent) => {
   };
 };
 
+/** Save a pointer to the pointers map, if certain conditions are met */
 const handleMouseDown = (event: PointerEvent) => {
   if (
     event.pointerType === 'mouse' &&
@@ -154,6 +167,10 @@ const handleMouseDown = (event: PointerEvent) => {
   pointers.set(event.pointerId, new DOMPoint(event.clientX, event.clientY));
 };
 
+/**
+ * Handle plane moving with mouse or touch events.\
+ * Handle pinch zooming if two pointers are present.
+ */
 const handleMouseMove = (event: PointerEvent) => {
   if (pointers.size > 2) {
     return;
@@ -186,10 +203,15 @@ const handleMouseMove = (event: PointerEvent) => {
       (pointerArray[0].y + pointerArray[1].y) / 2,
     );
 
+    if (previousDistance === null) {
+      previousDistance = distance;
+      return;
+    }
+
     // Delta between the current and the previous distance to determine zoom
     const difference = previousDistance - distance;
 
-    zoomPlane(centerPoint.x, centerPoint.y, difference);
+    zoomPlane(centerPoint.x, centerPoint.y, difference, 0.01);
 
     previousDistance = distance;
     pointers.set(event.pointerId, new DOMPoint(clientX, clientY));
@@ -209,14 +231,20 @@ const handleMouseMove = (event: PointerEvent) => {
   pointers.set(event.pointerId, new DOMPoint(clientX, clientY));
 };
 
+/** Remove pointer from pointer map and reset states */
 const handleMouseUp = (event: PointerEvent) => {
   if (event.pointerType === 'mouse') {
     isDragging.value = false;
   }
 
+  previousDistance = null;
   pointers.delete(event.pointerId);
 };
 
+/**
+ * Move the svg plane so that nodes are displayed in the center of the screen.\
+ * If the node would overflow at the top, attach nodes to the top of the screen.\
+ */
 const centerPlane = () => {
   if (!editorRef.value) return;
 

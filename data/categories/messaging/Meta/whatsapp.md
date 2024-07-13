@@ -3,6 +3,7 @@ name: WhatsApp
 type:
   - input-output
 compatible: true
+tested: true
 _id: 666594b244dfcae739555d11
 ---
 WhatsApp compresses images and thus strips c2pa metadata and/or invalidates it.

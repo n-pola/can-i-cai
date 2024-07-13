@@ -17,8 +17,8 @@
       }
     },
     "compatible": {
-       "description": "Wether or not the component supports c2pa",
-        "type": "boolean"
+      "description": "Wether or not the component supports c2pa",
+      "type": "boolean"
     },
     "minimalRequiredVersion": {
       "description": "The minimal required version of the component",
@@ -27,7 +27,32 @@
     "_id": {
       "description": "Unique identifier supplied by the database",
       "type": "string"
+    },
+    "source": {
+      "description": "Source for the claim of compatibility",
+      "type": "string"
+    },
+    "tested": {
+      "description": "Flag to indicate that the compatibility has been tested (used when no source is available)",
+      "type": "boolean"
     }
   },
-  "required": ["name", "type", "compatible", "_id"]
+  "required": ["name", "type", "compatible", "_id"],
+  "if": {
+    "properties": {
+      "compatible": {
+        "const": true
+      }
+    }
+  },
+  "then": {
+    "oneOf": [
+      {
+        "required": ["source"]
+      },
+      {
+        "required": ["tested"]
+      }
+    ]
+  }
 }

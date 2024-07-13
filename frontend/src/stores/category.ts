@@ -14,6 +14,7 @@ export const useCategoryStore = defineStore('category', {
     categories: new Map(),
   }),
   getters: {
+    /** Return stored categories in a form that can be used for select dropdowns */
     getCategoriesOptions:
       (state) =>
       (language: SupportedLanguage): SelectOption[] => {
@@ -22,6 +23,8 @@ export const useCategoryStore = defineStore('category', {
           name: category.name[language],
         }));
       },
+
+    /** Return all categories that match given types */
     getCategoriesByTypes:
       (state) =>
       (types: ComponentFunctionType[]): Category[] => {
@@ -29,6 +32,8 @@ export const useCategoryStore = defineStore('category', {
           category.types.some((categoryType) => types.includes(categoryType)),
         );
       },
+
+    /** Determine if a category has components that match requested types */
     categorySatisfiesTypes:
       (state) =>
       (categoryId: string, types: ComponentFunctionType[]): boolean => {
@@ -41,6 +46,7 @@ export const useCategoryStore = defineStore('category', {
       },
   },
   actions: {
+    /** Fetch or return all categories */
     async getAllCategories() {
       if (this.categories.size > 0) {
         return this.categories;
@@ -53,6 +59,8 @@ export const useCategoryStore = defineStore('category', {
 
       return this.categories;
     },
+
+    /** Fetch or return a full category with its components */
     async getCategory(id: string) {
       const componentsStore = useComponentsStore();
       if (this.categories.has(id)) {

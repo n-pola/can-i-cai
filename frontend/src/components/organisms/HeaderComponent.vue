@@ -6,10 +6,14 @@ import TextInput from '@/components/atoms/TextInput.vue';
 import { useWorkflowStore } from '@/stores/workflow';
 import { config } from '@/config';
 
+// Hooks
 const i18n = useI18n();
 const route = useRoute();
+
+// Data
 const { name: workflowName } = toRefs(useWorkflowStore());
 
+// Watchers
 watchEffect(() => {
   document.title = workflowName?.value
     ? `${config.documentTitleBase} | ${workflowName?.value}`
@@ -19,7 +23,7 @@ watchEffect(() => {
 
 <template>
   <header class="header">
-    <div>
+    <div class="header__link-wrap">
       <RouterLink to="/" :title="i18n.t('homepage')" class="header__home-link">
         <img alt="Can I CAI? Logo" class="header__logo" src="@/assets/logo.svg" />
       </RouterLink>
@@ -75,6 +79,10 @@ watchEffect(() => {
 
   &__home-link {
     display: inline-flex;
+  }
+
+  &__link-wrap {
+    display: flex;
   }
 
   &__logo {
