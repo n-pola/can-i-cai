@@ -4,6 +4,7 @@ import Button from '@/components/atoms/Button.vue';
 import type { PlaneMode } from '@/types/checkerPlane';
 import { useGlobalStore } from '@/stores/global';
 import { computed } from 'vue';
+import { isCoarsePointerDevice } from '@/utils/isCoarsePointerDevice';
 
 // Component setup
 const props = defineProps<{
@@ -25,6 +26,8 @@ const emit = defineEmits<{
 // Computed values
 const zoomFactorPercentage = computed(() => `${(props.zoomFactor * 100).toFixed(0)}%`);
 
+const isTouchDevice = computed(() => isCoarsePointerDevice());
+
 // Hooks
 const i18n = useI18n();
 const globalStore = useGlobalStore();
@@ -44,7 +47,7 @@ const globalStore = useGlobalStore();
         :rounded="false"
         size="xs"
         icon-size="s"
-        v-if="!globalStore.isMobile"
+        v-if="!isTouchDevice"
       />
       <Button
         class="checker-tool__button"
@@ -58,7 +61,7 @@ const globalStore = useGlobalStore();
         size="xs"
         icon-size="s"
         :icon-filled="true"
-        v-if="!globalStore.isMobile"
+        v-if="!isTouchDevice"
       />
       <Button
         class="checker-tool__button"
@@ -72,7 +75,7 @@ const globalStore = useGlobalStore();
         size="xs"
         icon-size="s"
         :icon-filled="true"
-        v-if="globalStore.isMobile"
+        v-if="isTouchDevice"
       />
     </div>
     <div class="checker-tool__group">
@@ -105,7 +108,7 @@ const globalStore = useGlobalStore();
         v-if="globalStore.isMobile"
       />
     </div>
-    <div class="checker-tool__group" v-if="!globalStore.isMobile">
+    <div class="checker-tool__group" v-if="!isTouchDevice">
       <Button
         class="checker-tool__button"
         @click="emit('zoomIn')"
