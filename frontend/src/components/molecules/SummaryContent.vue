@@ -54,7 +54,8 @@ const i18n = useI18n();
   display: flex;
   flex-flow: column;
   gap: $s;
-  padding: $s $xs;
+  padding: $s $xs 0;
+  overflow-y: auto;
 
   &__footer {
     display: flex;

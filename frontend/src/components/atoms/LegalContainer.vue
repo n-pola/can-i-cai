@@ -12,7 +12,7 @@
   display: grid;
   grid-template-columns: repeat($grid-columns, 1fr);
   grid-gap: $grid-gap;
-  height: calc(100vh - ($s * 2) - $l - 1px);
+  height: calc(100dvh - ($s * 2) - $l - 1px);
   padding: $grid-margin;
   overflow-y: auto;
 
@@ -22,6 +22,7 @@
   h4,
   p {
     margin-bottom: $xs;
+    word-break: break-word;
   }
 
   &__content {
