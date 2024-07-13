@@ -95,7 +95,7 @@ const height = computed(() => {
 .workflow-summary {
   display: flex;
   flex-flow: column;
-  max-height: calc(100vh - $l - $s * 4);
+  max-height: calc(100dvh - $l - $s * 2);
   overflow: hidden;
   background-color: $lighter;
   border-top-left-radius: $border-radius;
@@ -125,7 +125,7 @@ const height = computed(() => {
   }
 
   &__body {
-    overflow: hidden;
+    overflow-y: auto;
     transition: height 0.3s ease-in-out;
   }
 
