@@ -101,7 +101,8 @@
     "closeInterception": {
       "title": "Ungesicherte Änderungen",
       "message": "Du hast Änderungen an deinem benutzerdefinierten Bestandteil vorgenommen, welche noch nicht gespeichert wurden. Bist du sicher, dass du die Änderungen verwerfen möchtest?"
-    }
+    },
+    "typeNotAllowed": "Dieser Typ kann an der gewählten Position nicht platziert werden."
   },
   "share": "Teilen",
   "save": "Speichern",

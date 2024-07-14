@@ -6,7 +6,7 @@ import BooleanInputPill from '@/components/molecules/BooleanInputPill.vue';
 import SelectPill from '@/components/molecules/SelectPill.vue';
 import SelectInput from '@/components/atoms/SelectInput.vue';
 import { useCategoryStore } from '@/stores/category';
-import { ref, watch, watchEffect } from 'vue';
+import { computed, ref, watch, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SupportedLanguage } from '@/types/language';
 import type { PopulatedCustomComponent, ComponentType, ComponentFunctionType } from 'cic-shared';
@@ -20,9 +20,15 @@ import ConfirmModal from '@/components/organisms/ConfirmModal.vue';
 import { NodeHelper } from '@/helpers/nodeHelper';
 
 // Component definition
-const props = defineProps<{
-  initialData: PopulatedCustomComponent | null;
-}>();
+const props = withDefaults(
+  defineProps<{
+    initialData: PopulatedCustomComponent | null;
+    allowedTypes?: ComponentFunctionType[];
+  }>(),
+  {
+    allowedTypes: () => ['input', 'input-output', 'output'],
+  },
+);
 
 const isOpen = defineModel<boolean>();
 
@@ -50,6 +56,22 @@ const compatible = ref(false);
 const modalContentElement = ref<HTMLDivElement | null>(null);
 const showTypeExplanationModal = ref(false);
 const initialHash = ref<string | null>(null);
+
+const availableTypes: ComponentFunctionType[] = ['input', 'input-output', 'output'];
+
+// Computed values
+
+/** Map types to option object and set disabled prop accordingly */
+const typeOptions = computed(() => {
+  return availableTypes.map((option) => ({
+    id: option,
+    name: translate(`types.${option}`),
+    disabled: !props.allowedTypes.includes(option),
+    ...(!props.allowedTypes.includes(option) && {
+      title: translate('customComponentModal.typeNotAllowed'),
+    }),
+  }));
+});
 
 // Functions
 
@@ -217,14 +239,7 @@ watch(
               >
             </ToolTip>
           </label>
-          <SelectPill
-            :options="[
-              { id: 'input', name: 'Input' },
-              { id: 'input-output', name: 'Input/Output' },
-              { id: 'output', name: 'Output' },
-            ]"
-            v-model="type"
-          />
+          <SelectPill :options="typeOptions" v-model="type" />
         </div>
 
         <div class="custom-component-modal__group">
