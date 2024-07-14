@@ -434,7 +434,7 @@ export const useWorkflowStore = defineStore('workflow', {
         return;
       }
 
-      const updatedNode = { ...currentData, ...node, ...(group ? { group } : {}) };
+      const updatedNode = { ...currentData, ...node, ...{ group } };
 
       this.nodes.set(id, updatedNode);
       this.determineEdgeCompatibilityFromNode(id);
@@ -581,7 +581,22 @@ export const useWorkflowStore = defineStore('workflow', {
         this.addEdge(id, this.edges.get(edgeId)?.target || '');
       });
 
-      // this.recalculateGroupNodePositions(groupId);
+      this.recalculateGroupNodePositions(groupId);
+    },
+
+    removeGroup(groupId: string) {
+      const group = this.groups.get(groupId);
+      if (!group) {
+        return;
+      }
+
+      group.forEach((nodeId) => {
+        const node = this.nodes.get(nodeId);
+        if (!node) return;
+        this.updateNodeData(nodeId, node, undefined);
+      });
+
+      this.groups.delete(groupId);
     },
 
     /**
@@ -610,8 +625,8 @@ export const useWorkflowStore = defineStore('workflow', {
           groupNodes.splice(nodeIndex, 1);
         }
         this.recalculateGroupNodePositions(group);
-        if (groupNodes?.length === 0) {
-          this.groups.delete(group);
+        if (groupNodes && groupNodes.length <= 1) {
+          this.removeGroup(group);
         }
       }
     },
@@ -750,7 +765,7 @@ export const useWorkflowStore = defineStore('workflow', {
         this.recalculateNodePosition(nodeId);
       });
 
-      // this.centerGroup(group);
+      this.centerGroup(group);
     },
     centerGroup(group: string): void {
       const groupNodes = this.groups.get(group);

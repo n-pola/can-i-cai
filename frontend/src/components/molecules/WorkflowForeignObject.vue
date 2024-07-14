@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { type PopulatedComponent, type PopulatedCustomComponent } from 'cic-shared';
 import WorkflowComponent from '@/components/molecules/WorkflowComponent.vue';
 import { cssVariables } from '@/utils/cssVariables';
 import { useWorkflowStore } from '@/stores/workflow';
 import SvgAddButton from '@/components/atoms/SvgAddButton.vue';
+import { type FrontendNode } from '@/types/workflow';
 
 // Component setup
 const props = defineProps<{
-  component: PopulatedComponent | PopulatedCustomComponent;
+  component: FrontendNode;
   compatible: boolean;
   id: string;
   y: number;
@@ -81,7 +81,8 @@ onMounted(() => {
       title="Add component after this one"
       v-if="
         workflowStore.isFirstNode(props.id) &&
-        !(component.type.length === 1 && component.type.includes('output'))
+        !(component.type.length === 1 && component.type.includes('output')) &&
+        !component.group
       "
     />
     <foreignObject :width="width" :height="height" ref="objectRef" @click="emit('click')">
@@ -98,10 +99,12 @@ onMounted(() => {
       :size="cssVariables.size.m"
       @click="emit('requestAddAfter')"
       title="Add component after this one"
-      v-if="workflowStore.isLastNode(props.id) && !component.type.includes('input')"
+      v-if="
+        workflowStore.isLastNode(props.id) && !component.type.includes('input') && !component.group
+      "
     />
     <SvgAddButton
-      v-if="!workflowStore.nodeHasMultipleEdges(props.id)"
+      v-if="!workflowStore.nodeHasMultipleEdges(props.id) && !component.group"
       :x="width + cssVariables.size.s + cssVariables.size.m / 2"
       :y="height / 2"
       :size="cssVariables.size.m"

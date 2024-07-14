@@ -378,6 +378,17 @@ defineExpose({
         {{ i18n.t('addFirstComponent') }}
       </text>
     </g>
+    <rect
+      v-for="group in workflow.groupBoundingBoxes"
+      :x="group.bb.x - cssVariables.size.s"
+      :y="group.bb.y - cssVariables.size.s"
+      :width="group.bb.width + cssVariables.size.s * 2"
+      :height="group.bb.height + cssVariables.size.s * 2"
+      rx="4"
+      ry="4"
+      :key="group.id"
+      class="workflow-plane__group"
+    />
     <g class="workflow-plane__edge-wrap" v-for="line in workflow.positionedEdges" :key="line.id">
       <path
         :d="getBezierPath(line.coordinates)"
@@ -416,19 +427,6 @@ defineExpose({
       @recenter-plane="centerPlane"
       ref="componentRefs"
       tabindex="0"
-    />
-
-    <rect
-      v-for="group in workflow.groupBoundingBoxes"
-      :x="group.bb.x - cssVariables.size.s"
-      :y="group.bb.y - cssVariables.size.s"
-      :width="group.bb.width + cssVariables.size.s * 2"
-      :height="group.bb.height + cssVariables.size.s * 2"
-      rx="4"
-      ry="4"
-      fill="none"
-      stroke="black"
-      :key="group.id"
     />
   </svg>
 </template>
@@ -480,6 +478,13 @@ defineExpose({
         }
       }
     }
+  }
+
+  &__group {
+    fill: none;
+    stroke: $light;
+    stroke-dasharray: 4;
+    stroke-width: 2;
   }
 }
 </style>
