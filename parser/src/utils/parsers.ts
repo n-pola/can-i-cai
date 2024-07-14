@@ -14,6 +14,7 @@ import {
   getFilesByExtension,
   appendPropToFrontMatter,
 } from '@/utils/fsHelper';
+import { renderer } from '@/utils/markedAnchorRenderer';
 
 const categoryTypes = new Map<string, Set<string>>();
 
@@ -33,7 +34,11 @@ export const parseComponent = async (
 
   const { attributes, body } = fm<MarkdownComponent>(componentMarkdown);
 
-  const additionalInfo = await marked(body, { gfm: true, async: true });
+  const additionalInfo = await marked(body, {
+    gfm: true,
+    async: true,
+    renderer,
+  });
 
   const types = categoryTypes.get(category);
 

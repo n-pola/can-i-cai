@@ -22,6 +22,7 @@ See the [wiki](https://github.com/n-pola/can-i-cai/wiki) for further information
         2. [Components schema](#components-schema)
         3. [Explanation of types](#explanation-of-types)
 2. [Local development](#local-development)
+3. [API](#api)
 
 ## Contributions
 As the C2PA and CAI are open source projects, this webapp will also follow this philosophy. Feel free to contribute to this project, especially in the area of data for the app.
@@ -119,4 +120,5 @@ The types are used to define what a component can do with an image.
 > [!TIP]
 > If you change any of the types or schemas in the `shared` directory, run `npm install` in any of the consuming projects once to build the package and propagate the changes to all parts using it.
 
+## API
 Use the `insomnia-request-collection.json` in the root of this repository to explore the API of the backend.

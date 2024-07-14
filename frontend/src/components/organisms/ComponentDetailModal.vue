@@ -289,10 +289,7 @@ onMounted(() => {
 
     & :deep(a) {
       color: $primary;
-
-      &:hover {
-        text-decoration: underline;
-      }
+      text-decoration: underline;
     }
   }
 

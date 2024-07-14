@@ -96,7 +96,7 @@ const handleClick = (event: Event) => {
 .modal {
   width: $modal-width;
   max-width: calc(100vw - $grid-margin * 2);
-  max-height: calc(100vh - $s);
+  max-height: calc(100dvh - $s);
   padding: 0;
   margin: auto;
   overflow: hidden;

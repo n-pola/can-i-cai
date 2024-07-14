@@ -27,5 +27,6 @@ module.exports = {
     'consistent-return': 'off',
     'no-console': 'off',
     'no-underscore-dangle': 'warn',
+    'import/prefer-default-export': 'off',
   },
 };
