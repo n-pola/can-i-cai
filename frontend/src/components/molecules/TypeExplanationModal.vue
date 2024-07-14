@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import Modal from '@/components/atoms/Modal.vue';
 import { i18n } from '@/utils/i18n';
+import { computed } from 'vue';
 
 // Component setup
 const isOpen = defineModel<boolean>();
 
-// Data
-const explanations = [
+// Computed values
+const explanations = computed(() => [
   {
     title: i18n.t('types.input'),
     content: i18n.t('typeExplanation.input'),
@@ -19,7 +20,7 @@ const explanations = [
     title: i18n.t('types.output'),
     content: i18n.t('typeExplanation.output'),
   },
-];
+]);
 </script>
 
 <template>
