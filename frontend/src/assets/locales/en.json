@@ -101,7 +101,8 @@
     "closeInterception": {
       "title": "Unsaved changes",
       "message": "You made changes to your custom component that have not been updated yet. Are you sure you want to discard these changes?"
-    }
+    },
+    "typeNotAllowed": "This type cannot be placed at the selected position."
   },
   "share": "Share",
   "save": "Save",

@@ -2,7 +2,7 @@
 import Button from '@/components/atoms/Button.vue';
 
 defineProps<{
-  options: { id: string; name: string }[];
+  options: { id: string; name: string; disabled?: boolean; title?: string }[];
 }>();
 
 const selectedValue = defineModel<string>();
@@ -15,8 +15,10 @@ const selectedValue = defineModel<string>();
       :key="option.id"
       @click="selectedValue = option.id"
       :color="selectedValue === option.id ? 'primary' : 'lighter'"
-      :title="option.name"
+      :title="option.title ?? option.name"
       :rounded="false"
+      :disabled="option.disabled"
+      class="select-pill__button"
     >
       {{ option.name }}
     </Button>
@@ -29,5 +31,14 @@ const selectedValue = defineModel<string>();
   max-width: fit-content;
   overflow: hidden;
   border-radius: 9999px;
+
+  &__button {
+    &:disabled {
+      color: $light;
+      pointer-events: all;
+      cursor: not-allowed;
+      background-color: $lighter;
+    }
+  }
 }
 </style>

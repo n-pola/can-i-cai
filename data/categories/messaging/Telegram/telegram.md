@@ -1,5 +1,5 @@
 ---
-name: Signal
+name: Telegram
 type:
   - input-output
 compatible: true
