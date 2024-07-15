@@ -1,0 +1,6 @@
+User-agent: *
+disallow: /imprint
+disallow: /privacy
+disallow: /check/shared/*
+
+sitemap: https://www.can-i-cai.de/sitemap.xml
