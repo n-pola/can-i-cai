@@ -11,11 +11,13 @@ const props = withDefaults(
     showCompatibility?: boolean;
     showDelete?: boolean;
     compatible?: boolean;
+    fullWidth?: boolean;
   }>(),
   {
     showCompatibility: true,
     showDelete: true,
     compatible: false,
+    fullWidth: false,
   },
 );
 
@@ -55,7 +57,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="component" ref="componentRef">
+  <div class="component" ref="componentRef" :class="{ 'component--full-width': fullWidth }">
     <div
       class="component__category"
       :class="{
@@ -99,11 +101,16 @@ defineExpose({
   $self: &;
 
   display: flex;
+  width: $xxs * 24;
   height: $f-s * $lh-base + $f-xs * $lh-base + $xxs * 2;
   overflow: hidden;
   user-select: none;
   background-color: $lighter;
   border-radius: $border-radius;
+
+  &--full-width {
+    width: 100%;
+  }
 
   @media (hover: hover) {
     &:hover {
@@ -182,6 +189,7 @@ defineExpose({
     display: flex;
     flex-flow: column;
     justify-content: space-between;
+    overflow: hidden;
   }
 
   &__action {
