@@ -50,6 +50,7 @@ const dummyComponents: PopulatedComponent[] = [
     :key="dummyComponents[0].id"
     class="dummy-component"
     :compatible="true"
+    :full-width="true"
   />
   <div class="dummy-edge" />
   <WorkflowComponent
@@ -57,6 +58,7 @@ const dummyComponents: PopulatedComponent[] = [
     :key="dummyComponents[1].id"
     class="dummy-component"
     :compatible="true"
+    :full-width="true"
   />
 </template>
 

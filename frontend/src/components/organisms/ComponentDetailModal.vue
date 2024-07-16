@@ -186,6 +186,7 @@ onMounted(() => {
           :component="alternative"
           :show-delete="false"
           :compatible="true"
+          :full-width="true"
           @click="emit('alternativeClicked', nodeId, alternative.id)"
         />
       </div>
