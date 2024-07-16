@@ -25,17 +25,22 @@ const base = path.join(__dirname, '../../data/categories');
 const componentFiles = globSync(`${base}/*/*/*.md`);
 const categoryFiles = globSync(`${base}/*/index.md`);
 
+const componentIds = new Set<string>();
+const categoryIds = new Set<string>();
+
 const validateData = async () => {
   console.log('\nValidating component files...');
   const componentValidationFailed = await verifyFiles(
     componentFiles,
     validateComponent,
+    componentIds,
   );
 
   console.log('\nValidating category files...');
   const categoryValidationFailed = await verifyFiles(
     categoryFiles,
     validateCategory,
+    categoryIds,
   );
 
   return componentValidationFailed || categoryValidationFailed;
