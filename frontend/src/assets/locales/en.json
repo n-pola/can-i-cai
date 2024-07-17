@@ -154,5 +154,6 @@
     "input-output": "A component that needs an input image and produces a changed version of that image as an output. For example image manipulation software like Photoshop or a tool to resize and compress images.",
     "output": "A component that needs an input image and produces a changed version of that image as an output. For example image manipulation software like Photoshop or a tool to resize and compress images."
   },
-  "helpTooltip": "Click for help"
+  "helpTooltip": "Click for help",
+  "pageNotFound": "Sorry, the page you are looking for unfortunately does not exist."
 }
