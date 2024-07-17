@@ -66,10 +66,7 @@ export class WorkflowStorageHelper {
    * @param workflow - Workflow to save in savable format
    */
   static saveWorkflow(workflow: SavedWorkflow): void {
-    localStorage.setItem(
-      `${config.localStorage.prefix}-workflow-${workflow.id}`,
-      JSON.stringify(workflow),
-    );
+    localStorage.setItem(`${singleWorkflowKeyPrefix}${workflow.id}`, JSON.stringify(workflow));
     this.addWorkflowToStorage({
       id: workflow.id,
       name: workflow.name,
@@ -83,8 +80,12 @@ export class WorkflowStorageHelper {
    * @param id - Id of the workflow to remove
    */
   static removeWorkflow(id: string): void {
-    localStorage.removeItem(`${singleWorkflowKeyPrefix}-${id}`);
+    localStorage.removeItem(`${singleWorkflowKeyPrefix}${id}`);
     this.removeWorkflowFromStorage(id);
+
+    if (id === WorkflowStorageHelper.getCurrentWorkflow()) {
+      WorkflowStorageHelper.clearCurrentWorkflow();
+    }
   }
 
   /**

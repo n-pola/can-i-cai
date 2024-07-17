@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import WorkflowList from '@/components/organisms/WorkflowList.vue';
 import { WorkflowStorageHelper } from '@/helpers/workflowStorageHelper';
@@ -27,7 +27,7 @@ const {
 // Data
 const workflows = ref(WorkflowStorageHelper.getWorkflowStorage());
 
-if (!workflows.value) {
+if (!workflows.value || workflows.value.length === 0) {
   router.replace('/');
 }
 
@@ -60,6 +60,13 @@ const handleDelete = (id: string) => {
     { name: workflow.name },
   );
 };
+
+// Watchers
+watch(workflows, () => {
+  if (!workflows.value || workflows.value.length === 0) {
+    router.replace('/');
+  }
+});
 </script>
 
 <template>
