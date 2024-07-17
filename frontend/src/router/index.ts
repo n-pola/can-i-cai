@@ -79,7 +79,7 @@ const router = createRouter({
           return next();
         } catch (error) {
           toast.error(i18n.t('workflowNotFound'));
-          return next('/');
+          return next('/404');
         } finally {
           globalStore.spinnerVisible = false;
         }
@@ -100,6 +100,11 @@ const router = createRouter({
       path: '/imprint',
       name: 'Imprint',
       component: () => import('@/views/ImprintView.vue'),
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'Not Found',
+      component: () => import('@/views/NotFoundView.vue'),
     },
   ],
 });
