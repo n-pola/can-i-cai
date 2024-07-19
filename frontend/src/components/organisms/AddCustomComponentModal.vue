@@ -196,7 +196,7 @@ watch(
             class="custom-component-modal__input"
             id="name"
             label="Name"
-            placeholder="Component name"
+            :placeholder="translate('customComponentModal.namePlaceholder')"
             v-model="name"
             required
           />
@@ -209,7 +209,7 @@ watch(
           <TextInput
             id="manufacturer"
             label="Manufacturer"
-            placeholder="Manufacturer"
+            :placeholder="translate('detailModal.manufacturer')"
             v-model="manufacturer"
             class="custom-component-modal__input"
           />
