@@ -338,7 +338,10 @@ const handleAlternativeClicked = async (nodeId: string, componentId: string) => 
 
   interceptAddAlternative(
     () => {
-      workflowStore.updateNodeData(nodeId, newComponent);
+      workflowStore.updateNodeData(nodeId, {
+        ...newComponent,
+        additionalInfo: newComponent.additionalInfo ?? '',
+      });
       detailModalIsOpen.value = false;
       toast.success(i18n.t('workflowChecker.toasts.replaceSuccess'));
     },
