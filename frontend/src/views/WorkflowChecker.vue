@@ -92,6 +92,7 @@ const addComponentType = ref<ComponentFunctionType[] | null>(null);
 const tmpId = ref<string | null>(null);
 const addType = ref<'after' | 'between' | 'before' | 'beside'>('after');
 const editCustomComponent = ref<PopulatedCustomComponent | null>(null);
+const editCustomComponentType = ref<ComponentFunctionType[] | null>(null);
 
 const sharedModalIsOpen = ref(false);
 const sharedWorkflowId = ref<string | null>(null);
@@ -118,6 +119,17 @@ const handleNodeClick = (nodeId: string) => {
 
   if (node.dataType === 'custom') {
     editCustomComponent.value = node as PopulatedCustomComponent;
+
+    editCustomComponentType.value = ['input-output'];
+
+    if (workflowStore.previousNodes(nodeId).length === 0) {
+      editCustomComponentType.value?.push('output');
+    }
+
+    if (workflowStore.nextNodes(nodeId).length === 0) {
+      editCustomComponentType.value?.push('input');
+    }
+
     addCustomComponentModalIsOpen.value = true;
     return;
   }
@@ -150,6 +162,7 @@ const addComponent = async (
         throw new Error('Invalid add type');
     }
     tmpId.value = null;
+    addComponentType.value = null;
     return;
   }
 
@@ -224,7 +237,7 @@ const handleAddComponentOnEdgeRequest = async (id: string) => {
 const handleAddComponentRequested = (id?: string, place?: 'before' | 'after' | 'beside') => {
   addComponentModalIsOpen.value = true;
   tmpId.value = id || null;
-  addComponentType.value = ['output'];
+  addComponentType.value = ['output', 'input-output'];
 
   if (id) {
     addType.value = place ?? 'after';
@@ -338,7 +351,10 @@ const handleAlternativeClicked = async (nodeId: string, componentId: string) => 
 
   interceptAddAlternative(
     () => {
-      workflowStore.updateNodeData(nodeId, newComponent);
+      workflowStore.updateNodeData(nodeId, {
+        ...newComponent,
+        additionalInfo: newComponent.additionalInfo ?? '',
+      });
       detailModalIsOpen.value = false;
       toast.success(i18n.t('workflowChecker.toasts.replaceSuccess'));
     },
@@ -416,6 +432,7 @@ workflowStore.$subscribe(async () => {
 watch(addCustomComponentModalIsOpen, (isOpen) => {
   if (!isOpen) {
     editCustomComponent.value = null;
+    editCustomComponentType.value = null;
   }
 });
 
@@ -551,6 +568,7 @@ onBeforeRouteLeave((to, from, next) => {
       @add-custom-component="(component, type) => addComponent(component, undefined, type)"
       @update-custom-component="handleUpdateComponent"
       :initial-data="editCustomComponent"
+      :allowed-types="addComponentType ?? editCustomComponentType ?? undefined"
     />
     <ConfirmModal
       v-model="addExternalImageModalIsOpen"

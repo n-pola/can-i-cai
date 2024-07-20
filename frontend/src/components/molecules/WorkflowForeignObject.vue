@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import WorkflowComponent from '@/components/molecules/WorkflowComponent.vue';
 import { cssVariables } from '@/utils/cssVariables';
 import { useWorkflowStore } from '@/stores/workflow';
 import SvgAddButton from '@/components/atoms/SvgAddButton.vue';
-import { type FrontendNode } from '@/types/workflow';
+import type { FrontendNode } from '@/types/workflow';
 
 // Component setup
 const props = defineProps<{
@@ -27,14 +27,9 @@ const emit = defineEmits<{
 // Hooks
 const workflowStore = useWorkflowStore();
 
-// Daata
+// Data
 const componentRef = ref<{ componentRef: HTMLElement } | null>(null);
 const objectRef = ref<SVGForeignObjectElement | null>(null);
-
-// Computed values
-const height = computed(() => componentRef.value?.componentRef.scrollHeight || 0);
-
-const width = cssVariables.size.xxs * 24;
 
 // Functions
 
@@ -47,7 +42,7 @@ const updateMyPosition = () => {
     workflowStore.updateNodePosition(props.id, {
       x: props.x,
       y: props.y,
-      width,
+      width: componentRef.value.componentRef.scrollWidth,
       height: componentRef.value.componentRef.scrollHeight,
     });
     workflowStore.recalculateNodePositionsFrom(props.id);
@@ -74,7 +69,7 @@ onMounted(() => {
 <template>
   <g :transform="`translate(${x}, ${y})`">
     <SvgAddButton
-      :x="width / 2"
+      :x="component.boundingBox.width / 2"
       :y="-cssVariables.size.s - cssVariables.size.m / 2"
       :size="cssVariables.size.m"
       @click="emit('requestAddBefore')"
@@ -85,7 +80,12 @@ onMounted(() => {
         !component.group
       "
     />
-    <foreignObject :width="width" :height="height" ref="objectRef" @click="emit('click')">
+    <foreignObject
+      :width="component.boundingBox.width"
+      :height="component.boundingBox.height"
+      ref="objectRef"
+      @click="emit('click')"
+    >
       <WorkflowComponent
         :component="component"
         ref="componentRef"
@@ -94,8 +94,8 @@ onMounted(() => {
       />
     </foreignObject>
     <SvgAddButton
-      :x="width / 2"
-      :y="height + cssVariables.size.s + cssVariables.size.m / 2"
+      :x="component.boundingBox.width / 2"
+      :y="component.boundingBox.height + cssVariables.size.s + cssVariables.size.m / 2"
       :size="cssVariables.size.m"
       @click="emit('requestAddAfter')"
       title="Add component after this one"
@@ -105,8 +105,8 @@ onMounted(() => {
     />
     <SvgAddButton
       v-if="!workflowStore.nodeHasMultipleEdges(props.id) && !component.group"
-      :x="width + cssVariables.size.s + cssVariables.size.m / 2"
-      :y="height / 2"
+      :x="component.boundingBox.width + cssVariables.size.s + cssVariables.size.m / 2"
+      :y="component.boundingBox.height / 2"
       :size="cssVariables.size.m"
       @click="emit('requestAddBeside')"
       title="Add component beside this one"

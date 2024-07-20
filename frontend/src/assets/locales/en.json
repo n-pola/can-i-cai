@@ -101,10 +101,12 @@
   "customComponentModal": {
     "titleAdd": "Add custom component",
     "titleEdit": "Edit custom component",
+    "namePlaceholder": "Component name",
     "closeInterception": {
       "title": "Unsaved changes",
       "message": "You made changes to your custom component that have not been updated yet. Are you sure you want to discard these changes?"
-    }
+    },
+    "typeNotAllowed": "This type cannot be placed at the selected position."
   },
   "share": "Share",
   "save": "Save",
@@ -157,5 +159,6 @@
     "input-output": "A component that needs an input image and produces a changed version of that image as an output. For example image manipulation software like Photoshop or a tool to resize and compress images.",
     "output": "A component that needs an input image and produces a changed version of that image as an output. For example image manipulation software like Photoshop or a tool to resize and compress images."
   },
-  "helpTooltip": "Click for help"
+  "helpTooltip": "Click for help",
+  "pageNotFound": "Sorry, the page you are looking for unfortunately does not exist."
 }

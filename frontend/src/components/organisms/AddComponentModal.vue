@@ -247,6 +247,7 @@ onMounted(async () => {
                 :component="component"
                 :show-compatibility="false"
                 :show-delete="false"
+                :full-width="true"
                 tabindex="0"
               />
             </template>
@@ -296,6 +297,7 @@ onMounted(async () => {
               :component="component"
               :show-compatibility="false"
               :show-delete="false"
+              :full-width="true"
               tabindex="0"
             />
           </template>

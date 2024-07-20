@@ -101,10 +101,12 @@
   "customComponentModal": {
     "titleAdd": "Eigener Bestandteil",
     "titleEdit": "Bestandteil bearbeiten",
+    "namePlaceholder": "Bestandteilname",
     "closeInterception": {
       "title": "Ungesicherte Änderungen",
       "message": "Du hast Änderungen an deinem benutzerdefinierten Bestandteil vorgenommen, welche noch nicht gespeichert wurden. Bist du sicher, dass du die Änderungen verwerfen möchtest?"
-    }
+    },
+    "typeNotAllowed": "Dieser Typ kann an der gewählten Position nicht platziert werden."
   },
   "share": "Teilen",
   "save": "Speichern",
@@ -157,5 +159,6 @@
     "input-output": "Ein Bestandteil, welcher ein Eingabebild benötigt und eine veränderte Version dieses Bildes als Ausgabe erzeugt. Zum Beispiel Photoshop oder ein Tool zum Skalieren oder Komprimieren von Bildern.",
     "output": "Ein Bestandteil, der nur ein Eingabebild annimmt, aber kein weiter nutzbares Bild als Ausgabe erzeugt. Zum Beispiel eine Social-Media-Plattform wie Instagram."
   },
-  "helpTooltip": "Klicken für Hilfe"
+  "helpTooltip": "Klicken für Hilfe",
+  "pageNotFound": "Diese Seite konnte leider nicht gefunden werden."
 }
