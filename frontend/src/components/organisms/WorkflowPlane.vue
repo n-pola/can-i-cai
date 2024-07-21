@@ -47,6 +47,10 @@ const pointers: Map<number, DOMPoint> = new Map();
 let previousDistance: number | null = null;
 const isDragging = ref(false);
 
+// Cool down time for click events due to touch events
+let clickDisallowed = false;
+let clickDisallowedTimeout: number | null = null;
+
 // Computed values
 
 /** Current viewbox as string to be used on the svg element */
@@ -166,6 +170,19 @@ const handleMouseDown = (event: PointerEvent) => {
   pointers.set(event.pointerId, new DOMPoint(event.clientX, event.clientY));
 };
 
+/* Disallow click events for a certain duration */
+const disallowClick = (duration = 200) => {
+  if (clickDisallowedTimeout) {
+    window.clearTimeout(clickDisallowedTimeout);
+  }
+
+  clickDisallowed = true;
+
+  clickDisallowedTimeout = window.setTimeout(() => {
+    clickDisallowed = false;
+  }, duration);
+};
+
 /**
  * Handle plane moving with mouse or touch events.\
  * Handle pinch zooming if two pointers are present.
@@ -207,6 +224,10 @@ const handleMouseMove = (event: PointerEvent) => {
       return;
     }
 
+    if (event.pointerType !== 'mouse') {
+      disallowClick();
+    }
+
     // Delta between the current and the previous distance to determine zoom
     const difference = previousDistance - distance;
 
@@ -228,6 +249,9 @@ const handleMouseMove = (event: PointerEvent) => {
   };
 
   pointers.set(event.pointerId, new DOMPoint(clientX, clientY));
+  if (event.pointerType !== 'mouse') {
+    disallowClick();
+  }
 };
 
 /** Remove pointer from pointer map and reset states */
@@ -385,7 +409,7 @@ defineExpose({
       :compatible="NodeHelper.isCompatible(node[1])"
       :key="node[0]"
       :id="node[0]"
-      @click="emit('nodeClicked', node[0])"
+      @click="!clickDisallowed && emit('nodeClicked', node[0])"
       @delete="emit('deleteNode', node[0])"
       @keypress.enter="emit('nodeClicked', node[0])"
       @requestAddAfter="emit('addComponentRequested', node[0], 'after')"
