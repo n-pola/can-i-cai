@@ -103,11 +103,11 @@ const planeZoom = ref(1);
 // Functions
 
 /** Handle node click event and open detail modal */
-const handleNodeClick = (nodeId: string) => {
+const handleNodeClick = (nodeId: string, ignoreDeleteMode = false) => {
   const node = workflowStore.nodes.get(nodeId);
   if (!node) throw new Error(`Node with id ${nodeId} not found`);
 
-  if (mode.value === 'delete') {
+  if (mode.value === 'delete' && !ignoreDeleteMode) {
     workflowStore.removeNodeAndCloseGaps(nodeId);
     return;
   }
@@ -493,7 +493,7 @@ onBeforeRouteLeave((to, from, next) => {
         :componentCount="workflowStore.nodes.size"
         :workflowCompatible="workflowStore.compatible"
         :incompatibleComponents="workflowStore.incompatibleNodes"
-        @node-click="handleNodeClick"
+        @node-click="(id) => handleNodeClick(id, true)"
         @save="handleSaveRequested"
         @share="handleShare"
       />
@@ -502,7 +502,7 @@ onBeforeRouteLeave((to, from, next) => {
         :componentCount="workflowStore.nodes.size"
         :workflowCompatible="workflowStore.compatible"
         :incompatibleComponents="workflowStore.incompatibleNodes"
-        @node-click="handleNodeClick"
+        @node-click="(id) => handleNodeClick(id, true)"
         @save="handleSaveRequested"
         @share="handleShare"
       />
