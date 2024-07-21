@@ -172,11 +172,11 @@ const handleMouseDown = (event: PointerEvent) => {
 
 /* Disallow click events for a certain duration */
 const disallowClick = (duration = 200) => {
-  clickDisallowed = true;
-
   if (clickDisallowedTimeout) {
     window.clearTimeout(clickDisallowedTimeout);
   }
+
+  clickDisallowed = true;
 
   clickDisallowedTimeout = window.setTimeout(() => {
     clickDisallowed = false;
